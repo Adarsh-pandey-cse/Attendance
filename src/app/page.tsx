@@ -5,7 +5,7 @@ import { Greeting } from '@/components/greeting';
 import { Header } from '@/components/header';
 import { SubjectCard } from '@/components/subject-card';
 import { useAttendance } from '@/hooks/use-attendance';
-import { PlusCircle, Loader2 } from 'lucide-react';
+import { PlusCircle, Loader2, BookOpenCheck } from 'lucide-react';
 
 export default function Home() {
   const { subjects, loading } = useAttendance();
@@ -20,7 +20,7 @@ export default function Home() {
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold tracking-tight">Subjects</h2>
             <AddSubjectDialog>
-              <button className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors">
+              <button className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors duration-300">
                 <PlusCircle className="w-5 h-5" />
                 <span className="font-bold">Add New</span>
               </button>
@@ -33,13 +33,13 @@ export default function Home() {
               <p className="ml-4 text-lg font-semibold">Loading Subjects...</p>
             </div>
           ) : subjects.length === 0 ? (
-            <div className="text-center py-16 px-4 glass-card">
-              <h3 className="text-lg font-bold text-foreground">Welcome to AttendX!</h3>
+            <div className="text-center py-16 px-4 glass-card transition-all duration-500 ease-in-out hover:shadow-2xl hover:border-primary/30">
+              <BookOpenCheck className="w-16 h-16 mx-auto text-primary/70 mb-4 transition-transform duration-300 group-hover:scale-110" />
+              <h3 className="text-xl font-bold text-foreground mb-2">
+                Add a subject to track your attendance
+              </h3>
               <p className="text-muted-foreground mt-2">
-                You haven&apos;t added any subjects yet.
-              </p>
-              <p className="text-muted-foreground mt-1">
-                Click &quot;Add New&quot; to get started.
+                Click the &quot;Add New&quot; button to get started.
               </p>
             </div>
           ) : (

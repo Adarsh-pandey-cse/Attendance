@@ -15,7 +15,7 @@ import {
   Timestamp,
   setDoc,
 } from 'firebase/firestore';
-import type { Subject, AttendanceLog, UserData } from '@/types';
+import type { Subject, AttendanceLog, UserData, TimetableEntry } from '@/types';
 import { useToast } from './use-toast';
 
 // A mock user ID. In a real multi-user app, this would come from an auth system.
@@ -26,6 +26,7 @@ export const useAttendance = () => {
   const [userName, setUserNameState] = useState<string>('Student');
   const [profilePicture, setProfilePictureState] = useState<string | null>(null);
   const [overallTarget, setOverallTargetState] = useState<number>(75);
+  const [timetable, setTimetableState] = useState<UserData['timetable']>({});
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -42,9 +43,11 @@ export const useAttendance = () => {
         setUserNameState(data.userName || 'Student');
         setProfilePictureState(data.profilePicture || null);
         setOverallTargetState(data.overallTarget || 75);
+        setTimetableState(data.timetable || {});
       } else {
         // If the user document doesn't exist, create it with default values
         // This is handled by the set functions now to ensure it exists before write
+        setDoc(userDocRef, { userName: 'Student', overallTarget: 75, timetable: {} }, { merge: true });
       }
     }, (error) => {
       console.error("Error fetching user data:", error);
@@ -59,8 +62,6 @@ export const useAttendance = () => {
         return {
           ...data,
           id: doc.id,
-          // Firestore timestamps need to be converted to JS Dates if needed,
-          // but we are using numbers (milliseconds) which is fine.
           history: data.history || [],
         } as Subject;
       });
@@ -69,17 +70,14 @@ export const useAttendance = () => {
     }, (error) => {
         console.error("Error fetching subjects:", error);
         toast({ title: "Error", description: "Could not fetch subjects.", variant: "destructive" });
-        setLoading(false); // Make sure loading is turned off on error too
+        setLoading(false);
     });
 
     return () => {
       unsubscribeUser();
       unsubscribeSubjects();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // --- Data Manipulation Functions ---
 
   const addSubject = async (newSubject: Omit<Subject, 'id' | 'history'>) => {
     try {
@@ -123,7 +121,7 @@ export const useAttendance = () => {
     if (!subject) return;
 
     const newLog: AttendanceLog = {
-      id: doc(collection(db, 'dummy')).id, // Generate a unique ID
+      id: doc(collection(db, 'dummy')).id,
       timestamp: Date.now(),
       status,
     };
@@ -136,7 +134,6 @@ export const useAttendance = () => {
 
     try {
       await updateDoc(subjectDocRef, updatedData);
-      // No toast here to keep the UI clean on frequent actions
     } catch (error) {
       console.error('Error marking attendance:', error);
       toast({ title: "Error", description: "Failed to mark attendance.", variant: "destructive" });
@@ -171,6 +168,16 @@ export const useAttendance = () => {
     }
   }
 
+  const updateTimetable = async (newTimetable: UserData['timetable']) => {
+    try {
+      await setDoc(userDocRef, { timetable: newTimetable }, { merge: true });
+      toast({ title: "Success", description: "Timetable updated." });
+    } catch (error) {
+      console.error('Error updating timetable:', error);
+      toast({ title: "Error", description: "Failed to update timetable.", variant: "destructive" });
+    }
+  };
+
   return {
     subjects,
     addSubject,
@@ -184,6 +191,8 @@ export const useAttendance = () => {
     setProfilePicture,
     overallTarget,
     setOverallTarget,
+    timetable,
+    updateTimetable,
     loading,
   };
 };

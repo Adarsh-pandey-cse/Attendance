@@ -12,8 +12,20 @@ export type Subject = {
   history: AttendanceLog[];
 };
 
+export type TimetableEntry = {
+  id: string;
+  subjectId: string;
+  startTime: string; // HH:mm format
+  endTime: string;   // HH:mm format
+}
+
+export type DayOfWeek = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+
 export type UserData = {
     userName: string;
     profilePicture: string | null;
     overallTarget: number;
+    timetable: {
+      [key in DayOfWeek]?: TimetableEntry[];
+    };
 }

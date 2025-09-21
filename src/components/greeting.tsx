@@ -48,8 +48,6 @@ export function Greeting() {
   
   const greetingText = getGreeting();
   
-  const quoteColorClass = isRadhaTheme ? 'text-orange-700' : 'text-yellow-400';
-
   if (!isClient) {
     return (
         <div className="text-center h-[160px] md:h-auto">
@@ -79,15 +77,11 @@ export function Greeting() {
           <span className="text-2xl font-bold ml-2">{userName}!</span>
       </div>
       <p className="text-muted-foreground font-semibold mt-1 text-center">{currentDate}</p>
-
-      {isRadhaTheme && (
-        <>
-          {quoteLoading ? (
-              <p className="text-lg font-semibold text-yellow-300/80 mt-2 italic text-center">Loading quote...</p>
-          ) : (
-              <p className={cn("text-lg font-semibold mt-2 italic text-center", quoteColorClass, isRadhaTheme && "font-hindi")}>&quot;{quote}&quot;</p>
-          )}
-        </>
+      
+      {quoteLoading ? (
+          <p className="text-lg font-semibold text-yellow-300/80 mt-2 italic text-center">Loading quote...</p>
+      ) : (
+          <p className="text-lg font-hindi font-bold mt-2 italic text-center text-yellow-400">&quot;{quote}&quot;</p>
       )}
     </div>
   );

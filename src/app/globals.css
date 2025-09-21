@@ -213,6 +213,14 @@
     text-shadow: 0 0 2px black, 0 0 8px hsl(330, 80%, 70%);
     animation: bead-glow 3s ease-in-out infinite;
   }
+  
+  .motivational-quote {
+      @apply text-yellow-400;
+  }
+
+  .radha-rani .motivational-quote {
+      @apply text-orange-700;
+  }
 }
 
 @layer utilities {

@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import {
   Dialog,
   DialogContent,
@@ -41,7 +42,7 @@ function SubmitButton() {
 
 export function ReportBugDialog({ isOpen, onOpenChange }: ReportBugDialogProps) {
   const initialState = { message: '', success: false };
-  const [state, dispatch] = useFormState(submitBugReport, initialState);
+  const [state, dispatch] = useActionState(submitBugReport, initialState);
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
   const { userName } = useAttendance();

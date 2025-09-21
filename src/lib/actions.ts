@@ -6,13 +6,46 @@
  */
 
 import { db } from '@/lib/firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { z } from 'zod';
 import { DeveloperInfo } from '@/types';
+import { redirect } from 'next/navigation';
 
 
-// This file is being kept for other server actions, 
-// but the bug report logic has been moved to an API route for reliability.
+/**
+ * Saves a bug report submitted from a standard HTML form.
+ * This is a Server Action and is designed to be called directly from a <form> element.
+ * @param formData - The form data submitted by the user.
+ */
+export async function submitBugReport(formData: FormData): Promise<void> {
+  const description = formData.get('description') as string;
+
+  // Basic server-side validation
+  if (!description || description.trim().length < 10) {
+    // In a real app, you'd handle this more gracefully,
+    // but for now, we'll just log it and stop.
+    console.error('Validation failed: Description is too short.');
+    return;
+  }
+
+  try {
+    await addDoc(collection(db, 'bug-reports'), {
+      description: description.trim(),
+      userName: 'Anonymous', // Simplified for reliability
+      timestamp: serverTimestamp(),
+      status: 'new',
+    });
+  } catch (error) {
+    console.error('Firestore Error:', error);
+    // If the database fails, we can't do much, but we won't crash the server.
+    // In a production app, you would have more robust error logging here.
+    return;
+  }
+
+  // Redirect to the home page on success.
+  // This provides clear feedback to the user that the submission was successful.
+  redirect('/');
+}
 
 
 // --- Developer Info Actions ---

@@ -6,42 +6,13 @@
  */
 
 import { db } from '@/lib/firebase';
-import { addDoc, collection, doc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { z } from 'zod';
 import { DeveloperInfo } from '@/types';
 import { revalidatePath } from 'next/cache';
 
-/**
- * Saves a bug report submitted from the client.
- * This is a Server Action called from a client-side handler.
- * @param description - The bug description string.
- * @returns An object indicating success or failure.
- */
-export async function submitBugReport(
-  description: string
-): Promise<{ success: boolean; message: string }> {
-  // Basic server-side validation
-  if (!description || description.trim().length === 0) {
-    return { success: false, message: 'Bug description cannot be empty.' };
-  }
-
-  try {
-    await addDoc(collection(db, 'bug-reports'), {
-      description: description.trim(),
-      userName: 'Anonymous',
-      timestamp: serverTimestamp(),
-      status: 'new',
-    });
-    revalidatePath('/admin'); // Force the admin page to refetch data
-    return { success: true, message: 'Bug report submitted successfully!' };
-  } catch (error) {
-    console.error('Firestore Error:', error);
-    return {
-      success: false,
-      message: 'An unexpected error occurred on the server.',
-    };
-  }
-}
+// This file is being kept for other actions, but the bug submission logic
+// has been moved to a dedicated API route at /api/submit-bug for greater stability.
 
 
 // --- Developer Info Actions ---
@@ -66,6 +37,7 @@ export async function saveDeveloperInfo(
     const validatedDevInfo = DeveloperInfoSchema.parse(devInfo);
     const devInfoDocRef = doc(db, 'settings', 'developerInfo');
     await setDoc(devInfoDocRef, validatedDevInfo, { merge: true });
+    revalidatePath('/developer-info');
     return { success: true, message: 'Developer information updated successfully!' };
   } catch (error) {
     console.error('Error saving developer info to Firestore:', error);

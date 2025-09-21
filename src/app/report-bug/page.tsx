@@ -6,7 +6,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Bug, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { submitBugReport } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 
 export default function ReportBugPage() {
@@ -16,7 +15,6 @@ export default function ReportBugPage() {
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (description.trim().length === 0) {
       toast({
         title: 'Error',
@@ -25,26 +23,37 @@ export default function ReportBugPage() {
       });
       return;
     }
-
     setLoading(true);
+    try {
+      const response = await fetch('/api/submit-bug', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ description }),
+      });
 
-    const result = await submitBugReport(description);
+      const result = await response.json();
 
-    if (result.success) {
+      if (!response.ok) {
+        throw new Error(result.message || 'An unknown error occurred.');
+      }
+
       toast({
         title: 'Success!',
-        description: result.message,
+        description: 'Your bug report has been submitted.',
       });
-      setDescription(''); // Clear the textarea on success
-    } else {
+      setDescription('');
+    } catch (error: any) {
+      console.error('Submission Error:', error);
       toast({
         title: 'Submission Failed',
-        description: result.message,
+        description: error.message || 'Could not submit bug report.',
         variant: 'destructive',
       });
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
@@ -58,7 +67,6 @@ export default function ReportBugPage() {
           </Button>
           <h1 className="text-2xl font-bold tracking-tight">Report a Bug</h1>
         </div>
-
         <Card className="glass-card">
           <CardHeader>
             <CardTitle className="flex items-center gap-3">
@@ -84,7 +92,6 @@ export default function ReportBugPage() {
                   disabled={loading}
                 />
               </div>
-
               <Button type="submit" className="w-full font-bold h-12 text-lg" disabled={loading}>
                 {loading ? (
                   <>

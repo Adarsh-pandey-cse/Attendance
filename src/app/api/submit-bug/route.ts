@@ -1,10 +1,45 @@
-
 import { NextResponse } from 'next/server';
+import { db } from '@/lib/firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { z } from 'zod';
 
-// This API route is no longer used by the primary bug submission flow,
-// but is kept to avoid breaking changes if it was used by other parts of the app.
-// The new flow uses a Server Action for maximum reliability.
+const BugSchema = z.object({
+  description: z.string().trim().min(1, { message: "Description cannot be empty." }),
+});
+
 export async function POST(req: Request) {
-  console.warn("DEPRECATED API ROUTE: /api/submit-bug is no longer the primary method for bug submission.");
-  return NextResponse.json({ error: 'This API endpoint is deprecated. Please use the new Server Action form.' }, { status: 410 });
+  try {
+    // 1. Parse the request body
+    const body = await req.json();
+
+    // 2. Validate the data
+    const validation = BugSchema.safeParse(body);
+    if (!validation.success) {
+      return NextResponse.json({ message: validation.error.errors[0].message }, { status: 400 });
+    }
+    
+    const { description } = validation.data;
+
+    // 3. Save to Firestore
+    try {
+      await addDoc(collection(db, 'bug-reports'), {
+        description,
+        timestamp: serverTimestamp(),
+        status: 'new',
+        userName: 'Anonymous', // Default value
+      });
+      
+      // 4. Return success response
+      return NextResponse.json({ message: 'Bug report submitted successfully!' }, { status: 200 });
+
+    } catch (dbError) {
+      console.error('Firestore Error:', dbError);
+      return NextResponse.json({ message: 'Failed to save bug report to the database.' }, { status: 500 });
+    }
+
+  } catch (error) {
+    console.error('API Error:', error);
+    // This catches errors from req.json() if the body is malformed, or any other unexpected errors.
+    return NextResponse.json({ message: 'An invalid request was sent.' }, { status: 400 });
+  }
 }

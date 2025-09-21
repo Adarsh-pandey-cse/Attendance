@@ -159,7 +159,7 @@
 
   .radha-rani-background {
     @apply fixed inset-0 -z-10 w-full h-full;
-    background: url('https://i.postimg.cc/VvKgM7ch/radha-theme-bg.jpg');
+    background: url('https://i.postimg.cc/GtyLvKfC/Gemini-Generated-Image-bb97vlbb97vlbb97.png');
     background-size: cover;
     background-position: center;
   }
@@ -171,7 +171,7 @@
   }
 
   .yellow-stripped-background {
-    background-color: #ffd700; /* A solid, darker yellow (gold) */
+    background-color: hsl(350, 100%, 95%); /* Very light pink */
   }
 }
 

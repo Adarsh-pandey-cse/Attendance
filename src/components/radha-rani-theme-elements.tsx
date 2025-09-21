@@ -30,7 +30,7 @@ export function RadhaRaniThemeElements() {
                 ease: 'linear'
               }}
             >
-                <p className="font-hindi text-2xl font-bold bg-gradient-to-r from-pink-500 to-black bg-clip-text text-transparent" style={{fontFamily: "'Tiro Devanagari Hindi', serif"}}>
+                <p className="font-hindi text-2xl font-bold bg-gradient-to-r from-yellow-400 to-black bg-clip-text text-transparent" style={{fontFamily: "'Tiro Devanagari Hindi', serif"}}>
                     <span className='mx-8'>राधा राधा</span>
                     <span className='mx-8'>राधा राधा</span>
                     <span className='mx-8'>राधा राधा</span>

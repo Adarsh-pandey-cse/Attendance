@@ -43,10 +43,17 @@ export function Greeting() {
         setQuoteLoading(false);
       }
     };
-    fetchQuote();
-  }, [isClient]);
+
+    if (isRadhaTheme) {
+        fetchQuote();
+    } else {
+        setQuote("The best way to predict the future is to create it.");
+        setQuoteLoading(false);
+    }
+  }, [isClient, isRadhaTheme]);
   
   const getGreeting = () => {
+    if (!isClient) return 'Hello,';
     if (isRadhaTheme) {
       return 'राधा वल्लभ श्री हरिवंश,';
     }
@@ -60,11 +67,16 @@ export function Greeting() {
     }
   };
   
-  const greetingText = isClient ? getGreeting() : 'Hello,';
+  const greetingText = getGreeting();
   
-  let quoteColorClass = 'text-yellow-400';
-  if (isRadhaTheme) {
-    quoteColorClass = 'text-orange-700';
+  const quoteColorClass = isRadhaTheme ? 'text-orange-700' : 'text-yellow-400';
+
+  if (!isClient) {
+    return (
+        <div className="text-center h-[160px] md:h-auto">
+            {/* Placeholder to prevent layout shift */}
+        </div>
+    );
   }
 
   return (
@@ -72,7 +84,7 @@ export function Greeting() {
       {isRadhaTheme && (
         <div className="mb-4">
           <Image 
-            src="https://i.postimg.cc/GpLvzTrN/shopping.webp" 
+            src="https://i.postimg.cc/mD2tg5sD/radha-rani-dp.png" 
             alt="Radha Rani"
             width={96}
             height={96}
@@ -80,20 +92,20 @@ export function Greeting() {
           />
         </div>
       )}
-      <h2 className="text-3xl font-bold font-hindi text-center" style={{fontFamily: isRadhaTheme ? "'Tiro Devanagari Hindi', serif" : 'inherit'}}>
+      <h2 className={cn("text-3xl font-bold", isRadhaTheme && "font-hindi")}>
           {greetingText}
       </h2>
       <div className="text-center">
-          <span className="text-2xl font-bold ml-2">{isClient ? userName : 'Student'}!</span>
+          <span className="text-2xl font-bold ml-2">{userName}!</span>
       </div>
-      {isClient && <p className="text-muted-foreground font-semibold mt-1 text-center">{currentDate}</p>}
+      <p className="text-muted-foreground font-semibold mt-1 text-center">{currentDate}</p>
 
-      {isClient && (
+      {isRadhaTheme && (
         <>
           {quoteLoading ? (
               <p className="text-lg font-semibold text-yellow-300/80 mt-2 italic text-center">Loading quote...</p>
           ) : (
-              <p className={`text-lg font-semibold ${quoteColorClass} mt-2 italic text-center font-hindi`}>&quot;{quote}&quot;</p>
+              <p className={cn("text-lg font-semibold mt-2 italic text-center", quoteColorClass, isRadhaTheme && "font-hindi")}>&quot;{quote}&quot;</p>
           )}
         </>
       )}

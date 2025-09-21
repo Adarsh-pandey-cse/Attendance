@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -154,7 +155,7 @@ export function ScheduleDialog({ children, day, isOpen, setIsOpen, entry }: Sche
                 name="endTime"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className='font-semibold'>End Time</FormLabel>LOVE
+                    <FormLabel className='font-semibold'>End Time</FormLabel>
                     <FormControl>
                       <Input type="time" {...field} />
                     </FormControl>

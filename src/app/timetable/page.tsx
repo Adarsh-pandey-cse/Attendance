@@ -13,9 +13,10 @@ const daysOfWeek: DayOfWeek[] = ['monday', 'tuesday', 'wednesday', 'thursday', '
 
 function getToday(): DayOfWeek {
     const dayIndex = new Date().getDay();
-    // Sunday is 0, Monday is 1, etc. Match it with our array order.
-    const adjustedDay = (dayIndex + 6) % 7;
-    return daysOfWeek[adjustedDay];
+    // JS Date: Sunday = 0, Monday = 1, ... Saturday = 6
+    // Our array: monday = 0, ... sunday = 6
+    const adjustedIndex = (dayIndex === 0) ? 6 : dayIndex - 1;
+    return daysOfWeek[adjustedIndex];
 }
 
 

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useAttendance } from '@/hooks/use-attendance';

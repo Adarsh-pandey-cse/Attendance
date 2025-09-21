@@ -29,17 +29,12 @@ type SubjectCardProps = {
   subject: Subject;
 };
 
-const CircularProgress = ({ percentage, target, animateControls }: { percentage: number, target: number, animateControls: any }) => {
+const CircularProgress = ({ percentage, target }: { percentage: number, target: number }) => {
   const radius = 50;
   const circumference = 2 * Math.PI * radius;
   const { theme } = useTheme();
   
-  const a = (percentage / 100) * circumference;
-  const [offset, setOffset] = useState(circumference - a)
-  
-  useEffect(() => {
-    setOffset(circumference - (percentage / 100) * circumference);
-  }, [percentage, circumference]);
+  const offset = circumference - (percentage / 100) * circumference;
   
   let colorClass = 'text-yellow-400';
   if (percentage >= target) {
@@ -89,8 +84,10 @@ const CircularProgress = ({ percentage, target, animateControls }: { percentage:
       </svg>
       <motion.div 
         className="absolute inset-0 flex flex-col items-center justify-center"
-        animate={animateControls}
-        initial={{ scale: 1 }}
+        key={`${subject.attendedClasses}-${subject.totalClasses}`}
+        initial={{ scale: 1.2 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 0.4, type: 'spring', stiffness: 200, damping: 15 }}
       >
         <span className="text-2xl font-bold">{percentage.toFixed(0)}%</span>
       </motion.div>
@@ -131,20 +128,6 @@ export function SubjectCard({ subject }: SubjectCardProps) {
     deleteSubject(subject.id);
     setIsDeleteDialogOpen(false);
   }
-  
-  const animationControls = useAnimation();
-  const prevSubjectRef = useRef(subject);
-
-  useEffect(() => {
-    if (prevSubjectRef.current.attendedClasses !== subject.attendedClasses || prevSubjectRef.current.totalClasses !== subject.totalClasses) {
-      animationControls.start({
-        scale: [1, 1.2, 1],
-        transition: { duration: 0.4, times: [0, 0.5, 1] }
-      });
-    }
-    prevSubjectRef.current = subject;
-  }, [subject.attendedClasses, subject.totalClasses, animationControls]);
-
 
   return (
     <div className="glass-card p-4 space-y-4 transition-all duration-300 homepage-section">
@@ -194,11 +177,13 @@ export function SubjectCard({ subject }: SubjectCardProps) {
       )}
 
       <div className="flex items-center justify-around gap-4">
-        <CircularProgress percentage={percentage} target={overallTarget} animateControls={animationControls} />
+        <CircularProgress percentage={percentage} target={overallTarget} />
         <motion.div 
             className="text-center"
-            animate={animationControls}
-            initial={{ scale: 1 }}
+            key={`${subject.attendedClasses}-${subject.totalClasses}-text`}
+            initial={{ scale: 1.2 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.4, type: 'spring', stiffness: 200, damping: 15 }}
         >
             <p className="text-3xl font-bold">
               {subject.attendedClasses}/{subject.totalClasses}

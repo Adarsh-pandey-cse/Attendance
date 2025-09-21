@@ -1,40 +1,53 @@
 
 'use client';
 
-import { Suspense } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Bug } from 'lucide-react';
+import { ArrowLeft, Bug, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { submitBugReport } from '@/lib/actions';
-import { useSearchParams } from 'next/navigation';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { TriangleAlert } from 'lucide-react';
-
-function ErrorDisplay() {
-  const searchParams = useSearchParams();
-  const error = searchParams.get('error');
-
-  if (!error) return null;
-
-  let errorMessage = 'An unknown error occurred.';
-  if (error === 'description_empty') {
-    errorMessage = 'The bug description cannot be empty.';
-  } else if (error === 'submit_failed') {
-    errorMessage = 'Failed to submit bug report to the database. Please try again.';
-  }
-
-  return (
-    <Alert variant="destructive" className="mb-4">
-      <TriangleAlert className="h-4 w-4" />
-      <AlertTitle>Submission Failed</AlertTitle>
-      <AlertDescription>{errorMessage}</AlertDescription>
-    </Alert>
-  );
-}
+import { useToast } from '@/hooks/use-toast';
 
 export default function ReportBugPage() {
+  const [description, setDescription] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (description.trim().length === 0) {
+      toast({
+        title: 'Error',
+        description: 'Bug description cannot be empty.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    const result = await submitBugReport(description);
+
+    if (result.success) {
+      toast({
+        title: 'Success!',
+        description: result.message,
+      });
+      setDescription(''); // Clear the textarea on success
+    } else {
+      toast({
+        title: 'Submission Failed',
+        description: result.message,
+        variant: 'destructive',
+      });
+    }
+
+    setLoading(false);
+  };
+
   return (
     <main className="flex justify-center min-h-screen bg-gradient-to-b from-background to-slate-900/50">
       <div className="w-full max-w-2xl p-4 md:p-6 space-y-6">
@@ -58,25 +71,29 @@ export default function ReportBugPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Suspense fallback={<div>Loading...</div>}>
-              <ErrorDisplay />
-            </Suspense>
-            {/* This form uses a Server Action. When submitted, it will trigger the
-                `submitBugReport` function on the server. */}
-            <form action={submitBugReport} className="space-y-6">
+            <form onSubmit={handleFormSubmit} className="space-y-6">
               <div>
                 <label htmlFor="description" className="font-semibold mb-2 block">Bug Description (Required)</label>
                 <Textarea
                   id="description"
-                  name="description" // The name attribute is crucial for server actions
+                  name="description"
                   placeholder="Please provide as much detail as possible about the bug..."
                   rows={8}
                   required
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  disabled={loading}
                 />
               </div>
 
-              <Button type="submit" className="w-full font-bold h-12 text-lg">
-                Submit Bug Report
+              <Button type="submit" className="w-full font-bold h-12 text-lg" disabled={loading}>
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+                  </>
+                ) : (
+                  'Submit Bug Report'
+                )}
               </Button>
             </form>
           </CardContent>

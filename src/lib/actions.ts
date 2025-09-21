@@ -6,41 +6,41 @@
  */
 
 import { db } from '@/lib/firebase';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { z } from 'zod';
 import { DeveloperInfo } from '@/types';
-import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 
 /**
- * Saves a bug report submitted from a standard HTML form.
- * This is a Server Action and is designed to be called directly from a <form> element.
- * @param formData - The form data submitted by the user.
+ * Saves a bug report submitted from the client.
+ * This is a Server Action called from a client-side handler.
+ * @param description - The bug description string.
+ * @returns An object indicating success or failure.
  */
-export async function submitBugReport(formData: FormData): Promise<void> {
-  const description = formData.get('description') as string;
-
+export async function submitBugReport(
+  description: string
+): Promise<{ success: boolean; message: string }> {
   // Basic server-side validation
   if (!description || description.trim().length === 0) {
-    console.error('Validation failed: Description is empty.');
-    redirect('/report-bug?error=description_empty');
-    return;
+    return { success: false, message: 'Bug description cannot be empty.' };
   }
 
   try {
     await addDoc(collection(db, 'bug-reports'), {
       description: description.trim(),
-      userName: 'Anonymous', // Simplified for reliability
+      userName: 'Anonymous',
       timestamp: serverTimestamp(),
       status: 'new',
     });
+    revalidatePath('/admin'); // Force the admin page to refetch data
+    return { success: true, message: 'Bug report submitted successfully!' };
   } catch (error) {
     console.error('Firestore Error:', error);
-    redirect('/report-bug?error=submit_failed');
-    return;
+    return {
+      success: false,
+      message: 'An unexpected error occurred on the server.',
+    };
   }
-
-  // Redirect to the home page with a success flag on success.
-  redirect('/?bug_submitted=true');
 }
 
 

@@ -25,14 +25,18 @@ type SubjectCardProps = {
   subject: Subject;
 };
 
-const CircularProgress = ({ percentage }: { percentage: number }) => {
+const CircularProgress = ({ percentage, target }: { percentage: number, target: number }) => {
   const radius = 50;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (percentage / 100) * circumference;
   
-  let colorClass = 'text-green-400';
-  if (percentage < 75) colorClass = 'text-yellow-400';
-  if (percentage < 50) colorClass = 'text-red-500';
+  let colorClass = 'text-yellow-400';
+  if (percentage >= target) {
+    colorClass = 'text-green-400';
+  } else if (percentage < target * 0.75) { // e.g., if target is 75, this is < 56.25
+    colorClass = 'text-red-500';
+  }
+
 
   return (
     <div className="relative w-28 h-28">
@@ -140,7 +144,7 @@ export function SubjectCard({ subject }: SubjectCardProps) {
       )}
 
       <div className="flex items-center justify-around gap-4">
-        <CircularProgress percentage={percentage} />
+        <CircularProgress percentage={percentage} target={overallTarget} />
         <div className="text-center">
             <p className="text-3xl font-bold">
               {subject.attendedClasses}/{subject.totalClasses}

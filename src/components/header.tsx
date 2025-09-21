@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
-import { MoreVertical, Info, Percent, CalendarClock, Bug } from 'lucide-react';
+import { MoreVertical, Info, Percent, CalendarClock, Bug, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { useAttendance } from '@/hooks/use-attendance';
 import { Slider } from '@/components/ui/slider';
@@ -57,18 +57,25 @@ export function Header() {
                 <span>Timetable</span>
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/developer-info" className="flex items-center gap-2 cursor-pointer font-semibold">
-                <Info className="w-4 h-4" />
-                <span>Developer Info</span>
-              </Link>
-            </DropdownMenuItem>
              <ReportBugDialog isOpen={isReportBugOpen} setIsOpen={setIsReportBugOpen}>
                 <DropdownMenuItem onSelect={(e) => { e.preventDefault(); setIsReportBugOpen(true); }} className="flex items-center gap-2 cursor-pointer font-semibold">
                     <Bug className="w-4 h-4" />
                     <span>Report a Bug</span>
                 </DropdownMenuItem>
             </ReportBugDialog>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="/admin" className="flex items-center gap-2 cursor-pointer font-semibold">
+                <Shield className="w-4 h-4" />
+                <span>Admin Panel</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/developer-info" className="flex items-center gap-2 cursor-pointer font-semibold">
+                <Info className="w-4 h-4" />
+                <span>Developer Info</span>
+              </Link>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

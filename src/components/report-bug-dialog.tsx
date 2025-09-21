@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -8,7 +8,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -16,15 +15,13 @@ import { Label } from '@/components/ui/label';
 import { Bug, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAttendance } from '@/hooks/use-attendance';
-import { submitToGoogleForm } from '@/ai/flows/google-form-submit-flow';
+import { saveBugReport } from '@/ai/flows/bug-report-flow';
 
 type ReportBugDialogProps = {
   children: React.ReactNode;
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
 };
-
-const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export function ReportBugDialog({ children, isOpen, setIsOpen }: ReportBugDialogProps) {
   const [description, setDescription] = useState('');
@@ -44,69 +41,48 @@ export function ReportBugDialog({ children, isOpen, setIsOpen }: ReportBugDialog
 
     setIsSending(true);
 
-    const maxRetries = 3;
-    let attempts = 0;
-    let success = false;
+    try {
+      const result = await saveBugReport({
+        userName: userName,
+        description: description,
+      });
 
-    while (attempts < maxRetries && !success) {
-      attempts++;
-      try {
-        const result = await submitToGoogleForm({
-          userName: userName,
-          description: description,
+      if (result.success) {
+        toast({
+          title: 'Report Sent!',
+          description: 'Thank you for your bug report! The admin will review it shortly.',
         });
-
-        if (result.success) {
-          success = true;
-          toast({
-            title: 'Report Sent!',
-            description: 'Thank you for your bug report! Our team will review it shortly.',
-          });
-          setDescription('');
-          setIsOpen(false);
-        } else {
-          console.error(`Attempt ${attempts} failed:`, result.message);
-          if (attempts >= maxRetries) {
-            toast({
-              title: 'Submission Failed',
-              description: 'Failed to submit bug report. Please try again later.',
-              variant: 'destructive',
-            });
-          }
-        }
-      } catch (error) {
-        console.error(`Attempt ${attempts} failed with exception:`, error);
-        if (attempts >= maxRetries) {
-          toast({
-            title: 'Submission Failed',
-            description:
-              'An unexpected error occurred. Please try again later.',
-            variant: 'destructive',
-          });
-        }
+        setDescription('');
+        setIsOpen(false);
+      } else {
+        toast({
+          title: 'Submission Failed',
+          description: result.message || 'Failed to submit bug report. Please try again later.',
+          variant: 'destructive',
+        });
       }
-
-      if (!success && attempts < maxRetries) {
-        await wait(2000);
-      }
+    } catch (error) {
+      console.error('Error submitting bug report:', error);
+      toast({
+        title: 'Submission Failed',
+        description: 'An unexpected error occurred. Please try again later.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSending(false);
     }
-
-    setIsSending(false);
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild onClick={() => setIsOpen(true)}>
-        {children}
-      </DialogTrigger>
+      {children}
       <DialogContent className="sm:max-w-md glass-card">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 font-bold">
             <Bug className="text-destructive" /> Report a Bug
           </DialogTitle>
           <DialogDescription>
-            Help us improve AttendX by describing the issue you've encountered.
-            Your feedback is valuable!
+            Help us improve AttendX by describing the issue you've encountered. Your report will be sent to the admin.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4 max-h-[60vh] overflow-y-auto pr-4">

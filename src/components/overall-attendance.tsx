@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { useAttendance } from '@/hooks/use-attendance';
 import { motion } from 'framer-motion';
 import { calculateClassesToAttend, calculateClassesToBunk } from '@/lib/utils';
+import { useTheme } from '@/hooks/use-theme';
 
 const OverallCircularProgress = ({ percentage, target }: { percentage: number, target: number }) => {
     const radius = 60;
@@ -60,6 +61,7 @@ const OverallCircularProgress = ({ percentage, target }: { percentage: number, t
 
 export function OverallAttendance() {
     const { subjects, overallTarget } = useAttendance();
+    const { theme } = useTheme();
 
     const { totalAttended, totalClasses, overallPercentage, needed, bunkable } = useMemo(() => {
         const totalAttended = subjects.reduce((acc, subject) => acc + subject.attendedClasses, 0);
@@ -88,9 +90,13 @@ export function OverallAttendance() {
         return null;
     }
 
+    const containerClasses = theme === 'radha-rani'
+        ? "p-6 flex flex-col md:flex-row items-center justify-around gap-6"
+        : "glass-card p-6 flex flex-col md:flex-row items-center justify-around gap-6";
+
     return (
         <motion.div
-            className="glass-card p-6 flex flex-col md:flex-row items-center justify-around gap-6"
+            className={containerClasses}
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}

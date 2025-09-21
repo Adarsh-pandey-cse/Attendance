@@ -153,7 +153,7 @@
         @apply bg-card/80 border-black/10;
     }
     .radha-rani & {
-      @apply bg-card/90 backdrop-blur-xl border-primary/20;
+      @apply bg-transparent border-primary/20 backdrop-blur-none;
     }
   }
 
@@ -162,6 +162,8 @@
     background: url('https://i.postimg.cc/GtyLvKfC/Gemini-Generated-Image-bb97vlbb97vlbb97.png');
     background-size: cover;
     background-position: center;
+    filter: blur(2px);
+    transform: scale(1.05);
   }
 
   @keyframes gradient {
@@ -171,7 +173,11 @@
   }
 
   .yellow-stripped-background {
-    background-color: hsl(350, 100%, 95%); /* Very light pink */
+    background-color: hsl(45 100% 80% / 0.7); /* Light yellow with some transparency */
+  }
+
+  .radha-rani .homepage-section {
+    @apply bg-yellow-100/70 p-6 rounded-2xl border-2 border-yellow-300/50 shadow-lg;
   }
 }
 

@@ -42,6 +42,26 @@ export function Greeting() {
     quoteColorClass = 'text-orange-700';
   }
 
+  if (isClient && theme === 'radha-rani') {
+    return (
+      <div>
+        <h2 className="text-3xl font-bold font-hindi text-center" style={{fontFamily: "'Tiro Devanagari Hindi', serif"}}>
+          {greetingText}
+        </h2>
+        <div className="text-center">
+            <span className="text-2xl font-bold ml-2">{isClient ? userName : 'Student'}!</span>
+        </div>
+        {isClient && <p className="text-muted-foreground font-semibold mt-1 text-center">{currentDate}</p>}
+
+        {quoteLoading ? (
+            <p className="text-lg font-semibold text-yellow-300/80 mt-2 italic text-center">Loading quote...</p>
+        ) : (
+            <p className={`text-lg font-semibold ${quoteColorClass} mt-2 italic text-center`}>&quot;{quote}&quot;</p>
+        )}
+      </div>
+    )
+  }
+
 
   return (
     <div className="glass-card p-6">

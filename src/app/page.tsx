@@ -9,20 +9,29 @@ import { SubjectCard } from '@/components/subject-card';
 import { Separator } from '@/components/ui/separator';
 import { useAttendance } from '@/hooks/use-attendance';
 import { PlusCircle, Loader2, BookOpenCheck } from 'lucide-react';
+import { useTheme } from '@/hooks/use-theme';
+import { cn } from '@/lib/utils';
 
 export default function Home() {
   const { subjects, loading } = useAttendance();
+  const { theme } = useTheme();
+
+  const isRadhaTheme = theme === 'radha-rani';
 
   return (
     <main className="flex justify-center min-h-screen">
       <div className="w-full max-w-lg p-4 md:p-6 space-y-6">
         <Header />
-        <Greeting />
-        <OverallAttendance />
+        <div className={cn(isRadhaTheme && 'homepage-section')}>
+          <Greeting />
+        </div>
+        <div className={cn(isRadhaTheme && 'homepage-section')}>
+          <OverallAttendance />
+        </div>
 
         <Separator className="my-6 bg-white/10" />
 
-        <div className="space-y-4">
+        <div className={cn('space-y-4', isRadhaTheme && 'homepage-section')}>
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold tracking-tight">Subjects</h2>
             <AddSubjectDialog>
@@ -34,12 +43,12 @@ export default function Home() {
           </div>
 
           {loading ? (
-            <div className="flex justify-center items-center py-16 glass-card">
+            <div className="flex justify-center items-center py-16">
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
               <p className="ml-4 text-lg font-semibold">Loading Subjects...</p>
             </div>
           ) : subjects.length === 0 ? (
-            <div className="text-center py-16 px-4 glass-card transition-all duration-500 ease-in-out hover:shadow-2xl hover:border-primary/30">
+            <div className="text-center py-16 px-4">
               <BookOpenCheck className="w-16 h-16 mx-auto text-primary/70 mb-4 transition-transform duration-300 group-hover:scale-110" />
               <h3 className="text-xl font-bold text-foreground mb-2">
                 Add a subject to track your attendance

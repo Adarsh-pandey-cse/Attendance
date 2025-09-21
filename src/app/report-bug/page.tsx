@@ -1,8 +1,8 @@
 
 'use client';
 
-import { useEffect } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useEffect, useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -30,7 +30,7 @@ function SubmitButton() {
 export default function ReportBugPage() {
   const { toast } = useToast();
   const initialState = { message: '', errors: {}, success: false };
-  const [state, dispatch] = useFormState(submitBugReport, initialState);
+  const [state, dispatch] = useActionState(submitBugReport, initialState);
 
   useEffect(() => {
     if (state.success) {

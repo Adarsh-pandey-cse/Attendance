@@ -11,7 +11,7 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const DailyQuoteInputSchema = z.object({
-    isRadhaRaniTheme: z.boolean().describe('Whether the Radha Rani theme is active.'),
+  isRadhaRaniTheme: z.boolean().describe('Whether the Radha Rani theme is active.'),
 });
 
 export type DailyQuoteInput = z.infer<typeof DailyQuoteInputSchema>;
@@ -30,9 +30,13 @@ const prompt = ai.definePrompt({
   name: 'dailyQuotePrompt',
   input: {schema: DailyQuoteInputSchema},
   output: {schema: DailyQuoteOutputSchema},
-  prompt: `You are an expert at providing short, powerful, motivational quotes in Hindi. You will provide a unique quote each time.
+  prompt: `You are an expert at providing short, powerful, motivational quotes.
 
-  Please provide one short, powerful, motivational quote by Premanand ji Maharaj. The quote MUST be in Hindi script.
+  {{#if isRadhaRaniTheme}}
+  Please provide a short, powerful, motivational quote about Radha Krishna. The quote MUST be in Hindi script.
+  {{else}}
+  Please provide a unique, short, powerful, motivational quote by Premanand ji Maharaj. The quote MUST be in Hindi script.
+  {{/if}}
 
   Quote:`,
 });

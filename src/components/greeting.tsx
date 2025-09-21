@@ -26,24 +26,26 @@ export function Greeting() {
   useEffect(() => {
     if (!isClient) return;
 
-    const fetchQuote = async () => {
-      setQuoteLoading(true);
-      try {
-        const response = await getDailyQuote({ isRadhaRaniTheme: isRadhaTheme });
-        if (response?.quote) {
+    if (theme !== 'radha-rani') {
+      const fetchQuote = async () => {
+        setQuoteLoading(true);
+        try {
+          const response = await getDailyQuote({ isRadhaRaniTheme: false });
+          if (response?.quote) {
             setQuote(response.quote);
-        } else {
+          } else {
             setQuote("The best way to predict the future is to create it.");
+          }
+        } catch (error) {
+          console.error("Failed to fetch daily quote", error);
+          setQuote("The best way to predict the future is to create it.");
+        } finally {
+          setQuoteLoading(false);
         }
-      } catch (error) {
-        console.error("Failed to fetch daily quote", error);
-        setQuote("The best way to predict the future is to create it.");
-      } finally {
-        setQuoteLoading(false);
-      }
-    };
-    fetchQuote();
-  }, [isClient, isRadhaTheme]);
+      };
+      fetchQuote();
+    }
+  }, [isClient, theme]);
   
   const greetingText = isRadhaTheme ? 'राधा वल्लभ श्री हरिवंश,' : 'Hello,';
   
@@ -53,24 +55,24 @@ export function Greeting() {
   }
 
   return (
-    <div className={cn("text-center", isClient && theme === 'radha-rani' && "homepage-section")}>
-        <h2 className="text-3xl font-bold font-hindi text-center" style={{fontFamily: "'Tiro Devanagari Hindi', serif"}}>
-            {greetingText}
-        </h2>
-        <div className="text-center">
-            <span className="text-2xl font-bold ml-2">{isClient ? userName : 'Student'}!</span>
-        </div>
-        {isClient && <p className="text-muted-foreground font-semibold mt-1 text-center">{currentDate}</p>}
+    <div className={cn("text-center", isRadhaTheme && "homepage-section")}>
+      <h2 className="text-3xl font-bold font-hindi text-center" style={{fontFamily: "'Tiro Devanagari Hindi', serif"}}>
+          {greetingText}
+      </h2>
+      <div className="text-center">
+          <span className="text-2xl font-bold ml-2">{isClient ? userName : 'Student'}!</span>
+      </div>
+      {isClient && <p className="text-muted-foreground font-semibold mt-1 text-center">{currentDate}</p>}
 
-        {isClient && (
-          <>
-            {quoteLoading ? (
-                <p className="text-lg font-semibold text-yellow-300/80 mt-2 italic text-center">Loading quote...</p>
-            ) : (
-                <p className={`text-lg font-semibold ${quoteColorClass} mt-2 italic text-center font-hindi`}>&quot;{quote}&quot;</p>
-            )}
-          </>
-        )}
+      {isClient && theme !== 'radha-rani' && (
+        <>
+          {quoteLoading ? (
+              <p className="text-lg font-semibold text-yellow-300/80 mt-2 italic text-center">Loading quote...</p>
+          ) : (
+              <p className={`text-lg font-semibold ${quoteColorClass} mt-2 italic text-center font-hindi`}>&quot;{quote}&quot;</p>
+          )}
+        </>
+      )}
     </div>
   );
 }

@@ -25,7 +25,7 @@ export function Greeting() {
     const fetchQuote = async () => {
       setQuoteLoading(true);
       try {
-        const response = await getDailyQuote(theme);
+        const response = await getDailyQuote();
         if (response?.quote) {
             setQuote(response.quote);
         } else {
@@ -39,7 +39,7 @@ export function Greeting() {
       }
     };
     fetchQuote();
-  }, [theme, isClient]);
+  }, [isClient]);
   
   const greetingText = isClient && theme === 'radha-rani' ? 'राधा वल्लभ श्री हरिवंश,' : 'Hello,';
   
@@ -49,8 +49,8 @@ export function Greeting() {
   }
 
   return (
-    <div>
-        <h2 className="text-3xl font-bold font-hindi text-center" style={{fontFamily: "'Tiro Devanagari Hindi', serif"}}>
+    <div className="text-center">
+        <h2 className="text-3xl font-bold font-hindi" style={{fontFamily: "'Tiro Devanagari Hindi', serif"}}>
             {greetingText}
         </h2>
         <div className="text-center">
@@ -61,7 +61,7 @@ export function Greeting() {
         {quoteLoading ? (
             <p className="text-lg font-semibold text-yellow-300/80 mt-2 italic text-center">Loading quote...</p>
         ) : (
-            <p className={`text-lg font-semibold ${quoteColorClass} mt-2 italic text-center`}>&quot;{quote}&quot;</p>
+            <p className={`text-lg font-semibold ${quoteColorClass} mt-2 italic text-center font-hindi`}>&quot;{quote}&quot;</p>
         )}
     </div>
   );

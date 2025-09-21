@@ -10,30 +10,21 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-const DailyQuoteInputSchema = z.object({
-  isRadhaRaniTheme: z.boolean().optional().describe('Whether the current theme is Radha Rani.'),
-});
-
 const DailyQuoteOutputSchema = z.object({
   quote: z.string().describe('The motivational quote.'),
 });
 export type DailyQuoteOutput = z.infer<typeof DailyQuoteOutputSchema>;
 
-export async function getDailyQuote(theme?: string): Promise<DailyQuoteOutput> {
-  const {output} = await getDailyQuoteFlow({ isRadhaRaniTheme: theme === 'radha-rani' });
+export async function getDailyQuote(): Promise<DailyQuoteOutput> {
+  const {output} = await getDailyQuoteFlow();
   return output!;
 }
 
 const prompt = ai.definePrompt({
   name: 'dailyQuotePrompt',
-  input: {schema: DailyQuoteInputSchema},
   output: {schema: DailyQuoteOutputSchema},
   prompt: `You are an expert at providing short, powerful, motivational quotes. You will provide a unique quote each time.
-  {{#if isRadhaRaniTheme}}
   Please provide one short, powerful, motivational quote by Premanand ji Maharaj in Hindi. The quote MUST be in Hindi script.
-  {{else}}
-  Please provide one short, powerful, motivational quote related to Radha Krishna, spiritual love, or devotion. The tone should be uplifting and serene.
-  {{/if}}
 
   Quote:`,
 });
@@ -41,11 +32,10 @@ const prompt = ai.definePrompt({
 const getDailyQuoteFlow = ai.defineFlow(
   {
     name: 'getDailyQuoteFlow',
-    inputSchema: z.object({ isRadhaRaniTheme: z.boolean().optional() }),
     outputSchema: DailyQuoteOutputSchema,
   },
-  async ({ isRadhaRaniTheme }) => {
-    const {output} = await prompt({ isRadhaRaniTheme });
+  async () => {
+    const {output} = await prompt();
     return output!;
   }
 );

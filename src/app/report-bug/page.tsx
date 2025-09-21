@@ -19,7 +19,6 @@ const ACCEPTED_FILE_TYPES = {
   'image/png': ['.png'],
   'text/plain': ['.txt'],
   'application/pdf': ['.pdf'],
-  'video/mp4': ['.mp4'],
 };
 
 export default function ReportBugPage() {
@@ -37,7 +36,7 @@ export default function ReportBugPage() {
   }, []);
 
   const onDrop = useCallback((acceptedFiles: File[], fileRejections: any[]) => {
-    const newFiles = [...files, ...acceptedFiles];
+    const newFiles = [...files, ...acceptedFiles.filter(file => !files.some(f => f.name === file.name))];
     setFiles(newFiles);
     
     fileRejections.forEach((rejection: any) => {
@@ -69,7 +68,7 @@ export default function ReportBugPage() {
     setIsSending(true);
     
     const formData = new FormData();
-    formData.append('userName', userName);
+    formData.append('userName', userName || 'Anonymous');
     formData.append('description', description);
     formData.append('deviceInfo', deviceInfo);
     files.forEach(file => {
@@ -147,7 +146,7 @@ export default function ReportBugPage() {
                   ) : (
                     <p className="text-muted-foreground">Drag 'n' drop files here, or click to select files</p>
                   )}
-                  <p className="text-xs text-muted-foreground mt-1">Max 5MB per file. Supports PNG, JPG, TXT, PDF, MP4.</p>
+                  <p className="text-xs text-muted-foreground mt-1">Max 5MB per file. Supports PNG, JPG, PDF, TXT.</p>
                 </div>
                  {files.length > 0 && (
                   <div className="mt-4 space-y-2">

@@ -5,6 +5,7 @@ import { Greeting } from '@/components/greeting';
 import { Header } from '@/components/header';
 import { OverallAttendance } from '@/components/overall-attendance';
 import { SubjectCard } from '@/components/subject-card';
+import { Separator } from '@/components/ui/separator';
 import { useAttendance } from '@/hooks/use-attendance';
 import { PlusCircle, Loader2, BookOpenCheck } from 'lucide-react';
 
@@ -17,6 +18,8 @@ export default function Home() {
         <Header />
         <Greeting />
         <OverallAttendance />
+
+        <Separator className="my-6 bg-white/10" />
 
         <div className="space-y-4">
           <div className="flex justify-between items-center">

@@ -44,9 +44,9 @@ export function Greeting() {
        {isClient && <p className="text-muted-foreground font-semibold mt-1">{currentDate}</p>}
 
       {quoteLoading ? (
-         <p className="text-lg font-semibold text-cyan-400/80 mt-2 italic">Loading quote...</p>
+         <p className="text-lg font-semibold text-yellow-300/80 mt-2 italic">Loading quote...</p>
       ) : (
-        <p className="text-lg font-semibold text-cyan-400 mt-2 italic">&quot;{quote}&quot;</p>
+        <p className="text-lg font-semibold text-yellow-300 mt-2 italic">&quot;{quote}&quot;</p>
       )}
     </div>
   );

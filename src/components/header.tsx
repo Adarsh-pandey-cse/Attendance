@@ -15,18 +15,16 @@ import Link from 'next/link';
 import { useAttendance } from '@/hooks/use-attendance';
 import { Slider } from '@/components/ui/slider';
 import { ReportBugDialog } from '@/components/report-bug-dialog';
-import { useState } from 'react';
+import { Button } from './ui/button';
 
 export function Header() {
   const { overallTarget, setOverallTarget } = useAttendance();
-  const [isBugDialogOpen, setIsBugDialogOpen] = useState(false);
 
   return (
     <header className="flex justify-between items-center py-2">
       <Logo />
       <div className="flex items-center gap-4">
         <ProfileSection />
-        <ReportBugDialog isOpen={isBugDialogOpen} onOpenChange={setIsBugDialogOpen} />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="p-2 rounded-full hover:bg-white/10 transition-colors">
@@ -58,10 +56,14 @@ export function Header() {
                 <span>Timetable</span>
               </Link>
             </DropdownMenuItem>
-             <DropdownMenuItem onSelect={() => setIsBugDialogOpen(true)} className="flex items-center gap-2 cursor-pointer font-semibold">
-                <MessageSquareWarning className="w-4 h-4" />
-                <span>Report a Bug</span>
-            </DropdownMenuItem>
+            
+            <ReportBugDialog>
+                 <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="flex items-center gap-2 cursor-pointer font-semibold">
+                    <MessageSquareWarning className="w-4 h-4" />
+                    <span>Report a Bug</span>
+                </DropdownMenuItem>
+            </ReportBugDialog>
+
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link href="/admin" className="flex items-center gap-2 cursor-pointer font-semibold">

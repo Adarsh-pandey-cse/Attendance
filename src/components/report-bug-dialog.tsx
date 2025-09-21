@@ -8,6 +8,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -17,26 +18,8 @@ import { Loader2, MessageSquareWarning, Send } from 'lucide-react';
 import { useAttendance } from '@/hooks/use-attendance';
 
 type ReportBugDialogProps = {
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
+  children: React.ReactNode;
 };
-
-function SubmitButton() {
-  const [isPending] = useTransition();
-  return (
-    <Button type="submit" className="w-full font-bold gap-2" disabled={isPending}>
-      {isPending ? (
-        <>
-          <Loader2 className="animate-spin" /> Submitting...
-        </>
-      ) : (
-        <>
-          <Send /> Submit Report
-        </>
-      )}
-    </Button>
-  );
-}
 
 function BugReportForm({ setDialogOpen }: { setDialogOpen: (open: boolean) => void }) {
   const { userName } = useAttendance();
@@ -44,8 +27,7 @@ function BugReportForm({ setDialogOpen }: { setDialogOpen: (open: boolean) => vo
   const [description, setDescription] = useState('');
   const [isPending, startTransition] = useTransition();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     if (description.trim().length < 10) {
       toast({
         title: 'Error',
@@ -67,7 +49,7 @@ function BugReportForm({ setDialogOpen }: { setDialogOpen: (open: boolean) => vo
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="space-y-4">
       <div>
         <Textarea
           name="description"
@@ -82,7 +64,7 @@ function BugReportForm({ setDialogOpen }: { setDialogOpen: (open: boolean) => vo
         />
       </div>
       <DialogFooter>
-        <Button type="submit" className="w-full font-bold gap-2" disabled={isPending}>
+        <Button onClick={handleSubmit} className="w-full font-bold gap-2" disabled={isPending || description.trim().length < 10}>
           {isPending ? (
             <>
               <Loader2 className="animate-spin" /> Submitting...
@@ -94,11 +76,12 @@ function BugReportForm({ setDialogOpen }: { setDialogOpen: (open: boolean) => vo
           )}
         </Button>
       </DialogFooter>
-    </form>
+    </div>
   );
 }
 
-export function ReportBugDialog({ isOpen, onOpenChange }: ReportBugDialogProps) {
+export function ReportBugDialog({ children }: ReportBugDialogProps) {
+  const [isOpen, setIsOpen] = useState(false);
   // By giving the form a new key each time the dialog opens,
   // we ensure it remounts with a fresh state.
   const [formKey, setFormKey] = useState(() => Date.now().toString());
@@ -110,7 +93,10 @@ export function ReportBugDialog({ isOpen, onOpenChange }: ReportBugDialogProps) 
   }, [isOpen]);
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        {children}
+      </DialogTrigger>
       <DialogContent className="glass-card sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 font-bold text-xl">
@@ -120,7 +106,7 @@ export function ReportBugDialog({ isOpen, onOpenChange }: ReportBugDialogProps) 
             Encountered an issue? Please describe it in detail below. Your feedback helps improve the app.
           </DialogDescription>
         </DialogHeader>
-        {isOpen && <BugReportForm key={formKey} setDialogOpen={onOpenChange} />}
+        {isOpen && <BugReportForm key={formKey} setDialogOpen={setIsOpen} />}
       </DialogContent>
     </Dialog>
   );

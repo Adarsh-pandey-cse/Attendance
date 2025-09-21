@@ -34,7 +34,7 @@ export async function saveDeveloperInfo(
     const devInfoDocRef = doc(db, 'settings', 'developerInfo');
     await setDoc(devInfoDocRef, validatedDevInfo, { merge: true });
     revalidatePath('/developer-info');
-    revalidatePath('/admin');
+    revalidatePath('/admin/developer-info/edit');
     return { success: true, message: 'Developer information updated successfully!' };
   } catch (error) {
     console.error('Error saving developer info to Firestore:', error);

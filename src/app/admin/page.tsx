@@ -20,11 +20,11 @@ function BugReportCard({ bug, onUpdateStatus, isUpdating }: { bug: BugReport, on
   return (
     <motion.div
         layout
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.8 }}
+        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className={`p-4 rounded-lg glass-card flex justify-between items-start gap-4 border-l-4 ${isClosed ? 'border-green-500' : 'border-yellow-500'}`}
+        className={`p-4 rounded-lg glass-card flex justify-between items-start gap-4 border-l-4 ${isClosed ? 'border-green-500/70' : 'border-yellow-500/70'}`}
     >
       <div className="flex-1 space-y-2">
         <p className="text-foreground">{bug.description}</p>

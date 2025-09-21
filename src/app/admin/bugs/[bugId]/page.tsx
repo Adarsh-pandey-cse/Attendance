@@ -6,7 +6,7 @@ import { db } from '@/lib/firebase';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Loader2, User, Calendar, Smartphone, Paperclip, File, Download } from 'lucide-react';
+import { ArrowLeft, Loader2, User, Calendar, Smartphone, Paperclip, FileText, Download } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { BugReport } from '@/types';
@@ -133,8 +133,8 @@ export default function BugDetailPage() {
               <p className='text-sm p-3 bg-slate-900 rounded-md font-mono'>{bugReport.deviceInfo || 'Not provided'}</p>
             </div>
             <div className="space-y-1">
-              <h3 className="font-semibold text-muted-foreground">Description</h3>
-              <p className="whitespace-pre-wrap">{bugReport.description}</p>
+              <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><FileText className='w-4 h-4' />Description</h3>
+              <p className="whitespace-pre-wrap p-3 bg-slate-900/50 rounded-md">{bugReport.description}</p>
             </div>
 
             {bugReport.attachments && bugReport.attachments.length > 0 && (
@@ -144,7 +144,7 @@ export default function BugDetailPage() {
                   {bugReport.attachments.map(file => (
                     <div key={file.url} className='flex items-center justify-between p-2 glass-card rounded-md'>
                         <div className='flex items-center gap-2'>
-                            <File className='w-5 h-5 text-primary' />
+                            <FileText className='w-5 h-5 text-primary' />
                             <span className='font-semibold truncate max-w-xs'>{file.name}</span>
                         </div>
                         <Button asChild size='sm' variant='outline'>

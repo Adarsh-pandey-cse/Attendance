@@ -18,7 +18,7 @@ import { DeveloperInfo } from '@/types';
  * - Uploads files to Firebase Storage.
  * - Saves bug report details (including file URLs) to Firestore.
  * @param formData - The FormData object from the bug report form.
- * @returns An object indicating success or failure.
+ * @returns An object indicating success or failure with a message.
  */
 export async function saveBugReport(
   formData: FormData
@@ -27,26 +27,32 @@ export async function saveBugReport(
     const description = formData.get('description') as string;
     const userName = formData.get('userName') as string;
     const deviceInfo = formData.get('deviceInfo') as string;
-    const attachments = formData.getAll('attachments') as File[];
+    const files = formData.getAll('attachments') as File[];
 
-    if (!description) {
+    if (!description || description.trim() === '') {
       return { success: false, message: 'Bug description cannot be empty.' };
     }
 
     const attachmentUrls = [];
-    if (attachments.length > 0) {
-      for (const file of attachments) {
-        if (file.size > 0) {
-           const storageRef = ref(storage, `bug-attachments/${Date.now()}-${file.name}`);
-           // Convert file to buffer before uploading
-           const buffer = await file.arrayBuffer();
-           const snapshot = await uploadBytes(storageRef, buffer);
-           const downloadURL = await getDownloadURL(snapshot.ref);
-           attachmentUrls.push({ name: file.name, url: downloadURL });
+
+    // Loop through and upload each file individually
+    for (const file of files) {
+      if (file.size > 0) {
+        try {
+          const storageRef = ref(storage, `bug-attachments/${Date.now()}-${file.name}`);
+          const buffer = await file.arrayBuffer(); // Convert file to buffer
+          const snapshot = await uploadBytes(storageRef, buffer);
+          const downloadURL = await getDownloadURL(snapshot.ref);
+          attachmentUrls.push({ name: file.name, url: downloadURL });
+        } catch (uploadError) {
+          console.error('Error uploading a file:', uploadError);
+          // Stop and return an error if any file fails to upload
+          return { success: false, message: `Failed to upload file: ${file.name}.` };
         }
       }
     }
     
+    // Save the bug report to Firestore
     const bugReportsColRef = collection(db, 'bug-reports');
     await addDoc(bugReportsColRef, {
       userName,
@@ -75,7 +81,7 @@ const DeveloperInfoSchema = z.object({
   name: z.string().optional(),
   email: z.string().email().optional(),
   bio: z.string().optional(),
-  profilePicture: z.string().nullable().optional(),
+  profilePicture: z.string().url().nullable().optional(),
 });
 
 

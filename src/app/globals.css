@@ -187,8 +187,6 @@
   /* Bead animation styles */
   .bead-container {
     @apply fixed top-0 h-full w-12 overflow-hidden z-0 pointer-events-none;
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
   }
   .left-beads { @apply left-0; }
   .right-beads { @apply right-0; }
@@ -196,6 +194,8 @@
   .bead-column-up, .bead-column-down {
     @apply whitespace-nowrap;
     will-change: transform;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
   }
   .bead-column-up { animation: scroll-up 40s linear infinite; }
   .bead-column-down { animation: scroll-down 40s linear infinite; }

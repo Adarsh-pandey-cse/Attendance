@@ -2,7 +2,7 @@
 /**
  * @fileOverview A flow for sending a bug report summary via SMS.
  *
- * - sendBugReportSms - A function that takes bug report details and sends an SMS.
+ * - sendBugReport - A function that takes bug report details and sends an SMS.
  * - BugReportSmsInput - The Zod schema and type for the bug report input.
  * - BugReportSmsOutput - The Zod schema and type for the function's output.
  */

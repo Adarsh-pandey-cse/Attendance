@@ -35,8 +35,8 @@ export function Greeting() {
     fetchQuote();
   }, []);
 
-  const greetingText = theme === 'radha-rani' ? 'राधा वल्लभ श्री हरिवंश,' : 'राधे राधे,';
-  const quoteColorClass = theme === 'radha-rani' ? 'text-orange-700' : 'text-yellow-300';
+  const greetingText = (isClient && theme === 'radha-rani') ? 'राधा वल्लभ श्री हरिवंश,' : 'राधे राधे,';
+  const quoteColorClass = (isClient && theme === 'radha-rani') ? 'text-orange-700' : 'text-yellow-300';
 
   return (
     <div className="glass-card p-6">

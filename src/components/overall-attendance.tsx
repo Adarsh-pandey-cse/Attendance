@@ -73,7 +73,7 @@ export function OverallAttendance() {
 
     return (
         <motion.div
-            className="glass-card running-border p-6 flex flex-col md:flex-row items-center justify-around gap-6"
+            className="running-border p-6 flex flex-col md:flex-row items-center justify-around gap-6"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}

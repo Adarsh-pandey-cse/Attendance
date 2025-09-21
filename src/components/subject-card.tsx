@@ -128,7 +128,7 @@ export function SubjectCard({ subject }: SubjectCardProps) {
 
 
   return (
-    <div className="glass-card running-border p-4 space-y-4 transition-all duration-300 hover:shadow-xl">
+    <div className="running-border p-4 space-y-4 transition-all duration-300">
       <div className="flex justify-between items-start">
         <div className="flex-1">
           <h3 className="text-xl font-bold">{subject.name}</h3>

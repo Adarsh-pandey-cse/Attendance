@@ -58,35 +58,41 @@
   }
 
   .running-border {
-    position: relative;
+    border: 2px solid transparent;
     border-radius: 16px;
-    overflow: visible;
+    position: relative;
+    background-color: hsl(var(--card) / 0.5);
+    backdrop-filter: blur(16px);
   }
   
   .running-border::before {
     content: "";
     position: absolute;
-    inset: -5px;
-    border-radius: 20px;
+    inset: -2px;
+    border-radius: 16px;
     background: linear-gradient(
-      270deg,
+      120deg,
       #00f0ff,
       #00ff8f,
-      #ff00de,
+      #a800ff,
+      #ff0084,
       #00f0ff
     );
-    background-size: 600% 600%;
-    filter: blur(4px);
-    animation: neonBorderAnimation 8s linear infinite;
-    z-index: -1;
+    background-size: 400% 400%;
+    animation: neonrun 8s linear infinite;
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
   }
 
-  @keyframes neonBorderAnimation {
+  @keyframes neonrun {
     0% {
       background-position: 0% 50%;
     }
     100% {
-      background-position: 600% 50%;
+      background-position: 400% 50%;
     }
   }
 }

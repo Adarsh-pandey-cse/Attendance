@@ -7,6 +7,7 @@ import { getDailyQuote } from '@/ai/flows/daily-quote-flow';
 import { format } from 'date-fns';
 import { useTheme } from '@/hooks/use-theme';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 export function Greeting() {
   const { userName } = useAttendance();
@@ -68,6 +69,17 @@ export function Greeting() {
 
   return (
     <div className={cn("text-center", isRadhaTheme && "homepage-section")}>
+      {isRadhaTheme && (
+        <div className="mb-4">
+          <Image 
+            src="https://i.postimg.cc/GpLvzTrN/shopping.webp" 
+            alt="Radha Rani"
+            width={96}
+            height={96}
+            className="w-24 h-24 rounded-full mx-auto border-2 border-pink-300/70 shadow-[0_0_12px_2px_rgba(251,191,36,0.5),_0_0_8px_1px_rgba(236,72,153,0.6)]"
+          />
+        </div>
+      )}
       <h2 className="text-3xl font-bold font-hindi text-center" style={{fontFamily: isRadhaTheme ? "'Tiro Devanagari Hindi', serif" : 'inherit'}}>
           {greetingText}
       </h2>

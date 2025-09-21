@@ -117,6 +117,9 @@ export function ProfileSection() {
                             <Button variant="outline" className="justify-start"><Eye className="mr-2"/> View Image</Button>
                         </DialogTrigger>
                         <DialogContent className="p-0 max-w-md glass-card border-0">
+                           <DialogHeader>
+                              <DialogTitle className="sr-only">Full-size profile picture</DialogTitle>
+                            </DialogHeader>
                             <img src={profilePicture} alt="Profile" className="rounded-lg w-full h-auto"/>
                         </DialogContent>
                     </Dialog>

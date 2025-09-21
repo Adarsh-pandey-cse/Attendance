@@ -1,3 +1,16 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "radha-rani",
+      "description": "A divine painting of Radha Rani.",
+      "imageUrl": "https://picsum.photos/seed/radharani/300/300",
+      "imageHint": "radha krishna painting"
+    },
+    {
+      "id": "premanand-maharaj",
+      "description": "A portrait of Premanand ji Maharaj.",
+      "imageUrl": "https://picsum.photos/seed/premanandji/300/300",
+      "imageHint": "spiritual guru portrait"
+    }
+  ]
 }

@@ -7,14 +7,15 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator
+  DropdownMenuSeparator,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem
 } from '@/components/ui/dropdown-menu';
-import { MoreVertical, Info, Percent, CalendarClock, Shield, Moon, Sun } from 'lucide-react';
+import { MoreVertical, Info, Percent, CalendarClock, Shield, Moon, Sun, Palette } from 'lucide-react';
 import Link from 'next/link';
 import { useAttendance } from '@/hooks/use-attendance';
 import { Slider } from '@/components/ui/slider';
 import { useTheme } from '@/hooks/use-theme';
-import { Switch } from '@/components/ui/switch';
 
 export function Header() {
   const { overallTarget, setOverallTarget } = useAttendance();
@@ -50,16 +51,25 @@ export function Header() {
                 />
             </div>
             <DropdownMenuSeparator />
-             <DropdownMenuItem onSelect={(e) => e.preventDefault()} className='flex items-center justify-between font-semibold'>
-                 <div className='flex items-center gap-2'>
-                    {theme === 'dark' ? <Moon className='w-4 h-4' /> : <Sun className='w-4 h-4' />}
-                    <span>Theme</span>
-                 </div>
-                <Switch
-                    checked={theme === 'dark'}
-                    onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
-                />
-             </DropdownMenuItem>
+             <div className='p-2'>
+                <label className="flex items-center justify-between text-sm font-bold mb-2 px-2">
+                    <div className="flex items-center gap-2">
+                        <Palette className="w-4 h-4" />
+                        <span>Theme</span>
+                    </div>
+                </label>
+                <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
+                    <DropdownMenuRadioItem value="light" className='font-semibold'>
+                        <Sun className="mr-2" /> Light
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="dark" className='font-semibold'>
+                        <Moon className="mr-2" /> Dark
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="radha-rani" className='font-semibold'>
+                        <span className="mr-2">🪷</span> Radha Rani
+                    </DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+            </div>
              <DropdownMenuSeparator />
              <DropdownMenuItem asChild>
               <Link href="/timetable" className="flex items-center gap-2 cursor-pointer font-semibold">

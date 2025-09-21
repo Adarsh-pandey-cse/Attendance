@@ -11,6 +11,7 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
 import { useTheme as useNextTheme } from 'next-themes'
 
 export function useTheme() {
-    const { theme, setTheme } = useNextTheme()
-    return { theme: theme || 'dark', setTheme }
+    const { theme, setTheme, systemTheme } = useNextTheme()
+    const currentTheme = theme === 'system' ? systemTheme : theme;
+    return { theme: currentTheme || 'dark', setTheme }
 }

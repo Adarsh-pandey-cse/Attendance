@@ -100,6 +100,36 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 147 58% 40%;
   }
+
+  .radha-rani {
+    --background: 34 89% 96%; /* Light Cream */
+    --foreground: 25 60% 25%; /* Dark Brown */
+
+    --card: 34 80% 92%; /* Slightly darker cream for cards */
+    --card-foreground: 25 60% 25%;
+
+    --popover: 34 90% 98%;
+    --popover-foreground: 25 60% 25%;
+
+    --primary: 15 85% 55%; /* Saffron Orange */
+    --primary-foreground: 0 0% 100%; /* White */
+
+    --secondary: 45 90% 80%; /* Light Yellow */
+    --secondary-foreground: 25 60% 25%;
+
+    --muted: 45 85% 85%;
+    --muted-foreground: 25 50% 45%;
+
+    --accent: 355 80% 60%; /* Vermilion Red */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 15 70% 70%;
+    --input: 45 80% 88%;
+    --ring: 15 85% 55%;
+  }
 }
 
 @layer base {
@@ -120,5 +150,51 @@
     .light & {
         @apply bg-card/80 border-black/10;
     }
+     .radha-rani & {
+      @apply bg-card/70 border-primary/20 shadow-primary/10;
+    }
+  }
+
+  .radha-rani-background {
+    @apply fixed inset-0 -z-10 overflow-hidden;
+    background: linear-gradient(135deg, hsl(34, 100%, 90%), hsl(45, 100%, 80%), hsl(15, 90%, 70%));
+    animation: divine-gradient 15s ease infinite;
+  }
+
+  @keyframes divine-gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .radha-rani-background::before, .radha-rani-background::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.2;
+    filter: blur(80px);
+  }
+
+   .radha-rani-background::before {
+    width: 400px;
+    height: 400px;
+    background-color: hsl(var(--primary));
+    top: 10%;
+    left: 10%;
+    animation: float 20s infinite alternate;
+  }
+
+  .radha-rani-background::after {
+    width: 300px;
+    height: 300px;
+    background-color: hsl(var(--accent));
+    bottom: 10%;
+    right: 10%;
+    animation: float 15s infinite alternate-reverse;
+  }
+
+  @keyframes float {
+    from { transform: translate(0, 0) rotate(0deg); }
+    to { transform: translate(100px, 50px) rotate(180deg); }
   }
 }

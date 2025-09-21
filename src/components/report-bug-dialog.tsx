@@ -15,7 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Bug, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAttendance } from '@/hooks/use-attendance';
-import { saveBugReport } from '@/ai/flows/bug-report-flow';
+import { saveBugReport } from '@/lib/actions';
 
 type ReportBugDialogProps = {
   children: React.ReactNode;
@@ -65,7 +65,7 @@ export function ReportBugDialog({ children, isOpen, setIsOpen }: ReportBugDialog
       console.error('Error submitting bug report:', error);
       toast({
         title: 'Submission Failed',
-        description: 'An unexpected error occurred. Please try again later.',
+        description: 'An unexpected server error occurred. Please try again later.',
         variant: 'destructive',
       });
     } finally {

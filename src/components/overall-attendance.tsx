@@ -15,7 +15,7 @@ const OverallCircularProgress = ({ percentage, target }: { percentage: number, t
 
     let colorClass = 'text-yellow-400';
     if (percentage >= target) {
-        colorClass = 'text-green-400';
+        colorClass = 'text-primary';
     } else if (percentage < target * 0.75) {
         colorClass = 'text-red-500';
     }
@@ -33,7 +33,7 @@ const OverallCircularProgress = ({ percentage, target }: { percentage: number, t
                     cy="70"
                 />
                 <motion.circle
-                    className={`${colorClass} transition-colors duration-300`}
+                    className={cn(colorClass, "transition-colors duration-300")}
                     strokeWidth="12"
                     strokeDasharray={circumference}
                     strokeLinecap="round"
@@ -101,7 +101,7 @@ export function OverallAttendance() {
 
     return (
         <motion.div
-            className={cn(isRadhaTheme ? "homepage-section" : "glass-card", "p-6 flex flex-col md:flex-row items-center justify-around gap-6")}
+            className="p-6 flex flex-col md:flex-row items-center justify-around gap-6 homepage-section"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -115,12 +115,12 @@ export function OverallAttendance() {
             >
                 <h2 className="text-2xl font-bold tracking-tight">Your Progress</h2>
                 <p className="text-muted-foreground font-semibold">A summary of all your subjects.</p>
-                 <p className={`text-base font-semibold mt-3 ${statusColor}`}>
+                 <p className={cn("text-base font-semibold mt-3", statusColor)}>
                     {statusText}
                 </p>
                 <div className="mt-4 flex gap-6 justify-center md:justify-start">
                     <div>
-                        <p className="text-3xl font-extrabold text-green-400">{totalAttended}</p>
+                        <p className="text-3xl font-extrabold text-primary">{totalAttended}</p>
                         <p className="text-sm font-semibold text-muted-foreground">Classes Attended</p>
                     </div>
                     <div>

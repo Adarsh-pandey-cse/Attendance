@@ -22,6 +22,7 @@ import { EditSubjectDialog } from './edit-subject-dialog';
 import { useState, useEffect, useRef } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { useTheme } from '@/hooks/use-theme';
+import { cn } from '@/lib/utils';
 
 type SubjectCardProps = {
   subject: Subject;
@@ -41,14 +42,14 @@ const CircularProgress = ({ percentage, target, animateControls }: { percentage:
   
   let colorClass = 'text-yellow-400';
   if (percentage >= target) {
-    colorClass = 'text-green-400';
+    colorClass = 'text-primary';
   } else if (percentage < target * 0.75) { 
     colorClass = 'text-red-500';
   }
   
   if (theme === 'radha-rani') {
     if (percentage >= target) {
-      colorClass = 'text-green-600';
+      colorClass = 'text-primary';
     } else if (percentage < target * 0.75) { 
       colorClass = 'text-red-600';
     } else {
@@ -70,7 +71,7 @@ const CircularProgress = ({ percentage, target, animateControls }: { percentage:
           cy="60"
         />
         <motion.circle
-          className={`${colorClass} transition-colors duration-300`}
+          className={cn(colorClass, "transition-colors duration-300")}
           strokeWidth="10"
           strokeDasharray={circumference}
           strokeLinecap="round"
@@ -145,7 +146,7 @@ export function SubjectCard({ subject }: SubjectCardProps) {
 
 
   return (
-    <div className="glass-card p-4 space-y-4 transition-all duration-300">
+    <div className="glass-card p-4 space-y-4 transition-all duration-300 homepage-section">
       <div className="flex justify-between items-start">
         <div className="flex-1">
           <h3 className="text-xl font-bold">{subject.name}</h3>
@@ -180,7 +181,7 @@ export function SubjectCard({ subject }: SubjectCardProps) {
       
       {isAboveTarget && (
          <div className="text-center">
-            <p className="text-xl font-bold text-green-600">
+            <p className="text-xl font-bold text-primary">
                 You're on track! Keep it up!
             </p>
         </div>
@@ -201,12 +202,12 @@ export function SubjectCard({ subject }: SubjectCardProps) {
       </div>
       
       <div className="text-center">
-        <p className={`font-bold ${statusColor}`}>{statusText}</p>
+        <p className={cn("font-bold", statusColor)}>{statusText}</p>
         {!isAboveTarget && <AttendanceNotification subject={subject} />}
       </div>
 
       <div className="flex gap-2">
-        <Button onClick={() => markAttendance(subject.id, 'present')} className="flex-1 bg-green-600 text-white hover:bg-green-700 shadow-lg shadow-green-600/20 font-bold transition-all duration-300 hover:scale-[1.03]">
+        <Button onClick={() => markAttendance(subject.id, 'present')} className="flex-1 bg-primary text-primary-foreground hover:bg-primary/80 shadow-lg shadow-green-600/20 font-bold transition-all duration-300 hover:scale-[1.03]">
           <Plus className="mr-2 h-4 w-4"/> Attended
         </Button>
         <Button onClick={() => markAttendance(subject.id, 'absent')} className="flex-1 bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/20 font-bold transition-all duration-300 hover:scale-[1.03]">

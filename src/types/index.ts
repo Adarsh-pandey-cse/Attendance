@@ -17,11 +17,3 @@ export type UserData = {
     profilePicture: string | null;
     overallTarget: number;
 }
-
-export type Badge = {
-    id: string;
-    name: string;
-    description: string;
-    icon: React.ComponentType<{ className?: string }>;
-    achieved: boolean;
-};

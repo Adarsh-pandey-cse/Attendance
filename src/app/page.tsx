@@ -6,25 +6,15 @@ import { Header } from '@/components/header';
 import { SubjectCard } from '@/components/subject-card';
 import { useAttendance } from '@/hooks/use-attendance';
 import { PlusCircle, Loader2, BookOpenCheck } from 'lucide-react';
-import { BadgesSection } from '@/components/badges-section';
-import { useMemo } from 'react';
-import { checkBadges } from '@/lib/badges';
-
 
 export default function Home() {
   const { subjects, loading } = useAttendance();
-
-  const earnedBadges = useMemo(() => {
-    return checkBadges(subjects);
-  }, [subjects]);
 
   return (
     <main className="flex justify-center min-h-screen bg-gradient-to-b from-background to-slate-900/50">
       <div className="w-full max-w-lg p-4 md:p-6 space-y-6">
         <Header />
         <Greeting />
-        
-        <BadgesSection badges={earnedBadges} />
 
         <div className="space-y-4">
           <div className="flex justify-between items-center">

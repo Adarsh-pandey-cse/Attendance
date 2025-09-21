@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -23,6 +24,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { useToast } from '@/hooks/use-toast';
 import { BugReport } from '@/types';
+import { motion } from 'framer-motion';
 
 
 export default function AdminPage() {
@@ -32,7 +34,9 @@ export default function AdminPage() {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Query sorted by timestamp descending, so newest reports are first
     const q = query(collection(db, 'bug-reports'), orderBy('timestamp', 'desc'));
+    
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const reports: BugReport[] = [];
       querySnapshot.forEach((doc) => {
@@ -138,7 +142,7 @@ export default function AdminPage() {
               <span>Bug Reports</span>
             </CardTitle>
             <CardDescription>
-              Review and manage user-submitted bug reports.
+              Review and manage user-submitted bug reports. New reports appear here instantly.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -157,8 +161,14 @@ export default function AdminPage() {
               </div>
             ) : (
               <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-                {bugReports.map((report) => (
-                    <Link href={`/admin/bugs/${report.id}`} key={report.id} className="block group">
+                {bugReports.map((report, index) => (
+                    <motion.div
+                        key={report.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                    >
+                    <Link href={`/admin/bugs/${report.id}`} className="block group">
                       <div className="glass-card p-4 rounded-lg hover:border-primary/50 border-2 border-transparent transition-all">
                         <div className="flex justify-between items-start">
                             <div className='flex-1 overflow-hidden'>
@@ -206,6 +216,7 @@ export default function AdminPage() {
                         </div>
                       </div>
                     </Link>
+                    </motion.div>
                 ))}
               </div>
             )}

@@ -29,3 +29,10 @@ export type UserData = {
       [key in DayOfWeek]?: TimetableEntry[];
     };
 }
+
+export type DeveloperInfo = {
+    name: string;
+    email: string;
+    bio: string;
+    profilePicture: string | null;
+}

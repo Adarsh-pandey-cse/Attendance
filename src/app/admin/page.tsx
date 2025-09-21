@@ -21,6 +21,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { useToast } from '@/hooks/use-toast';
 
 type BugReport = {
   id: string;
@@ -34,6 +35,7 @@ export default function AdminPage() {
   const router = useRouter();
   const [bugReports, setBugReports] = useState<BugReport[]>([]);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     const q = query(collection(db, 'bug-reports'), orderBy('timestamp', 'desc'));
@@ -46,11 +48,16 @@ export default function AdminPage() {
       setLoading(false);
     }, (error) => {
         console.error("Error fetching bug reports:", error);
+        toast({
+          title: "Error",
+          description: "Could not fetch bug reports.",
+          variant: "destructive"
+        });
         setLoading(false);
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [toast]);
 
   const handleLogout = () => {
     sessionStorage.removeItem('isAdminAuthenticated');
@@ -59,12 +66,38 @@ export default function AdminPage() {
 
   const updateBugStatus = async (id: string, status: BugReport['status']) => {
     const bugDocRef = doc(db, 'bug-reports', id);
-    await updateDoc(bugDocRef, { status });
+    try {
+      await updateDoc(bugDocRef, { status });
+       toast({
+        title: "Status Updated",
+        description: `Bug report status changed to ${status}.`
+      });
+    } catch(error){
+       console.error("Error updating bug status:", error);
+       toast({
+        title: "Error",
+        description: "Could not update bug status.",
+        variant: "destructive"
+      });
+    }
   };
 
   const deleteBugReport = async (id: string) => {
     const bugDocRef = doc(db, 'bug-reports', id);
-    await deleteDoc(bugDocRef);
+    try {
+      await deleteDoc(bugDocRef);
+      toast({
+        title: "Report Deleted",
+        description: "The bug report has been permanently deleted."
+      });
+    } catch (error) {
+      console.error("Error deleting bug report:", error);
+       toast({
+        title: "Error",
+        description: "Could not delete bug report.",
+        variant: "destructive"
+      });
+    }
   };
 
   const getStatusVariant = (status: BugReport['status']): "default" | "secondary" | "destructive" => {
@@ -112,9 +145,9 @@ export default function AdminPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className='text-center'>
-            <Link href="/developer-info">
+            <Link href="/admin/developer-info/edit">
                  <Button className="font-bold text-base">
-                    <FileText className="mr-2 h-5 w-5" /> Edit Developer Info Page
+                    <FileText className="mr-2 h-5 w-5" /> Edit Developer Info
                 </Button>
             </Link>
           </CardContent>
@@ -184,9 +217,10 @@ export default function AdminPage() {
                       <div className="flex items-center gap-2 text-sm text-muted-foreground font-semibold">
                           <Calendar className="w-4 h-4" />
                           <span>
-                            {formatDistanceToNow(new Date(report.timestamp.seconds * 1000), { addSuffix: true })}
-                            {' on '}
-                            {format(new Date(report.timestamp.seconds * 1000), 'MMM d, yyyy')}
+                            {report.timestamp ? 
+                                `${formatDistanceToNow(new Date(report.timestamp.seconds * 1000), { addSuffix: true })} on ${format(new Date(report.timestamp.seconds * 1000), 'MMM d, yyyy')}` 
+                                : 'Awaiting timestamp...'
+                            }
                           </span>
                       </div>
                       <div className="flex items-center gap-2">

@@ -54,7 +54,7 @@ export function RadhaRaniThemeElements() {
             <span className='mx-8'>राधा राधा</span>
             <span className='mx-8'>राधा राधा</span>
             <span className='mx-8'>राधा राधा</span>
-            <span className='mx-8'>раधा राधा</span>
+            <span className='mx-8'>राधा राधा</span>
             <span className='mx-8'>राधा राधा</span>
             <span className='mx-8'>राधा राधा</span>
           </p>

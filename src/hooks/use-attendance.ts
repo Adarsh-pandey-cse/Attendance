@@ -43,24 +43,23 @@ export const useAttendance = () => {
   };
 
   const markAttendance = (subjectId: string, status: 'present' | 'absent') => {
-    setSubjects(prevSubjects => {
-      return prevSubjects.map(subject => {
-        if (subject.id === subjectId) {
-          const newLog: AttendanceLog = {
-            id: v4(),
-            timestamp: Date.now(),
-            status,
-          };
-          return {
-            ...subject,
-            totalClasses: subject.totalClasses + 1,
-            attendedClasses: status === 'present' ? subject.attendedClasses + 1 : subject.attendedClasses,
-            history: [...subject.history, newLog],
-          };
-        }
-        return subject;
-      });
+    const updatedSubjects = subjects.map(subject => {
+      if (subject.id === subjectId) {
+        const newLog: AttendanceLog = {
+          id: v4(),
+          timestamp: Date.now(),
+          status,
+        };
+        return {
+          ...subject,
+          totalClasses: subject.totalClasses + 1,
+          attendedClasses: status === 'present' ? subject.attendedClasses + 1 : subject.attendedClasses,
+          history: [...subject.history, newLog],
+        };
+      }
+      return subject;
     });
+    setSubjects(updatedSubjects);
   };
 
   const getSubjectById = (subjectId: string): Subject | undefined => {

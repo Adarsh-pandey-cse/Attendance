@@ -49,6 +49,10 @@ export const useAttendance = () => {
             overallTarget: 75,
         }, { merge: true });
       }
+    }, (error) => {
+      console.error("Error fetching user data:", error);
+      // We don't want to block the UI for user data errors, but we can toast
+      toast({ title: "Warning", description: "Could not load user profile.", variant: "destructive" });
     });
 
     // Listen for subjects data
@@ -69,13 +73,14 @@ export const useAttendance = () => {
     }, (error) => {
         console.error("Error fetching subjects:", error);
         toast({ title: "Error", description: "Could not fetch subjects.", variant: "destructive" });
-        setLoading(false);
+        setLoading(false); // Make sure loading is turned off on error too
     });
 
     return () => {
       unsubscribeUser();
       unsubscribeSubjects();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // --- Data Manipulation Functions ---

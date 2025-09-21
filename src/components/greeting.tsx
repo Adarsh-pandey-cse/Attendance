@@ -84,10 +84,11 @@ export function Greeting() {
       {isRadhaTheme && (
         <div className="mb-4">
           <Image 
-            src="https://i.postimg.cc/mD2tg5sD/radha-rani-dp.png" 
+            src="/radha-rani-dp.png" 
             alt="Radha Rani"
             width={96}
             height={96}
+            priority
             className="w-24 h-24 rounded-full mx-auto border-2 border-pink-300/70 shadow-[0_0_12px_2px_rgba(251,191,36,0.5),_0_0_8px_1px_rgba(236,72,153,0.6)]"
           />
         </div>

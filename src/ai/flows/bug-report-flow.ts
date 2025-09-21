@@ -13,7 +13,7 @@ import { z } from 'zod';
 // Schema for the input of the bug report
 const BugReportSmsInputSchema = z.object({
   userName: z.string().optional().default('N/A'),
-  description: z.string(),
+  description: z.string(), // This will now be the pre-formatted string
   severity: z.string().optional().default('N/A'),
 });
 export type BugReportSmsInput = z.infer<typeof BugReportSmsInputSchema>;
@@ -75,21 +75,12 @@ const bugSmsReporter = ai.defineFlow(
     }),
   },
   async (report) => {
-    // Constructing a concise SMS body
-    const smsBody = `
-New Bug Report:
-User: ${report.userName}
-Severity: ${report.severity}
-Description: ${report.description.substring(0, 80)}${report.description.length > 80 ? '...' : ''}
-Time: ${new Date().toLocaleTimeString()}
-`.trim();
-
+    // The report.description is now the full, pre-formatted message.
     const llmResponse = await ai.generate({
-      prompt: `A user has submitted a bug report. Your only task is to send this report as an SMS to '+918800795476' using the provided sendSmsTool.
+      prompt: `Your only task is to send the following text as an SMS to '+918800795476' using the provided sendSmsTool.
 
-SMS Body:
 """
-${smsBody}
+${report.description}
 """
 `,
       tools: [sendSmsTool],

@@ -60,14 +60,25 @@ export function ReportBugDialog({ children, isOpen, setIsOpen }: ReportBugDialog
     let attempts = 0;
     let success = false;
 
+    // Format the bug report details here in the frontend
+    const bugReportDetails = `
+New Bug Report:
+User: ${userName || "N/A"}
+Severity: ${severity}
+Description: ${description}${steps ? `\nSteps to Reproduce: ${steps}` : ''}
+Device: ${deviceInfo}
+Time: ${new Date().toLocaleString()}
+    `.trim();
+
     while (attempts < maxRetries && !success) {
       attempts++;
       console.log(`Bug report submission attempt ${attempts}...`);
       try {
+        // Pass only the formatted description to the flow
         const result = await sendBugReport({
-          userName: userName || 'N/A',
-          description,
-          severity,
+          userName: userName, // Keep for potential future use or logging
+          description: bugReportDetails,
+          severity: severity,
         });
 
         if (result.success) {
@@ -82,6 +93,7 @@ export function ReportBugDialog({ children, isOpen, setIsOpen }: ReportBugDialog
           setSeverity('Medium');
           setIsOpen(false);
         } else {
+          // This error is now more meaningful as it comes from the flow's failure check
           throw new Error(result.message || 'The AI model failed to send the report.');
         }
       } catch (error) {

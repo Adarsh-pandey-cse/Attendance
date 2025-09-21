@@ -65,11 +65,9 @@ export function ReportBugDialog({ children, isOpen, setIsOpen }: ReportBugDialog
       console.log(`Bug report submission attempt ${attempts}...`);
       try {
         const result = await sendBugReport({
-          userName: userName || 'Not provided',
+          userName: userName || 'N/A',
           description,
-          steps: steps || 'Not provided',
           severity,
-          deviceInfo,
         });
 
         if (result.success) {
@@ -77,7 +75,7 @@ export function ReportBugDialog({ children, isOpen, setIsOpen }: ReportBugDialog
           console.log('Submission successful.');
           toast({
             title: "Report Sent!",
-            description: "Thank you for your bug report! Our team will review it shortly.",
+            description: "Thank you! Your bug report has been sent to the admin.",
           });
           setDescription('');
           setSteps('');
@@ -92,7 +90,7 @@ export function ReportBugDialog({ children, isOpen, setIsOpen }: ReportBugDialog
           console.error("All submission attempts failed.");
           toast({
             title: "Submission Failed",
-            description: "Bug report could not be sent at this moment. Please try again later.",
+            description: "Bug report notification failed. Please try again later.",
             variant: "destructive",
           });
         } else {

@@ -54,45 +54,6 @@
 
 @layer components {
   .glass-card {
-    @apply bg-card/50 backdrop-blur-xl border border-white/10 rounded-2xl shadow-lg;
-  }
-
-  .running-border {
-    border: 2px solid transparent;
-    border-radius: 16px;
-    position: relative;
-    background-color: hsl(var(--card) / 0.5);
-    backdrop-filter: blur(16px);
-  }
-  
-  .running-border::before {
-    content: "";
-    position: absolute;
-    inset: -20px;
-    border-radius: 36px;
-    background: linear-gradient(
-      120deg,
-      #00f0ff,
-      #00ff8f,
-      #a800ff,
-      #ff0084,
-      #00f0ff
-    );
-    background-size: 400% 400%;
-    animation: neonrun 8s linear infinite;
-    -webkit-mask:
-      linear-gradient(#fff 0 0) content-box,
-      linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-  }
-
-  @keyframes neonrun {
-    0% {
-      background-position: 0% 50%;
-    }
-    100% {
-      background-position: 400% 50%;
-    }
+    @apply bg-card/50 backdrop-blur-xl border-2 border-white/10 rounded-2xl shadow-lg;
   }
 }

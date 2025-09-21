@@ -128,7 +128,7 @@ export function SubjectCard({ subject }: SubjectCardProps) {
 
 
   return (
-    <div className="running-border p-4 space-y-4 transition-all duration-300">
+    <div className="glass-card p-4 space-y-4 transition-all duration-300">
       <div className="flex justify-between items-start">
         <div className="flex-1">
           <h3 className="text-xl font-bold">{subject.name}</h3>
@@ -189,10 +189,10 @@ export function SubjectCard({ subject }: SubjectCardProps) {
       </div>
 
       <div className="flex gap-2">
-        <Button onClick={() => markAttendance(subject.id, 'present')} className="flex-1 bg-green-900/50 text-green-300 border border-green-400/60 hover:bg-green-800/60 font-bold transition-all duration-300 hover:scale-105 hover:text-green-200">
+        <Button onClick={() => markAttendance(subject.id, 'present')} className="flex-1 bg-green-500/20 text-green-300 border border-green-400/60 hover:bg-green-500/30 font-bold transition-all duration-300 hover:scale-105 hover:text-green-200">
           <Plus className="mr-2 h-4 w-4"/> Attended
         </Button>
-        <Button onClick={() => markAttendance(subject.id, 'absent')} className="flex-1 bg-red-900/50 text-red-300 border border-red-400/60 hover:bg-red-800/60 font-bold transition-all duration-300 hover:scale-105 hover:text-red-200">
+        <Button onClick={() => markAttendance(subject.id, 'absent')} className="flex-1 bg-red-500/20 text-red-300 border border-red-400/60 hover:bg-red-500/30 font-bold transition-all duration-300 hover:scale-105 hover:text-red-200">
           <Minus className="mr-2 h-4 w-4"/> Missed
         </Button>
         <Button asChild variant="outline" size="icon" className="transition-all duration-300 hover:scale-105 hover:bg-accent/50">

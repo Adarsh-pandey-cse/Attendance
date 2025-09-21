@@ -33,7 +33,6 @@ export const useAttendance = () => {
 
   // --- Real-time Listeners ---
   useEffect(() => {
-    setLoading(true);
     // Listen for user profile data (name, picture, target)
     const unsubscribeUser = onSnapshot(userDocRef, (doc) => {
       if (doc.exists()) {

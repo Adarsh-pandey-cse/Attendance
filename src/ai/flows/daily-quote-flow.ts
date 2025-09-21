@@ -20,7 +20,7 @@ export const getDailyQuote = ai.defineFlow(
     name: 'getDailyQuoteFlow',
     inputSchema: z.object({}),
     outputSchema: DailyQuoteOutputSchema,
-    cache: {ttl: 0}, // Disable caching to get a new quote every time.
+    cache: {ttl: 86400}, // Cache for 24 hours to prevent rate limiting.
   },
   async () => {
     const {output} = await ai.generate({

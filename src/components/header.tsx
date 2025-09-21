@@ -57,12 +57,12 @@ export function Header() {
                 <span>Timetable</span>
               </Link>
             </DropdownMenuItem>
-             <ReportBugDialog isOpen={isReportBugOpen} setIsOpen={setIsReportBugOpen}>
-                <DropdownMenuItem onSelect={(e) => { e.preventDefault(); setIsReportBugOpen(true); }} className="flex items-center gap-2 cursor-pointer font-semibold">
-                    <Bug className="w-4 h-4" />
-                    <span>Report a Bug</span>
-                </DropdownMenuItem>
-            </ReportBugDialog>
+             <DropdownMenuItem asChild>
+              <Link href="/report-bug" className="flex items-center gap-2 cursor-pointer font-semibold">
+                <Bug className="w-4 h-4" />
+                <span>Report a Bug</span>
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link href="/admin" className="flex items-center gap-2 cursor-pointer font-semibold">

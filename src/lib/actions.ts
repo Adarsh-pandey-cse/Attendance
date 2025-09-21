@@ -1,51 +1,71 @@
+
 'use server';
 
 /**
  * @fileOverview Server-side actions for the application.
  */
 
-import { db } from '@/lib/firebase';
+import { db, storage } from '@/lib/firebase';
 import { collection, addDoc, serverTimestamp, doc, setDoc } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { z } from 'zod';
 import { DeveloperInfo } from '@/types';
 
 // --- Bug Report Actions ---
 
-const BugReportInputSchema = z.object({
-  userName: z.string().optional(),
-  description: z.string().min(1, { message: 'Bug description cannot be empty.' }),
-});
-export type BugReportInput = z.infer<typeof BugReportInputSchema>;
-
 /**
- * Saves a bug report to the 'bug-reports' collection in Firestore.
- * @param input - The bug report data.
+ * Saves a bug report with optional attachments.
+ * - Uploads files to Firebase Storage.
+ * - Saves bug report details (including file URLs) to Firestore.
+ * @param formData - The FormData object from the bug report form.
  * @returns An object indicating success or failure.
  */
 export async function saveBugReport(
-  input: BugReportInput
+  formData: FormData
 ): Promise<{ success: boolean; message: string }> {
   try {
-    const validatedInput = BugReportInputSchema.parse(input);
+    const description = formData.get('description') as string;
+    const userName = formData.get('userName') as string;
+    const deviceInfo = formData.get('deviceInfo') as string;
+    const attachments = formData.getAll('attachments') as File[];
 
+    if (!description) {
+      return { success: false, message: 'Bug description cannot be empty.' };
+    }
+
+    const attachmentUrls = [];
+    if (attachments.length > 0) {
+      for (const file of attachments) {
+        if (file.size > 0) {
+           const storageRef = ref(storage, `bug-attachments/${Date.now()}-${file.name}`);
+           const snapshot = await uploadBytes(storageRef, file);
+           const downloadURL = await getDownloadURL(snapshot.ref);
+           attachmentUrls.push({ name: file.name, url: downloadURL });
+        }
+      }
+    }
+    
     const bugReportsColRef = collection(db, 'bug-reports');
     await addDoc(bugReportsColRef, {
-      ...validatedInput,
+      userName,
+      description,
+      deviceInfo,
+      attachments: attachmentUrls,
       timestamp: serverTimestamp(),
       status: 'new',
     });
+
     return { success: true, message: 'Bug report submitted successfully!' };
+
   } catch (error) {
-    console.error('Error saving bug report to Firestore:', error);
-    if (error instanceof z.ZodError) {
-      return { success: false, message: error.errors[0]?.message || 'Invalid data provided.' };
-    }
+    console.error('Error saving bug report:', error);
     return {
       success: false,
       message: 'An unexpected error occurred while saving the report.',
     };
   }
 }
+
 
 // --- Developer Info Actions ---
 

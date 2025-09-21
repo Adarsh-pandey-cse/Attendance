@@ -36,3 +36,18 @@ export type DeveloperInfo = {
     bio: string;
     profilePicture: string | null;
 }
+
+export type BugReportAttachment = {
+  name: string;
+  url: string;
+};
+
+export type BugReport = {
+  id: string;
+  userName: string;
+  description: string;
+  deviceInfo?: string;
+  attachments?: BugReportAttachment[];
+  timestamp: { seconds: number; nanoseconds: number };
+  status: 'new' | 'in-progress' | 'resolved';
+};

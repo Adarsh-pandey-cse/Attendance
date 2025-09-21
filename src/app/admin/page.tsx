@@ -6,7 +6,7 @@ import { db } from '@/lib/firebase';
 import { collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, LogOut, Bug, Wrench, Trash2, Check, User, Calendar, Loader2, ShieldCheck, FileText } from 'lucide-react';
+import { ArrowLeft, LogOut, Bug, Wrench, Trash2, Check, User, Calendar, Loader2, ShieldCheck, FileText, Paperclip, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { format, formatDistanceToNow } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
@@ -22,14 +22,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { useToast } from '@/hooks/use-toast';
+import { BugReport } from '@/types';
 
-type BugReport = {
-  id: string;
-  userName: string;
-  description: string;
-  timestamp: { seconds: number; nanoseconds: number };
-  status: 'new' | 'in-progress' | 'resolved';
-};
 
 export default function AdminPage() {
   const router = useRouter();
@@ -64,25 +58,8 @@ export default function AdminPage() {
     router.push('/admin/login');
   };
 
-  const updateBugStatus = async (id: string, status: BugReport['status']) => {
-    const bugDocRef = doc(db, 'bug-reports', id);
-    try {
-      await updateDoc(bugDocRef, { status });
-       toast({
-        title: "Status Updated",
-        description: `Bug report status changed to ${status}.`
-      });
-    } catch(error){
-       console.error("Error updating bug status:", error);
-       toast({
-        title: "Error",
-        description: "Could not update bug status.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const deleteBugReport = async (id: string) => {
+  const deleteBugReport = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // prevent link navigation
     const bugDocRef = doc(db, 'bug-reports', id);
     try {
       await deleteDoc(bugDocRef);
@@ -181,54 +158,54 @@ export default function AdminPage() {
             ) : (
               <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
                 {bugReports.map((report) => (
-                  <div key={report.id} className="glass-card p-4 rounded-lg">
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <div className="flex items-center gap-2 mb-2">
-                                <User className="w-4 h-4 text-muted-foreground" />
-                                <span className="font-bold text-primary">{report.userName || 'Anonymous'}</span>
+                    <Link href={`/admin/bugs/${report.id}`} key={report.id} className="block group">
+                      <div className="glass-card p-4 rounded-lg hover:border-primary/50 border-2 border-transparent transition-all">
+                        <div className="flex justify-between items-start">
+                            <div className='flex-1 overflow-hidden'>
+                                <div className="flex items-center gap-2 mb-2">
+                                    <User className="w-4 h-4 text-muted-foreground" />
+                                    <span className="font-bold text-primary">{report.userName || 'Anonymous'}</span>
+                                    <Badge variant={getStatusVariant(report.status)} className="capitalize">{report.status}</Badge>
+                                </div>
+                                <p className="text-foreground truncate">{report.description}</p>
                             </div>
-                            <p className="text-foreground">{report.description}</p>
+                            <div className="flex items-center gap-2">
+                                {report.attachments && report.attachments.length > 0 && <Paperclip className="w-4 h-4 text-muted-foreground" />}
+                                <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                        <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()} className="text-muted-foreground hover:text-destructive w-8 h-8">
+                                            <Trash2 className="w-4 h-4" />
+                                        </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                            This will permanently delete this bug report. This action cannot be undone.
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel onClick={(e) => e.stopPropagation()}>Cancel</AlertDialogCancel>
+                                            <AlertDialogAction onClick={(e) => deleteBugReport(report.id, e)} className="bg-destructive hover:bg-destructive/80 font-bold">Delete</AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+                                <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                            </div>
                         </div>
-                         <div className="flex items-center gap-2">
-                             <Badge variant={getStatusVariant(report.status)} className="capitalize">{report.status}</Badge>
-                            <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                     <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive w-8 h-8">
-                                        <Trash2 className="w-4 h-4" />
-                                    </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                        This will permanently delete this bug report. This action cannot be undone.
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction onClick={() => deleteBugReport(report.id)} className="bg-destructive hover:bg-destructive/80 font-bold">Delete</AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
-                         </div>
-                    </div>
-                    <div className="flex justify-between items-end mt-4">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground font-semibold">
-                          <Calendar className="w-4 h-4" />
-                          <span>
-                            {report.timestamp ? 
-                                `${formatDistanceToNow(new Date(report.timestamp.seconds * 1000), { addSuffix: true })} on ${format(new Date(report.timestamp.seconds * 1000), 'MMM d, yyyy')}` 
-                                : 'Awaiting timestamp...'
-                            }
-                          </span>
+                        <div className="flex justify-between items-end mt-4">
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground font-semibold">
+                              <Calendar className="w-4 h-4" />
+                              <span>
+                                {report.timestamp ? 
+                                    `${formatDistanceToNow(new Date(report.timestamp.seconds * 1000), { addSuffix: true })}` 
+                                    : 'Awaiting timestamp...'
+                                }
+                              </span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        {report.status !== 'in-progress' && <Button size="sm" variant="secondary" onClick={() => updateBugStatus(report.id, 'in-progress')}>Start</Button>}
-                        {report.status !== 'resolved' && <Button size="sm" variant="default" onClick={() => updateBugStatus(report.id, 'resolved')}><Check className='mr-1 w-4 h-4' />Resolve</Button>}
-                      </div>
-                    </div>
-                  </div>
+                    </Link>
                 ))}
               </div>
             )}

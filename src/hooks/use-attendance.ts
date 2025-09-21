@@ -134,6 +134,10 @@ export const useAttendance = () => {
 
     try {
       await updateDoc(subjectDocRef, updatedData);
+       toast({
+        title: `Attendance Marked for ${subject.name}`,
+        description: `You have been marked as ${status}.`,
+      });
     } catch (error) {
       console.error('Error marking attendance:', error);
       toast({ title: "Error", description: "Failed to mark attendance.", variant: "destructive" });

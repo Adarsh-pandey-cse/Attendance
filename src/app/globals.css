@@ -197,12 +197,12 @@
     @apply whitespace-nowrap;
     will-change: transform;
   }
-  .bead-column-up { animation: scroll-up 60s linear infinite; }
-  .bead-column-down { animation: scroll-down 60s linear infinite; }
+  .bead-column-up { animation: scroll-up 40s linear infinite; }
+  .bead-column-down { animation: scroll-down 40s linear infinite; }
 
   .bead {
-    @apply inline-block font-hindi text-sm font-bold text-yellow-600 my-1;
-    text-shadow: 0 0 5px hsl(50, 100%, 70%), 0 0 10px hsl(350, 80%, 70%);
+    @apply inline-block font-hindi text-base font-bold my-1 text-pink-500;
+    text-shadow: 0 0 2px black, 0 0 8px hsl(330, 80%, 70%);
     animation: bead-glow 3s ease-in-out infinite;
   }
 }

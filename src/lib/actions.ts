@@ -38,7 +38,9 @@ export async function saveBugReport(
       for (const file of attachments) {
         if (file.size > 0) {
            const storageRef = ref(storage, `bug-attachments/${Date.now()}-${file.name}`);
-           const snapshot = await uploadBytes(storageRef, file);
+           // Convert file to buffer before uploading
+           const buffer = await file.arrayBuffer();
+           const snapshot = await uploadBytes(storageRef, buffer);
            const downloadURL = await getDownloadURL(snapshot.ref);
            attachmentUrls.push({ name: file.name, url: downloadURL });
         }

@@ -27,6 +27,8 @@ type ReportBugDialogProps = {
   setIsOpen: (open: boolean) => void;
 };
 
+const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 export function ReportBugDialog({ children, isOpen, setIsOpen }: ReportBugDialogProps) {
   const [description, setDescription] = useState('');
   const [steps, setSteps] = useState('');
@@ -53,37 +55,53 @@ export function ReportBugDialog({ children, isOpen, setIsOpen }: ReportBugDialog
     }
 
     setIsSending(true);
-    try {
-      const result = await sendBugReport({
-        userName: userName || 'Not provided',
-        description,
-        steps: steps || 'Not provided',
-        severity,
-        deviceInfo,
-      });
 
-      if (result.success) {
-        toast({
-          title: "Report Sent!",
-          description: "Thank you for your report! Our team will review it and get back to you shortly.",
+    const maxRetries = 3;
+    let attempts = 0;
+    let success = false;
+
+    while (attempts < maxRetries && !success) {
+      attempts++;
+      console.log(`Bug report submission attempt ${attempts}...`);
+      try {
+        const result = await sendBugReport({
+          userName: userName || 'Not provided',
+          description,
+          steps: steps || 'Not provided',
+          severity,
+          deviceInfo,
         });
-        setDescription('');
-        setSteps('');
-        setSeverity('Medium');
-        setIsOpen(false);
-      } else {
-        throw new Error(result.message || 'Unknown error');
+
+        if (result.success) {
+          success = true;
+          console.log('Submission successful.');
+          toast({
+            title: "Report Sent!",
+            description: "Thank you for your bug report! Our team will review it shortly.",
+          });
+          setDescription('');
+          setSteps('');
+          setSeverity('Medium');
+          setIsOpen(false);
+        } else {
+          throw new Error(result.message || 'The AI model failed to send the report.');
+        }
+      } catch (error) {
+        console.error(`Attempt ${attempts} failed:`, error);
+        if (attempts >= maxRetries) {
+          console.error("All submission attempts failed.");
+          toast({
+            title: "Submission Failed",
+            description: "Bug report could not be sent at this moment. Please try again later.",
+            variant: "destructive",
+          });
+        } else {
+          await wait(2000); // Wait 2 seconds before retrying
+        }
       }
-    } catch (error) {
-      console.error("Failed to send bug report", error);
-      toast({
-        title: "Submission Failed",
-        description: "Could not send the bug report. Please try again later.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSending(false);
     }
+
+    setIsSending(false);
   };
 
   return (

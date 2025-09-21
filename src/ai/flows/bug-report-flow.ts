@@ -70,6 +70,7 @@ const sendEmailTool = ai.defineTool(
     console.log(`To: ${input.to}`);
     console.log(`Subject: ${input.subject}`);
     console.log(`Body: \n${input.body}`);
+    console.log(`Timestamp: ${new Date().toISOString()}`);
     console.log('//////////////////////////////////////////////////');
     // In a real scenario, you would have your email sending logic here.
     // For now, we'll just simulate a successful send.

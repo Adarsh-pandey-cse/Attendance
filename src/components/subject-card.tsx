@@ -213,11 +213,11 @@ export function SubjectCard({ subject }: SubjectCardProps) {
       </div>
 
       <div className="flex gap-2">
-        <Button onClick={() => markAttendance(subject.id, 'present')} size="sm" className="flex-1 bg-primary text-primary-foreground hover:bg-primary/80 shadow-lg shadow-green-600/20 font-bold transition-all duration-300 hover:scale-[1.03]">
-          <Plus className="mr-2 h-4 w-4"/> Attended
+        <Button onClick={() => markAttendance(subject.id, 'present')} size="sm" className="flex-1 bg-primary text-primary-foreground hover:bg-primary/80 shadow-lg shadow-green-600/20 font-bold transition-all duration-300 hover:scale-[1.03] text-xs px-2">
+          <Plus className="mr-1 md:mr-2 h-4 w-4"/> Attended
         </Button>
-        <Button onClick={() => markAttendance(subject.id, 'absent')} size="sm" className="flex-1 bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/20 font-bold transition-all duration-300 hover:scale-[1.03]">
-          <Minus className="mr-2 h-4 w-4"/> Missed
+        <Button onClick={() => markAttendance(subject.id, 'absent')} size="sm" className="flex-1 bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/20 font-bold transition-all duration-300 hover:scale-[1.03] text-xs px-2">
+          <Minus className="mr-1 md:mr-2 h-4 w-4"/> Missed
         </Button>
       </div>
     </div>

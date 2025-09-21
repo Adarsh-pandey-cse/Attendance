@@ -20,9 +20,8 @@ export function RadhaRaniThemeElements() {
     <>
         <div className="radha-rani-background"></div>
         <div className="fixed bottom-0 left-0 w-full h-16 overflow-hidden z-50 pointer-events-none">
-            <div className="absolute top-0 w-full h-full bg-gradient-to-t from-background via-background/70 to-transparent"></div>
             <motion.div 
-              className="absolute whitespace-nowrap"
+              className="absolute whitespace-nowrap bottom-4"
               initial={{ x: '100%' }}
               animate={{ x: '-100%' }}
               transition={{
@@ -40,7 +39,6 @@ export function RadhaRaniThemeElements() {
                     <span className='mx-8'>राधा राधा</span>
                 </p>
             </motion.div>
-             <div className="absolute bottom-0 w-full h-full bg-gradient-to-b from-background via-background/70 to-transparent"></div>
         </div>
     </>
   );

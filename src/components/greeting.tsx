@@ -26,27 +26,23 @@ export function Greeting() {
   useEffect(() => {
     if (!isClient) return;
 
-    // Only fetch the quote if the theme is not 'radha-rani'
-    if (!isRadhaTheme) {
-      const fetchQuote = async () => {
-        setQuoteLoading(true);
-        try {
-          // isRadhaRaniTheme will be false, so it will fetch the correct quote
-          const response = await getDailyQuote({ isRadhaRaniTheme: false });
-          if (response?.quote) {
-              setQuote(response.quote);
-          } else {
-              setQuote("The best way to predict the future is to create it.");
-          }
-        } catch (error) {
-          console.error("Failed to fetch daily quote", error);
-          setQuote("The best way to predict the future is to create it.");
-        } finally {
-          setQuoteLoading(false);
+    const fetchQuote = async () => {
+      setQuoteLoading(true);
+      try {
+        const response = await getDailyQuote({ isRadhaRaniTheme: isRadhaTheme });
+        if (response?.quote) {
+            setQuote(response.quote);
+        } else {
+            setQuote("The best way to predict the future is to create it.");
         }
-      };
-      fetchQuote();
-    }
+      } catch (error) {
+        console.error("Failed to fetch daily quote", error);
+        setQuote("The best way to predict the future is to create it.");
+      } finally {
+        setQuoteLoading(false);
+      }
+    };
+    fetchQuote();
   }, [isClient, isRadhaTheme]);
   
   const greetingText = isRadhaTheme ? 'राधा वल्लभ श्री हरिवंश,' : 'Hello,';
@@ -66,8 +62,7 @@ export function Greeting() {
         </div>
         {isClient && <p className="text-muted-foreground font-semibold mt-1 text-center">{currentDate}</p>}
 
-        {/* Only render the quote if not in Radha Rani theme */}
-        {!isRadhaTheme && isClient && (
+        {isClient && (
           <>
             {quoteLoading ? (
                 <p className="text-lg font-semibold text-yellow-300/80 mt-2 italic text-center">Loading quote...</p>

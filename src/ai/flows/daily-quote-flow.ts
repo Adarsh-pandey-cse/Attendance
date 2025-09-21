@@ -32,11 +32,7 @@ const prompt = ai.definePrompt({
   output: {schema: DailyQuoteOutputSchema},
   prompt: `You are an expert at providing short, powerful, motivational quotes in Hindi. You will provide a unique quote each time.
 
-  {{#if isRadhaRaniTheme}}
-  Please provide one short, powerful, motivational quote about Radha Krishna. The quote MUST be in Hindi script.
-  {{else}}
   Please provide one short, powerful, motivational quote by Premanand ji Maharaj. The quote MUST be in Hindi script.
-  {{/if}}
 
   Quote:`,
 });

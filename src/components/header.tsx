@@ -14,12 +14,10 @@ import { MoreVertical, Info, Percent, CalendarClock, Bug, Shield } from 'lucide-
 import Link from 'next/link';
 import { useAttendance } from '@/hooks/use-attendance';
 import { Slider } from '@/components/ui/slider';
-import { ReportBugDialog } from './report-bug-dialog';
 import { useState } from 'react';
 
 export function Header() {
   const { overallTarget, setOverallTarget } = useAttendance();
-  const [isReportBugOpen, setIsReportBugOpen] = useState(false);
 
   return (
     <header className="flex justify-between items-center py-2">

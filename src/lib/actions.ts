@@ -15,6 +15,7 @@ import { DeveloperInfo } from '@/types';
 
 /**
  * Saves a bug report with optional attachments.
+ * - Validates input.
  * - Uploads files to Firebase Storage.
  * - Saves bug report details (including file URLs) to Firestore.
  * @param formData - The FormData object from the bug report form.
@@ -26,38 +27,37 @@ export async function saveBugReport(
   try {
     const description = formData.get('description') as string;
     const userName = formData.get('userName') as string;
-    const deviceInfo = formData.get('deviceInfo') as string;
+    const deviceInfo = formData.get('deviceInfo') as string | null;
     const files = formData.getAll('attachments') as File[];
 
     if (!description || description.trim() === '') {
       return { success: false, message: 'Bug description cannot be empty.' };
     }
+     if (!userName || userName.trim() === '') {
+      return { success: false, message: 'User name is missing.' };
+    }
 
     const attachmentUrls = [];
 
-    // Loop through and upload each file individually
     for (const file of files) {
       if (file.size > 0) {
         try {
           const storageRef = ref(storage, `bug-attachments/${Date.now()}-${file.name}`);
-          const buffer = await file.arrayBuffer(); // Convert file to buffer
+          const buffer = await file.arrayBuffer();
           const snapshot = await uploadBytes(storageRef, buffer);
           const downloadURL = await getDownloadURL(snapshot.ref);
           attachmentUrls.push({ name: file.name, url: downloadURL });
         } catch (uploadError) {
           console.error('Error uploading a file:', uploadError);
-          // Stop and return an error if any file fails to upload
           return { success: false, message: `Failed to upload file: ${file.name}.` };
         }
       }
     }
     
-    // Save the bug report to Firestore
-    const bugReportsColRef = collection(db, 'bug-reports');
-    await addDoc(bugReportsColRef, {
+    await addDoc(collection(db, 'bug-reports'), {
       userName,
       description,
-      deviceInfo,
+      deviceInfo: deviceInfo || 'Not provided',
       attachments: attachmentUrls,
       timestamp: serverTimestamp(),
       status: 'new',
@@ -66,10 +66,10 @@ export async function saveBugReport(
     return { success: true, message: 'Bug report submitted successfully!' };
 
   } catch (error) {
-    console.error('Error saving bug report:', error);
+    console.error('Error in saveBugReport server action:', error);
     return {
       success: false,
-      message: 'An unexpected error occurred while saving the report.',
+      message: 'An unexpected server error occurred. Please try again later.',
     };
   }
 }

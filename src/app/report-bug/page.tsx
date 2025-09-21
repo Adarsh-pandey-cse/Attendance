@@ -68,8 +68,8 @@ export default function ReportBugPage() {
     setIsSending(true);
     
     const formData = new FormData();
-    formData.append('userName', userName || 'Anonymous');
     formData.append('description', description);
+    formData.append('userName', userName || 'Anonymous');
     formData.append('deviceInfo', deviceInfo);
     files.forEach(file => {
       formData.append('attachments', file);

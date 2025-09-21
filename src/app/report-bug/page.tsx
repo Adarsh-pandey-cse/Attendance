@@ -41,12 +41,10 @@ export default function ReportBugPage() {
       if (!response.ok) {
         throw new Error(result.message || 'An error occurred.');
       }
-
-      toast({
-        title: 'Success!',
-        description: 'Bug report submitted. Thank you for your feedback!',
-      });
+      
+      // On success, redirect to the home page with a query param
       router.push('/?bug_submitted=true');
+
     } catch (error) {
       console.error('Submission failed:', error);
       toast({

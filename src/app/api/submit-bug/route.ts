@@ -12,24 +12,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: 'Description is required and cannot be empty.' }, { status: 400 });
     }
 
-    try {
-      await addDoc(collection(db, 'bug-reports'), {
-        description: description.trim(),
-        timestamp: serverTimestamp(),
-        status: 'new',
-        userName: 'Anonymous', // In a real app, you'd get this from session/auth
-      });
+    // This is the database operation
+    await addDoc(collection(db, 'bug-reports'), {
+      description: description.trim(),
+      timestamp: serverTimestamp(),
+      status: 'new',
+      userName: 'Anonymous', // In a real app, you'd get this from session/auth
+    });
 
-      return NextResponse.json({ message: 'Bug report submitted successfully!' }, { status: 200 });
-
-    } catch (dbError) {
-      console.error('Firestore Error:', dbError);
-      return NextResponse.json({ message: 'Could not submit bug report to the database.' }, { status: 500 });
-    }
+    // If it gets here, the save was successful
+    return NextResponse.json({ message: 'Bug report submitted successfully!' }, { status: 200 });
 
   } catch (error) {
     console.error('API Error:', error);
-    // This catches errors like invalid JSON in the request body
-    return NextResponse.json({ message: 'An invalid request was sent.' }, { status: 400 });
+    // This generic catch block ensures that if anything fails (parsing JSON, DB error, etc.),
+    // we always return a valid JSON response, preventing the HTML error.
+    return NextResponse.json({ message: 'An internal server error occurred.' }, { status: 500 });
   }
 }

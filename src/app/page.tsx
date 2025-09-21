@@ -19,11 +19,15 @@ export default function Home() {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Check for the query parameter and show the toast
     if (searchParams.get('bug_submitted') === 'true') {
       toast({
         title: 'Success!',
         description: 'Your bug report has been submitted.',
       });
+      // Optional: remove the query param from URL without reloading the page
+      const newUrl = window.location.pathname;
+      window.history.replaceState({...window.history.state, as: newUrl, url: newUrl}, '', newUrl);
     }
   }, [searchParams, toast]);
 

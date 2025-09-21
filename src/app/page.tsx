@@ -12,6 +12,7 @@ import { PlusCircle, Loader2, BookOpenCheck } from 'lucide-react';
 import { useTheme } from '@/hooks/use-theme';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { useState, useEffect } from 'react';
 
 const DivineImage = () => {
   const image = PlaceHolderImages.find(img => img.id === "radha-rani-main");
@@ -46,12 +47,17 @@ const DivineImage = () => {
 export default function Home() {
   const { subjects, loading } = useAttendance();
   const { theme } = useTheme();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return (
     <main className="flex justify-center min-h-screen bg-gradient-to-b from-background to-slate-900/50">
       <div className="w-full max-w-lg p-4 md:p-6 space-y-6">
         <Header />
-        {theme === 'radha-rani' && <DivineImage />}
+        {isClient && theme === 'radha-rani' && <DivineImage />}
         <Greeting />
         <OverallAttendance />
 

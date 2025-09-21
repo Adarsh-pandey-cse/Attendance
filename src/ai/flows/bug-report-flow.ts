@@ -31,12 +31,17 @@ export type BugReportSmsOutput = z.infer<typeof BugReportSmsOutputSchema>;
  * @returns A promise that resolves to a success or failure message.
  */
 export async function sendBugReport(input: BugReportSmsInput): Promise<BugReportSmsOutput> {
-  const result = await bugSmsReporter(input);
-  
-  if (result.sent) {
-    return { success: true, message: "Bug report SMS has been sent successfully." };
+  try {
+    const result = await bugSmsReporter(input);
+    if (result.success) {
+      return { success: true, message: "Bug report SMS has been sent successfully." };
+    } else {
+      return { success: false, message: "The tool failed to send the SMS." };
+    }
+  } catch (error) {
+    console.error('Error in bugSmsReporter flow:', error);
+    return { success: false, message: 'An unexpected error occurred while sending the bug report.' };
   }
-  return { success: false, message: result.message || "The model did not send the SMS. You may need to try again." };
 }
 
 // This is a mock tool. In a real application, this would use an SMS service
@@ -70,28 +75,17 @@ const bugSmsReporter = ai.defineFlow(
     name: 'bugSmsReporter',
     inputSchema: BugReportSmsInputSchema,
     outputSchema: z.object({
-      sent: z.boolean(),
-      message: z.string().optional(),
+      success: z.boolean(),
     }),
   },
   async (report) => {
-    // The report.description is now the full, pre-formatted message.
-    const llmResponse = await ai.generate({
-      prompt: `Your only task is to send the following text as an SMS to '+918800795476' using the provided sendSmsTool.
-
-"""
-${report.description}
-"""
-`,
-      tools: [sendSmsTool],
+    // This flow now directly calls the tool, removing the LLM from the decision process.
+    // This is a much more reliable way to guarantee the tool is executed.
+    const toolResult = await sendSmsTool.run({
+      to: '+918800795476',
+      body: report.description,
     });
     
-    // Check if the tool was called. This is the most reliable way to check for success.
-    if (llmResponse.toolRequests.length > 0) {
-        return { sent: true };
-    }
-
-    // If the tool was not called, then it's a failure.
-    return { sent: false, message: "The model decided not to send the SMS. " + llmResponse.text };
+    return { success: toolResult.success };
   }
 );

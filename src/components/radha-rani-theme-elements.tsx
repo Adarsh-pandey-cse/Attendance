@@ -19,7 +19,7 @@ export function RadhaRaniThemeElements() {
   return (
     <>
         <div className="radha-rani-background"></div>
-        <div className="fixed bottom-2 left-0 w-full h-12 overflow-hidden z-50 pointer-events-none yellow-stripped-background py-1">
+        <div className="fixed bottom-0 left-0 w-full h-12 overflow-hidden z-50 pointer-events-none yellow-stripped-background py-1">
             <motion.div 
               className="absolute whitespace-nowrap"
               initial={{ x: '100%' }}

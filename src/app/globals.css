@@ -171,13 +171,7 @@
   }
 
   .yellow-stripped-background {
-    background: repeating-linear-gradient(
-      45deg,
-      rgba(255, 221, 0, 0.2),
-      rgba(255, 221, 0, 0.2) 10px,
-      rgba(255, 238, 102, 0.2) 10px,
-      rgba(255, 238, 102, 0.2) 20px
-    );
+    background-color: #ffd700; /* A solid, darker yellow (gold) */
   }
 }
 

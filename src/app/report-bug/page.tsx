@@ -19,8 +19,8 @@ function ErrorDisplay() {
   if (!error) return null;
 
   let errorMessage = 'An unknown error occurred.';
-  if (error === 'description_too_short') {
-    errorMessage = 'The bug description must be at least 10 characters long.';
+  if (error === 'description_empty') {
+    errorMessage = 'The bug description cannot be empty.';
   } else if (error === 'submit_failed') {
     errorMessage = 'Failed to submit bug report to the database. Please try again.';
   }
@@ -69,11 +69,9 @@ export default function ReportBugPage() {
                 <Textarea
                   id="description"
                   name="description" // The name attribute is crucial for server actions
-                  placeholder="Please provide as much detail as possible about the bug... (min. 10 characters)"
+                  placeholder="Please provide as much detail as possible about the bug..."
                   rows={8}
                   required
-                  minLength={10}
-                  maxLength={5000}
                 />
               </div>
 

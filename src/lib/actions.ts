@@ -6,7 +6,7 @@
  */
 
 import { db, storage } from '@/lib/firebase';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { z } from 'zod';
 import { DeveloperInfo } from '@/types';
@@ -21,11 +21,9 @@ export async function submitBugReport(formData: FormData): Promise<void> {
   const description = formData.get('description') as string;
 
   // Basic server-side validation
-  if (!description || description.trim().length < 10) {
-    // In a real app, you'd handle this more gracefully.
-    console.error('Validation failed: Description is too short.');
-    // Redirect with an error query parameter
-    redirect('/report-bug?error=description_too_short');
+  if (!description || description.trim().length === 0) {
+    console.error('Validation failed: Description is empty.');
+    redirect('/report-bug?error=description_empty');
     return;
   }
 
@@ -38,7 +36,6 @@ export async function submitBugReport(formData: FormData): Promise<void> {
     });
   } catch (error) {
     console.error('Firestore Error:', error);
-    // In a production app, you would have more robust error logging here.
     redirect('/report-bug?error=submit_failed');
     return;
   }

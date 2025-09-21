@@ -38,11 +38,3 @@ export type DeveloperInfo = {
     bio: string;
     profilePicture: string | null;
 }
-
-export type BugReport = {
-  id: string;
-  description: string;
-  timestamp: number;
-  status: 'open' | 'closed';
-  userName: string;
-}

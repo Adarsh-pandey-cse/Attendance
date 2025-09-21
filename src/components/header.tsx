@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Logo } from '@/components/logo';
@@ -10,15 +9,16 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
-import { MoreVertical, Info, Percent, CalendarClock, Shield, MessageSquareWarning } from 'lucide-react';
+import { MoreVertical, Info, Percent, CalendarClock, Shield, Moon, Sun } from 'lucide-react';
 import Link from 'next/link';
 import { useAttendance } from '@/hooks/use-attendance';
 import { Slider } from '@/components/ui/slider';
-import { ReportBugDialog } from '@/components/report-bug-dialog';
-import { Button } from './ui/button';
+import { useTheme } from '@/hooks/use-theme';
+import { Switch } from '@/components/ui/switch';
 
 export function Header() {
   const { overallTarget, setOverallTarget } = useAttendance();
+  const { theme, setTheme } = useTheme();
 
   return (
     <header className="flex justify-between items-center py-2">
@@ -50,19 +50,23 @@ export function Header() {
                 />
             </div>
             <DropdownMenuSeparator />
+             <DropdownMenuItem onSelect={(e) => e.preventDefault()} className='flex items-center justify-between font-semibold'>
+                 <div className='flex items-center gap-2'>
+                    {theme === 'dark' ? <Moon className='w-4 h-4' /> : <Sun className='w-4 h-4' />}
+                    <span>Theme</span>
+                 </div>
+                <Switch
+                    checked={theme === 'dark'}
+                    onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+                />
+             </DropdownMenuItem>
+             <DropdownMenuSeparator />
              <DropdownMenuItem asChild>
               <Link href="/timetable" className="flex items-center gap-2 cursor-pointer font-semibold">
                 <CalendarClock className="w-4 h-4" />
                 <span>Timetable</span>
               </Link>
             </DropdownMenuItem>
-            
-            <ReportBugDialog>
-                 <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="flex items-center gap-2 cursor-pointer font-semibold">
-                    <MessageSquareWarning className="w-4 h-4" />
-                    <span>Report a Bug</span>
-                </DropdownMenuItem>
-            </ReportBugDialog>
 
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>

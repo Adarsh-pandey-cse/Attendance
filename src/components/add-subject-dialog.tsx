@@ -25,6 +25,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useAttendance } from '@/hooks/use-attendance';
 import { Plus } from 'lucide-react';
+import { useTheme } from '@/hooks/use-theme';
+import { cn } from '@/lib/utils';
 
 const formSchema = z.object({
   name: z.string().min(1, 'Subject name is required.'),
@@ -42,6 +44,7 @@ type AddSubjectDialogProps = {
 export function AddSubjectDialog({ children }: AddSubjectDialogProps) {
   const [open, setOpen] = useState(false);
   const { addSubject } = useAttendance();
+  const { theme } = useTheme();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -68,15 +71,17 @@ export function AddSubjectDialog({ children }: AddSubjectDialogProps) {
     setOpen(false);
   };
   
+  const isRadhaTheme = theme === 'radha-rani';
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px] glass-card">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 font-bold">
-            <Plus className="text-primary" /> Add New Subject
+          <DialogTitle className={cn("flex items-center gap-2 font-bold", isRadhaTheme && "text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-red-500")}>
+            <Plus className={cn("text-primary", isRadhaTheme && "text-pink-500")} /> Add New Subject
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className={cn(isRadhaTheme && "text-pink-900/80")}>
             Enter the details for your new subject below. You can mark attendance later.
           </DialogDescription>
         </DialogHeader>
@@ -87,7 +92,7 @@ export function AddSubjectDialog({ children }: AddSubjectDialogProps) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className='font-semibold'>Subject Name</FormLabel>
+                  <FormLabel className={cn('font-semibold', isRadhaTheme && "text-pink-600")}>Subject Name</FormLabel>
                   <FormControl>
                     <Input placeholder="e.g., Quantum Physics" {...field} />
                   </FormControl>
@@ -101,7 +106,7 @@ export function AddSubjectDialog({ children }: AddSubjectDialogProps) {
                 name="attendedClasses"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className='font-semibold'>Classes Attended</FormLabel>
+                    <FormLabel className={cn('font-semibold', isRadhaTheme && "text-pink-600")}>Classes Attended</FormLabel>
                     <FormControl>
                       <Input type="number" {...field} onFocus={(e) => e.target.select()} />
                     </FormControl>
@@ -114,7 +119,7 @@ export function AddSubjectDialog({ children }: AddSubjectDialogProps) {
                 name="totalClasses"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className='font-semibold'>Total Classes</FormLabel>
+                    <FormLabel className={cn('font-semibold', isRadhaTheme && "text-pink-600")}>Total Classes</FormLabel>
                     <FormControl>
                       <Input type="number" {...field} onFocus={(e) => e.target.select()} />
                     </FormControl>
@@ -124,7 +129,7 @@ export function AddSubjectDialog({ children }: AddSubjectDialogProps) {
               />
             </div>
             <DialogFooter>
-              <Button type="submit" className="bg-gradient-to-r from-primary to-green-500 text-white w-full font-bold">Add Subject</Button>
+              <Button type="submit" className={cn("text-white w-full font-bold", isRadhaTheme ? "bg-gradient-to-r from-pink-500 to-red-500" : "bg-gradient-to-r from-primary to-green-500")}>Add Subject</Button>
             </DialogFooter>
           </form>
         </Form>

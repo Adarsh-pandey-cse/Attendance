@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -15,11 +14,17 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Bug, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAttendance } from '@/hooks/use-attendance';
-import { sendBugReport } from '@/ai/flows/bug-report-flow';
+import { submitToGoogleForm } from '@/ai/flows/google-form-submit-flow';
 
 type ReportBugDialogProps = {
   children: React.ReactNode;
@@ -33,6 +38,7 @@ export function ReportBugDialog({ children, isOpen, setIsOpen }: ReportBugDialog
   const [description, setDescription] = useState('');
   const [steps, setSteps] = useState('');
   const [severity, setSeverity] = useState('Medium');
+  const [userEmail, setUserEmail] = useState('');
   const [isSending, setIsSending] = useState(false);
   const { toast } = useToast();
   const { userName } = useAttendance();
@@ -47,9 +53,9 @@ export function ReportBugDialog({ children, isOpen, setIsOpen }: ReportBugDialog
   const handleSubmit = async () => {
     if (description.trim() === '') {
       toast({
-        title: "Error",
-        description: "Please describe the bug before submitting.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Please describe the bug before submitting.',
+        variant: 'destructive',
       });
       return;
     }
@@ -60,59 +66,52 @@ export function ReportBugDialog({ children, isOpen, setIsOpen }: ReportBugDialog
     let attempts = 0;
     let success = false;
 
-    const bugReportDetails = `
-New Bug Report:
-User: ${userName || "N/A"}
-Severity: ${severity}
-Description: ${description}${steps ? `\nSteps to Reproduce: ${steps}` : ''}
-Device: ${deviceInfo}
-Time: ${new Date().toLocaleString()}
-    `.trim();
-
     while (attempts < maxRetries && !success) {
       attempts++;
-      console.log(`Bug report submission attempt ${attempts}...`);
       try {
-        const result = await sendBugReport({
+        const result = await submitToGoogleForm({
           userName: userName,
-          description: bugReportDetails,
+          userEmail: userEmail,
+          description: description,
+          steps: steps,
           severity: severity,
+          deviceInfo: deviceInfo,
         });
 
         if (result.success) {
           success = true;
-          console.log('Submission successful.');
           toast({
-            title: "Report Sent!",
-            description: "Thank you! Your bug report has been sent to the admin.",
+            title: 'Report Sent!',
+            description: 'Thank you! Your bug report has been submitted.',
           });
           setDescription('');
           setSteps('');
           setSeverity('Medium');
+          setUserEmail('');
           setIsOpen(false);
         } else {
-          // If it fails, we'll let the loop continue to the retry logic.
-          // The final error will be shown after all retries are exhausted.
-          console.error(`Attempt ${attempts} failed with message: ${result.message}`);
-           if (attempts >= maxRetries) {
-             toast({
-                title: "Submission Failed",
-                description: result.message || "Bug report notification failed. Please try again later.",
-                variant: "destructive",
+          console.error(`Attempt ${attempts} failed:`, result.message);
+          if (attempts >= maxRetries) {
+            toast({
+              title: 'Submission Failed',
+              description:
+                'Failed to submit bug report. Please try again later.',
+              variant: 'destructive',
             });
-           }
+          }
         }
       } catch (error) {
         console.error(`Attempt ${attempts} failed with exception:`, error);
-         if (attempts >= maxRetries) {
-            toast({
-                title: "Submission Failed",
-                description: "An unexpected error occurred. Please try again later.",
-                variant: "destructive",
-            });
+        if (attempts >= maxRetries) {
+          toast({
+            title: 'Submission Failed',
+            description:
+              'An unexpected error occurred. Please try again later.',
+            variant: 'destructive',
+          });
         }
       }
-      
+
       if (!success && attempts < maxRetries) {
         await wait(2000);
       }
@@ -132,61 +131,105 @@ Time: ${new Date().toLocaleString()}
             <Bug className="text-destructive" /> Report a Bug
           </DialogTitle>
           <DialogDescription>
-            Help us improve AttendX by describing the issue you've encountered. Your feedback is valuable!
+            Help us improve AttendX by describing the issue you've encountered.
+            Your feedback is valuable!
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4 max-h-[60vh] overflow-y-auto pr-4">
-            <div className="space-y-2">
-                <Label htmlFor="bug-description" className="font-semibold">Bug Description (Required)</Label>
-                <Textarea
-                    id="bug-description"
-                    placeholder="Please provide as much detail as possible..."
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    rows={4}
-                    className="resize-none"
-                    disabled={isSending}
-                />
-            </div>
-             <div className="space-y-2">
-                <Label htmlFor="bug-steps" className="font-semibold">Steps to Reproduce</Label>
-                <Textarea
-                    id="bug-steps"
-                    placeholder="e.g., 1. Go to Timetable page. 2. Click 'Add Class'. 3. See error."
-                    value={steps}
-                    onChange={(e) => setSteps(e.target.value)}
-                    rows={3}
-                    className="resize-none"
-                    disabled={isSending}
-                />
-            </div>
-             <div className="space-y-2">
-                <Label htmlFor="bug-severity" className="font-semibold">Severity Level</Label>
-                 <Select value={severity} onValueChange={setSeverity} disabled={isSending}>
-                    <SelectTrigger id="bug-severity">
-                        <SelectValue placeholder="Select severity" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="Low">Low</SelectItem>
-                        <SelectItem value="Medium">Medium</SelectItem>
-                        <SelectItem value="High">High</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
-             <div className="space-y-2">
-                <Label htmlFor="bug-device" className="font-semibold">Device/App Info</Label>
-                <Input id="bug-device" value={deviceInfo} readOnly disabled className="bg-muted/50"/>
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="bug-description" className="font-semibold">
+              Bug Description (Required)
+            </Label>
+            <Textarea
+              id="bug-description"
+              placeholder="Please provide as much detail as possible..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={4}
+              className="resize-none"
+              disabled={isSending}
+            />
+          </div>
+           <div className="space-y-2">
+            <Label htmlFor="bug-email" className="font-semibold">
+              Your Email (Optional)
+            </Label>
+            <Input
+              id="bug-email"
+              type="email"
+              placeholder="So we can contact you if needed"
+              value={userEmail}
+              onChange={(e) => setUserEmail(e.target.value)}
+              disabled={isSending}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="bug-steps" className="font-semibold">
+              Steps to Reproduce
+            </Label>
+            <Textarea
+              id="bug-steps"
+              placeholder="e.g., 1. Go to Timetable page. 2. Click 'Add Class'. 3. See error."
+              value={steps}
+              onChange={(e) => setSteps(e.target.value)}
+              rows={3}
+              className="resize-none"
+              disabled={isSending}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="bug-severity" className="font-semibold">
+              Severity Level
+            </Label>
+            <Select
+              value={severity}
+              onValueChange={setSeverity}
+              disabled={isSending}
+            >
+              <SelectTrigger id="bug-severity">
+                <SelectValue placeholder="Select severity" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Low">Low</SelectItem>
+                <SelectItem value="Medium">Medium</SelectItem>
+                <SelectItem value="High">High</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="bug-device" className="font-semibold">
+              Device/App Info
+            </Label>
+            <Input
+              id="bug-device"
+              value={deviceInfo}
+              readOnly
+              disabled
+              className="bg-muted/50"
+            />
+          </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => setIsOpen(false)} disabled={isSending}>Cancel</Button>
-          <Button onClick={handleSubmit} className="bg-destructive hover:bg-destructive/80 text-white font-bold" disabled={isSending}>
+          <Button
+            variant="outline"
+            onClick={() => setIsOpen(false)}
+            disabled={isSending}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            className="bg-destructive hover:bg-destructive/80 text-white font-bold"
+            disabled={isSending}
+          >
             {isSending ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Sending...
               </>
-            ) : "Send Report"}
+            ) : (
+              'Send Report'
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -101,24 +101,24 @@
 
   .radha-rani {
     --background: 30 100% 98%; /* Light yellow */
-    --foreground: 25 80% 20%; /* Dark orange/brown */
+    --foreground: 25 80% 15%; /* Darker orange/brown */
 
-    --card: 30 100% 98% / 0.8;
-    --card-foreground: 25 80% 20%;
+    --card: 30 100% 95%;
+    --card-foreground: 25 80% 15%;
 
     --popover: 30 100% 95%;
-    --popover-foreground: 25 80% 20%;
+    --popover-foreground: 25 80% 15%;
 
     --primary: 350 70% 50%; /* Red */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 40 100% 85%; /* Lighter yellow */
-    --secondary-foreground: 25 80% 20%;
+    --secondary-foreground: 25 80% 15%;
 
     --muted: 40 100% 90%;
-    --muted-foreground: 30 50% 40%;
+    --muted-foreground: 30 50% 30%; /* Darker muted text */
 
-    --accent: 35 100% 60%; /* Orange */
+    --accent: 35 100% 55%; /* Brighter Orange */
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 70% 50%;
@@ -153,7 +153,7 @@
         @apply bg-card/80 border-black/10;
     }
     .radha-rani & {
-      @apply bg-card/80 border-primary/20 backdrop-blur-md;
+      @apply bg-card/90 border-primary/20;
     }
   }
 

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -127,10 +126,6 @@ export default function BugDetailPage() {
             <div className="space-y-1">
               <h3 className="font-semibold flex items-center gap-2 text-muted-foreground"><Calendar className='w-4 h-4' /> Submitted At</h3>
               <p>{bugReport.timestamp ? format(new Date(bugReport.timestamp.seconds * 1000), 'PPPpp') : 'No timestamp'}</p>
-            </div>
-             <div className="space-y-1">
-              <h3 className="font-semibold flex items-center gap-2 text-muted-foreground"><Smartphone className='w-4 h-4' /> Device Info</h3>
-              <p className='text-sm p-3 bg-slate-900 rounded-md font-mono'>{bugReport.deviceInfo || 'Not provided'}</p>
             </div>
             <div className="space-y-1">
               <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><FileText className='w-4 h-4' />Description</h3>

@@ -6,44 +6,13 @@
  */
 
 import { db } from '@/lib/firebase';
-import { collection, addDoc, serverTimestamp, doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { z } from 'zod';
 import { DeveloperInfo } from '@/types';
 
 
-/**
- * Saves a bug report to Firestore.
- * This is a simplified version that only takes the description to ensure reliability.
- * @param description - The bug description string.
- * @returns An object indicating success or failure with a message.
- */
-export async function saveBugReport(
-  description: string
-): Promise<{ success: boolean; message: string }> {
-  try {
-    if (!description || description.trim() === '') {
-      return { success: false, message: 'Description is required.' };
-    }
-
-    await addDoc(collection(db, 'bug-reports'), {
-      description,
-      userName: 'Anonymous', // Hardcoded for reliability
-      deviceInfo: 'Not provided', // Hardcoded for reliability
-      timestamp: serverTimestamp(),
-      status: 'new',
-      attachments: [], 
-    });
-
-    return { success: true, message: 'Bug report submitted successfully!' };
-
-  } catch (error) {
-    console.error('Error in saveBugReport server action:', error);
-    return {
-      success: false,
-      message: 'An unexpected server error occurred while saving the report.',
-    };
-  }
-}
+// This file is being kept for other server actions, 
+// but the bug report logic has been moved to an API route for reliability.
 
 
 // --- Developer Info Actions ---

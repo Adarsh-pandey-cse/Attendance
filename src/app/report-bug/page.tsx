@@ -1,22 +1,20 @@
-
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Bug, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
-import { saveBugReport } from '@/lib/actions';
+import { useRouter } from 'next/navigation';
 
 export default function ReportBugPage() {
   const [description, setDescription] = useState('');
   const [isSending, setIsSending] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (description.trim() === '') {
@@ -25,19 +23,25 @@ export default function ReportBugPage() {
     }
 
     setIsSending(true);
-    
-    try {
-      const result = await saveBugReport(description);
 
-      if (result.success) {
-        toast({
-          title: 'Report Sent!',
-          description: 'Thank you for your feedback!',
-        });
-        router.push('/');
-      } else {
-        throw new Error(result.message || 'Failed to submit bug report.');
+    try {
+      const response = await fetch('/api/submit-bug', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bugDescription: description }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'An unknown error occurred.');
       }
+
+      toast({
+        title: 'Report Sent!',
+        description: 'Thank you for your feedback!',
+      });
+      router.push('/');
     } catch (error: any) {
       console.error('Error submitting bug report:', error);
       toast({
@@ -84,6 +88,7 @@ export default function ReportBugPage() {
                   rows={8}
                   required
                   disabled={isSending}
+                  maxLength={5000}
                 />
               </div>
 

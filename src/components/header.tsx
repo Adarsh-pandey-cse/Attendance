@@ -9,13 +9,16 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
-import { MoreVertical, Info, Percent, CalendarClock } from 'lucide-react';
+import { MoreVertical, Info, Percent, CalendarClock, Bug } from 'lucide-react';
 import Link from 'next/link';
 import { useAttendance } from '@/hooks/use-attendance';
 import { Slider } from '@/components/ui/slider';
+import { ReportBugDialog } from './report-bug-dialog';
+import { useState } from 'react';
 
 export function Header() {
   const { overallTarget, setOverallTarget } = useAttendance();
+  const [isReportBugOpen, setIsReportBugOpen] = useState(false);
 
   return (
     <header className="flex justify-between items-center py-2">
@@ -59,6 +62,12 @@ export function Header() {
                 <span>Developer Info</span>
               </Link>
             </DropdownMenuItem>
+             <ReportBugDialog isOpen={isReportBugOpen} setIsOpen={setIsReportBugOpen}>
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="flex items-center gap-2 cursor-pointer font-semibold">
+                    <Bug className="w-4 h-4" />
+                    <span>Report a Bug</span>
+                </DropdownMenuItem>
+            </ReportBugDialog>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

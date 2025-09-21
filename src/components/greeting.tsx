@@ -34,7 +34,7 @@ export function Greeting() {
   }, []);
 
   return (
-    <div className="p-6 glass-card">
+    <div className="glass-card p-6 neon-border">
       <div className="flex items-center">
         <h2 className="text-3xl font-bold font-hindi" style={{fontFamily: "'Tiro Devanagari Hindi', serif"}}>
           राधे राधे,

@@ -5,9 +5,8 @@
  * @fileOverview Server-side actions for the application.
  */
 
-import { db, storage } from '@/lib/firebase';
-import { addDoc, collection, doc, serverTimestamp, setDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db } from '@/lib/firebase';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { z } from 'zod';
 import { DeveloperInfo } from '@/types';
 import { redirect } from 'next/navigation';

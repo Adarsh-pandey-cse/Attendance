@@ -59,28 +59,28 @@
 
     .neon-border {
         position: relative;
-        overflow: hidden;
         border-radius: 1.25rem; /* Match rounded-2xl */
-        border: 1px solid transparent; /* Hide base border */
+        border: 1.5px solid transparent;
+        background-origin: border-box;
+        background-clip: padding-box, border-box;
     }
 
     .neon-border::before {
         content: '';
         position: absolute;
-        width: 200%;
-        height: 300%;
-        top: -100%;
-        left: -50%;
+        top: 0; right: 0; bottom: 0; left: 0;
         z-index: -1;
+        margin: -1.5px; /* Same as border width */
+        border-radius: inherit;
         background: conic-gradient(
-            transparent,
-            #ff0000, /* red */
-            #ff00ff, /* magenta */
-            #0000ff, /* blue */
-            #00ffff, /* cyan */
-            #00ff00, /* green */
-            #ffff00, /* yellow */
-            #ff0000  /* back to red */
+            from 0deg at 50% 50%,
+            #ff0000,
+            #ff00ff,
+            #0000ff,
+            #00ffff,
+            #00ff00,
+            #ffff00,
+            #ff0000
         );
         animation: rotate 4s linear infinite;
     }

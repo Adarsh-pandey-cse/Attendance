@@ -21,16 +21,13 @@ const DivineImage = () => {
 
   return (
     <div className="relative group my-6 flex justify-center">
-       <div 
-        className="absolute -inset-1 rounded-full bg-gradient-to-r from-yellow-400 via-red-500 to-orange-500 opacity-75 blur-lg transition duration-1000 group-hover:opacity-100 group-hover:duration-200 animate-tilt"
-      ></div>
       <Image
         src={image.imageUrl}
         alt={image.description}
         width={150}
         height={150}
         data-ai-hint={image.imageHint}
-        className="relative rounded-full border-4 border-white/60 shadow-xl"
+        className="relative rounded-full border border-white/60 shadow-xl"
       />
     </div>
   );

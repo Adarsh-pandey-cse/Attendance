@@ -74,7 +74,7 @@ const sendBugReportFlow = ai.defineFlow(
   async (bugDescription) => {
     // We just call the prompt and let the LLM call the tool.
     // The prompt already knows the recipient and the subject line.
-    await bugReportPrompt(bugDescription);
+    await bugReportPrompt({ prompt: bugDescription });
 
     return { success: true, message: 'Bug report sent successfully.' };
   }

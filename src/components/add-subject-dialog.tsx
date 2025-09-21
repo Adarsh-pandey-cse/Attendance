@@ -103,7 +103,7 @@ export function AddSubjectDialog({ children }: AddSubjectDialogProps) {
                   <FormItem>
                     <FormLabel className='font-semibold'>Classes Attended</FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} />
+                      <Input type="number" {...field} onFocus={(e) => e.target.select()} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -116,7 +116,7 @@ export function AddSubjectDialog({ children }: AddSubjectDialogProps) {
                   <FormItem>
                     <FormLabel className='font-semibold'>Total Classes</FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} />
+                      <Input type="number" {...field} onFocus={(e) => e.target.select()} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

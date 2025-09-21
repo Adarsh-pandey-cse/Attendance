@@ -59,7 +59,7 @@ export const useAttendance = () => {
       }
       return subject;
     });
-    setSubjects(updatedSubjects);
+    setSubjects([...updatedSubjects]);
   };
 
   const getSubjectById = (subjectId: string): Subject | undefined => {

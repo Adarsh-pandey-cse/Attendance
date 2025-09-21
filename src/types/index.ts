@@ -11,3 +11,9 @@ export type Subject = {
   attendedClasses: number;
   history: AttendanceLog[];
 };
+
+export type UserData = {
+    userName: string;
+    profilePicture: string | null;
+    overallTarget: number;
+}

@@ -65,7 +65,7 @@ export function EditSubjectDialog({ children, subject }: EditSubjectDialogProps)
   }, [open, subject, form]);
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    updateSubject({ ...subject, ...values });
+    updateSubject({ id: subject.id, ...values });
     setOpen(false);
   };
 

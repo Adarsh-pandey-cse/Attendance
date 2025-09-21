@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { useActionState } from 'react';
+import { useEffect, useRef, useState, useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import {
   Dialog,
@@ -26,7 +25,7 @@ type ReportBugDialogProps = {
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" className="w-full font-bold" disabled={pending}>
+    <Button type="submit" className="w-full font-bold gap-2" disabled={pending}>
       {pending ? (
         <>
           <Loader2 className="animate-spin" /> Submitting...
@@ -40,7 +39,7 @@ function SubmitButton() {
   );
 }
 
-export function ReportBugDialog({ isOpen, onOpenChange }: ReportBugDialogProps) {
+function BugReportForm({ setDialogOpen }: { setDialogOpen: (open: boolean) => void }) {
   const initialState = { message: '', success: false };
   const [state, dispatch] = useActionState(submitBugReport, initialState);
   const { toast } = useToast();
@@ -52,24 +51,44 @@ export function ReportBugDialog({ isOpen, onOpenChange }: ReportBugDialogProps) 
       if (state.success) {
         toast({ title: 'Success!', description: state.message });
         formRef.current?.reset();
-        onOpenChange(false);
+        setDialogOpen(false);
       } else {
         toast({ title: 'Error', description: state.message, variant: 'destructive' });
       }
     }
-  }, [state, toast, onOpenChange]);
-  
-  // Reset form state when dialog is closed/opened
-  useEffect(() => {
-    if (!isOpen) {
-        formRef.current?.reset();
-        // A way to reset the form state action
-        dispatch({
-            type: '@@RESET',
-        } as any);
-    }
-  }, [isOpen, dispatch]);
+  }, [state, toast, setDialogOpen]);
 
+  return (
+    <form ref={formRef} action={dispatch} className="space-y-4">
+      <input type="hidden" name="userName" value={userName} />
+      <div>
+        <Textarea
+          name="description"
+          placeholder="Please provide a detailed description of the bug, including steps to reproduce it if possible."
+          rows={6}
+          className="text-base"
+          required
+          autoFocus
+        />
+      </div>
+      <DialogFooter>
+        <SubmitButton />
+      </DialogFooter>
+    </form>
+  );
+}
+
+export function ReportBugDialog({ isOpen, onOpenChange }: ReportBugDialogProps) {
+  // By giving the form a new key each time the dialog opens,
+  // we ensure it remounts with a fresh state, which is the correct
+  // way to "reset" the useActionState hook.
+  const [formKey, setFormKey] = useState(() => Date.now().toString());
+
+  useEffect(() => {
+    if (isOpen) {
+      setFormKey(Date.now().toString());
+    }
+  }, [isOpen]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -82,22 +101,7 @@ export function ReportBugDialog({ isOpen, onOpenChange }: ReportBugDialogProps) 
             Encountered an issue? Please describe it in detail below. Your feedback helps improve the app.
           </DialogDescription>
         </DialogHeader>
-        <form ref={formRef} action={dispatch} className="space-y-4">
-           <input type="hidden" name="userName" value={userName} />
-          <div>
-            <Textarea
-              name="description"
-              placeholder="Please provide a detailed description of the bug, including steps to reproduce it if possible."
-              rows={6}
-              className="text-base"
-              required
-              autoFocus
-            />
-          </div>
-          <DialogFooter>
-            <SubmitButton />
-          </DialogFooter>
-        </form>
+        {isOpen && <BugReportForm key={formKey} setDialogOpen={onOpenChange} />}
       </DialogContent>
     </Dialog>
   );

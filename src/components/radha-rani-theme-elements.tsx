@@ -3,6 +3,7 @@
 import { useTheme } from '@/hooks/use-theme';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { useEffect, useState } from 'react';
 
 const DivineImage = ({ imageId, className, alt }: { imageId: string; className?: string, alt: string }) => {
   const image = PlaceHolderImages.find(img => img.id === imageId);
@@ -71,8 +72,13 @@ const Marquee = () => {
 
 export function RadhaRaniThemeElements() {
   const { theme } = useTheme();
+  const [isMounted, setIsMounted] = useState(false);
 
-  if (theme !== 'radha-rani') {
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted || theme !== 'radha-rani') {
     return null;
   }
 

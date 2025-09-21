@@ -45,7 +45,21 @@ export function Greeting() {
     fetchQuote();
   }, [isClient]);
   
-  const greetingText = isRadhaTheme ? 'राधा वल्लभ श्री हरिवंश,' : 'Hello,';
+  const getGreeting = () => {
+    if (isRadhaTheme) {
+      return 'राधा वल्लभ श्री हरिवंश,';
+    }
+    const currentHour = new Date().getHours();
+    if (currentHour < 12) {
+      return 'Good morning,';
+    } else if (currentHour < 18) {
+      return 'Good afternoon,';
+    } else {
+      return 'Good evening,';
+    }
+  };
+  
+  const greetingText = isClient ? getGreeting() : 'Hello,';
   
   let quoteColorClass = 'text-yellow-400';
   if (isRadhaTheme) {
@@ -54,7 +68,7 @@ export function Greeting() {
 
   return (
     <div className={cn("text-center", isRadhaTheme && "homepage-section")}>
-      <h2 className="text-3xl font-bold font-hindi text-center" style={{fontFamily: "'Tiro Devanagari Hindi', serif"}}>
+      <h2 className="text-3xl font-bold font-hindi text-center" style={{fontFamily: isRadhaTheme ? "'Tiro Devanagari Hindi', serif" : 'inherit'}}>
           {greetingText}
       </h2>
       <div className="text-center">

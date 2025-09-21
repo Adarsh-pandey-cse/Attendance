@@ -21,11 +21,16 @@ export function Greeting() {
   }, []);
 
   useEffect(() => {
+    if (!isClient) return;
     const fetchQuote = async () => {
       setQuoteLoading(true);
       try {
         const response = await getDailyQuote(theme);
-        setQuote(response.quote);
+        if (response?.quote) {
+            setQuote(response.quote);
+        } else {
+            setQuote("The best way to predict the future is to create it.");
+        }
       } catch (error) {
         console.error("Failed to fetch daily quote", error);
         setQuote("The best way to predict the future is to create it.");
@@ -34,20 +39,19 @@ export function Greeting() {
       }
     };
     fetchQuote();
-  }, [theme]);
+  }, [theme, isClient]);
   
   const greetingText = isClient && theme === 'radha-rani' ? 'राधा वल्लभ श्री हरिवंश,' : 'Hello,';
   
-  let quoteColorClass = 'text-yellow-300';
+  let quoteColorClass = 'text-yellow-400';
   if (isClient && theme === 'radha-rani') {
     quoteColorClass = 'text-orange-700';
   }
 
-  if (isClient && theme === 'radha-rani') {
-    return (
-      <div>
+  return (
+    <div>
         <h2 className="text-3xl font-bold font-hindi text-center" style={{fontFamily: "'Tiro Devanagari Hindi', serif"}}>
-          {greetingText}
+            {greetingText}
         </h2>
         <div className="text-center">
             <span className="text-2xl font-bold ml-2">{isClient ? userName : 'Student'}!</span>
@@ -59,26 +63,6 @@ export function Greeting() {
         ) : (
             <p className={`text-lg font-semibold ${quoteColorClass} mt-2 italic text-center`}>&quot;{quote}&quot;</p>
         )}
-      </div>
-    )
-  }
-
-
-  return (
-    <div className="glass-card p-6">
-      <div className="flex items-center">
-        <h2 className="text-3xl font-bold font-hindi" style={{fontFamily: "'Tiro Devanagari Hindi', serif"}}>
-          {greetingText}
-        </h2>
-        <span className="text-2xl font-bold ml-2">{isClient ? userName : 'Student'}!</span>
-      </div>
-       {isClient && <p className="text-muted-foreground font-semibold mt-1">{currentDate}</p>}
-
-      {quoteLoading ? (
-         <p className="text-lg font-semibold text-yellow-300/80 mt-2 italic">Loading quote...</p>
-      ) : (
-        <p className={`text-lg font-semibold ${quoteColorClass} mt-2 italic`}>&quot;{quote}&quot;</p>
-      )}
     </div>
   );
 }

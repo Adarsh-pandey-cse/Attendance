@@ -19,7 +19,10 @@ export type BugReportOutput = z.infer<typeof BugReportOutputSchema>;
 
 export async function sendBugReport(input: BugReportInput): Promise<BugReportOutput> {
   const result = await bugReporter(input);
-  return { success: true, message: result };
+  if (result.sent) {
+    return { success: true, message: "Bug report has been sent successfully." };
+  }
+  return { success: false, message: result.message || "The model did not send the bug report. You may need to try again." };
 }
 
 // This is a mock tool. In a real application, this would use an email service
@@ -56,10 +59,13 @@ const bugReporter = ai.defineFlow(
   {
     name: 'bugReporter',
     inputSchema: BugReportInputSchema,
-    outputSchema: z.string(),
+    outputSchema: z.object({
+      sent: z.boolean(),
+      message: z.string().optional(),
+    }),
   },
   async (bugReport) => {
-    const { output: llmResponse } = await ai.generate({
+    const llmResponse = await ai.generate({
       prompt: `A user has submitted the following bug report. Your task is to send this report to 'pandeyji5544@gmail.com' using the provided sendEmailTool.
 
 The subject of the email must be "Bug Report from AttendX App".
@@ -71,13 +77,14 @@ ${bugReport}
 """
 `,
       tools: [sendEmailTool],
+      model: 'googleai/gemini-2.5-flash',
     });
     
     // Check if the tool was called and return a confirmation message.
-    if (llmResponse?.toolRequests?.length > 0) {
-      return "Bug report has been sent successfully.";
+    if (llmResponse.toolRequests.length > 0) {
+      return { sent: true };
     }
 
-    return "The model did not send the bug report. You may need to try again.";
+    return { sent: false, message: llmResponse.text };
   }
 );

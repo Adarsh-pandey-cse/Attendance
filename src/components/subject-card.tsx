@@ -19,13 +19,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { EditSubjectDialog } from './edit-subject-dialog';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { motion, useAnimation } from 'framer-motion';
 
 type SubjectCardProps = {
   subject: Subject;
 };
 
-const CircularProgress = ({ percentage, target }: { percentage: number, target: number }) => {
+const CircularProgress = ({ percentage, target, animateControls }: { percentage: number, target: number, animateControls: any }) => {
   const radius = 50;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (percentage / 100) * circumference;
@@ -33,10 +34,9 @@ const CircularProgress = ({ percentage, target }: { percentage: number, target: 
   let colorClass = 'text-yellow-400';
   if (percentage >= target) {
     colorClass = 'text-green-400';
-  } else if (percentage < target * 0.75) { // e.g., if target is 75, this is < 56.25
+  } else if (percentage < target * 0.75) { 
     colorClass = 'text-red-500';
   }
-
 
   return (
     <div className="relative w-28 h-28">
@@ -50,11 +50,10 @@ const CircularProgress = ({ percentage, target }: { percentage: number, target: 
           cx="60"
           cy="60"
         />
-        <circle
-          className={`${colorClass} transition-all duration-500`}
+        <motion.circle
+          className={`${colorClass} transition-colors duration-300`}
           strokeWidth="10"
           strokeDasharray={circumference}
-          strokeDashoffset={offset}
           strokeLinecap="round"
           stroke="currentColor"
           fill="transparent"
@@ -62,11 +61,18 @@ const CircularProgress = ({ percentage, target }: { percentage: number, target: 
           cx="60"
           cy="60"
           transform="rotate(-90 60 60)"
+          initial={{ strokeDashoffset: circumference }}
+          animate={{ strokeDashoffset: offset }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
         />
       </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
+      <motion.div 
+        className="absolute inset-0 flex flex-col items-center justify-center"
+        animate={animateControls}
+        initial={{ scale: 1 }}
+      >
         <span className="text-2xl font-bold">{percentage.toFixed(0)}%</span>
-      </div>
+      </motion.div>
     </div>
   );
 };
@@ -100,6 +106,20 @@ export function SubjectCard({ subject }: SubjectCardProps) {
     deleteSubject(subject.id);
     setIsDeleteDialogOpen(false);
   }
+  
+  const animationControls = useAnimation();
+  const prevSubjectRef = useRef(subject);
+
+  useEffect(() => {
+    if (prevSubjectRef.current.attendedClasses !== subject.attendedClasses || prevSubjectRef.current.totalClasses !== subject.totalClasses) {
+      animationControls.start({
+        scale: [1, 1.2, 1],
+        transition: { duration: 0.4, times: [0, 0.5, 1] }
+      });
+    }
+    prevSubjectRef.current = subject;
+  }, [subject.attendedClasses, subject.totalClasses, animationControls]);
+
 
   return (
     <div className="glass-card p-4 space-y-4 transition-all duration-300 hover:shadow-xl hover:border-primary/20">
@@ -144,13 +164,17 @@ export function SubjectCard({ subject }: SubjectCardProps) {
       )}
 
       <div className="flex items-center justify-around gap-4">
-        <CircularProgress percentage={percentage} target={overallTarget} />
-        <div className="text-center">
+        <CircularProgress percentage={percentage} target={overallTarget} animateControls={animationControls} />
+        <motion.div 
+            className="text-center"
+            animate={animationControls}
+            initial={{ scale: 1 }}
+        >
             <p className="text-3xl font-bold">
               {subject.attendedClasses}/{subject.totalClasses}
             </p>
             <p className="text-sm text-muted-foreground font-semibold">Classes</p>
-        </div>
+        </motion.div>
       </div>
       
       <div className="text-center">

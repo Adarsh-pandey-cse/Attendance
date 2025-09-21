@@ -13,6 +13,7 @@ import {
   writeBatch,
   serverTimestamp,
   Timestamp,
+  setDoc,
 } from 'firebase/firestore';
 import type { Subject, AttendanceLog, UserData } from '@/types';
 import { useToast } from './use-toast';
@@ -33,6 +34,7 @@ export const useAttendance = () => {
 
   // --- Real-time Listeners ---
   useEffect(() => {
+    setLoading(true);
     // Listen for user profile data (name, picture, target)
     const unsubscribeUser = onSnapshot(userDocRef, (doc) => {
       if (doc.exists()) {
@@ -42,15 +44,10 @@ export const useAttendance = () => {
         setOverallTargetState(data.overallTarget || 75);
       } else {
         // If the user document doesn't exist, create it with default values
-        updateDoc(userDocRef, {
-            userName: 'Student',
-            profilePicture: null,
-            overallTarget: 75,
-        }, { merge: true });
+        // This is handled by the set functions now to ensure it exists before write
       }
     }, (error) => {
       console.error("Error fetching user data:", error);
-      // We don't want to block the UI for user data errors, but we can toast
       toast({ title: "Warning", description: "Could not load user profile.", variant: "destructive" });
     });
 
@@ -152,7 +149,7 @@ export const useAttendance = () => {
   
   const setUserName = async (name: string) => {
     try {
-      await updateDoc(userDocRef, { userName: name }, { merge: true });
+      await setDoc(userDocRef, { userName: name }, { merge: true });
     } catch (error) {
       console.error('Error updating user name:', error);
     }
@@ -160,7 +157,7 @@ export const useAttendance = () => {
 
   const setProfilePicture = async (url: string | null) => {
     try {
-      await updateDoc(userDocRef, { profilePicture: url }, { merge: true });
+      await setDoc(userDocRef, { profilePicture: url }, { merge: true });
     } catch (error) {
       console.error('Error updating profile picture:', error);
     }
@@ -168,7 +165,7 @@ export const useAttendance = () => {
   
   const setOverallTarget = async (target: number) => {
      try {
-      await updateDoc(userDocRef, { overallTarget: target }, { merge: true });
+      await setDoc(userDocRef, { overallTarget: target }, { merge: true });
     } catch (error) {
       console.error('Error updating overall target:', error);
     }

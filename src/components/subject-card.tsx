@@ -76,17 +76,20 @@ export function SubjectCard({ subject }: SubjectCardProps) {
   const needed = calculateClassesToAttend(subject.attendedClasses, subject.totalClasses, overallTarget);
   const bunkable = calculateClassesToBunk(subject.attendedClasses, subject.totalClasses, overallTarget);
 
-  let statusText, statusColor;
+  let statusText, statusColor, isAboveTarget;
   if (percentage < overallTarget) {
     statusText = `Attend next ${needed} class${needed !== 1 ? 'es' : ''} to reach target.`;
     statusColor = "text-red-400";
+    isAboveTarget = false;
   } else {
     statusText = `You can bunk next ${bunkable} class${bunkable !== 1 ? 'es' : ''}.`;
     statusColor = "text-cyan-400";
+    isAboveTarget = true;
   }
   if (needed === Infinity) {
     statusText = "Target is unreachable."
     statusColor = "text-red-400";
+    isAboveTarget = false;
   }
 
   const handleDelete = () => {
@@ -128,6 +131,14 @@ export function SubjectCard({ subject }: SubjectCardProps) {
         </div>
       </div>
       
+      {isAboveTarget && (
+         <div className="text-center">
+            <p className="text-xl font-bold text-green-400 font-hindi" style={{fontFamily: "'Tiro Devanagari Hindi', serif"}}>
+                Leyyy bete mauj kardi...!! 😎
+            </p>
+        </div>
+      )}
+
       <div className="flex items-center justify-around gap-4">
         <CircularProgress percentage={percentage} />
         <div className="text-center">
@@ -140,7 +151,7 @@ export function SubjectCard({ subject }: SubjectCardProps) {
       
       <div className="text-center">
         <p className={`font-bold ${statusColor}`}>{statusText}</p>
-        <AttendanceNotification subject={subject} />
+        {!isAboveTarget && <AttendanceNotification subject={subject} />}
       </div>
 
       <div className="flex gap-2">

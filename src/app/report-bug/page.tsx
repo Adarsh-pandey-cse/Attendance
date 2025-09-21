@@ -12,6 +12,10 @@ import { useToast } from '@/hooks/use-toast';
 import { useAttendance } from '@/hooks/use-attendance';
 import { saveBugReport } from '@/lib/actions';
 import { useRouter } from 'next/navigation';
+import { storage } from '@/lib/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { BugReportAttachment } from '@/types';
+
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_FILE_TYPES = {
@@ -67,16 +71,23 @@ export default function ReportBugPage() {
 
     setIsSending(true);
     
-    const formData = new FormData();
-    formData.append('description', description);
-    formData.append('userName', userName || 'Anonymous');
-    formData.append('deviceInfo', deviceInfo);
-    files.forEach(file => {
-      formData.append('attachments', file);
-    });
-
     try {
-      const result = await saveBugReport(formData);
+      // 1. Upload files to Firebase Storage directly from the client
+      const attachmentUrls: BugReportAttachment[] = [];
+      for (const file of files) {
+        const storageRef = ref(storage, `bug-attachments/${Date.now()}-${file.name}`);
+        const snapshot = await uploadBytes(storageRef, file);
+        const downloadURL = await getDownloadURL(snapshot.ref);
+        attachmentUrls.push({ name: file.name, url: downloadURL });
+      }
+
+      // 2. Call the server action with text data and the file URLs
+      const result = await saveBugReport({
+        description,
+        userName: userName || 'Anonymous',
+        deviceInfo,
+        attachments: attachmentUrls,
+      });
 
       if (result.success) {
         toast({
@@ -91,7 +102,7 @@ export default function ReportBugPage() {
       console.error('Error submitting bug report:', error);
       toast({
         title: 'Submission Failed',
-        description: error.message || 'An unexpected error occurred.',
+        description: error.message || 'An unexpected error occurred. Please check your connection and try again.',
         variant: 'destructive',
       });
     } finally {

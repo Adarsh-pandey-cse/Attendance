@@ -19,9 +19,9 @@ export function RadhaRaniThemeElements() {
   return (
     <>
         <div className="radha-rani-background"></div>
-        <div className="fixed bottom-0 left-0 w-full h-16 overflow-hidden z-50 pointer-events-none">
+        <div className="fixed bottom-2 left-0 w-full h-12 overflow-hidden z-50 pointer-events-none yellow-stripped-background py-1">
             <motion.div 
-              className="absolute whitespace-nowrap bottom-4"
+              className="absolute whitespace-nowrap"
               initial={{ x: '100%' }}
               animate={{ x: '-100%' }}
               transition={{
@@ -30,7 +30,7 @@ export function RadhaRaniThemeElements() {
                 ease: 'linear'
               }}
             >
-                <p className="font-hindi text-3xl bg-gradient-to-r from-pink-500 via-red-500 to-yellow-400 bg-clip-text text-transparent" style={{fontFamily: "'Tiro Devanagari Hindi', serif"}}>
+                <p className="font-hindi text-2xl font-bold bg-gradient-to-r from-pink-500 to-black bg-clip-text text-transparent" style={{fontFamily: "'Tiro Devanagari Hindi', serif"}}>
                     <span className='mx-8'>राधा राधा</span>
                     <span className='mx-8'>राधा राधा</span>
                     <span className='mx-8'>राधा राधा</span>

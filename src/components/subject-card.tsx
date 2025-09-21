@@ -100,24 +100,28 @@ const CircularProgress = ({ percentage, target, animateControls }: { percentage:
 export function SubjectCard({ subject }: SubjectCardProps) {
   const { markAttendance, deleteSubject, overallTarget } = useAttendance();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const { theme } = useTheme();
   const percentage = subject.totalClasses > 0 ? (subject.attendedClasses / subject.totalClasses) * 100 : 0;
   
   const needed = calculateClassesToAttend(subject.attendedClasses, subject.totalClasses, overallTarget);
   const bunkable = calculateClassesToBunk(subject.attendedClasses, subject.totalClasses, overallTarget);
 
   let statusText, statusColor, isAboveTarget;
+
+  const isRadhaTheme = theme === 'radha-rani';
+
   if (percentage < overallTarget) {
     statusText = `Attend next ${needed} class${needed !== 1 ? 'es' : ''} to reach target.`;
-    statusColor = "text-red-400";
+    statusColor = isRadhaTheme ? "text-red-700" : "text-red-400";
     isAboveTarget = false;
   } else {
     statusText = `You can bunk next ${bunkable} class${bunkable !== 1 ? 'es' : ''}.`;
-    statusColor = "text-cyan-400";
+    statusColor = isRadhaTheme ? "text-orange-600" : "text-cyan-400";
     isAboveTarget = true;
   }
   if (needed === Infinity) {
     statusText = "Target is unreachable."
-    statusColor = "text-red-400";
+    statusColor = isRadhaTheme ? "text-red-700" : "text-red-400";
     isAboveTarget = false;
   }
 
@@ -176,7 +180,7 @@ export function SubjectCard({ subject }: SubjectCardProps) {
       
       {isAboveTarget && (
          <div className="text-center">
-            <p className="text-xl font-bold text-green-400">
+            <p className="text-xl font-bold text-green-600">
                 You're on track! Keep it up!
             </p>
         </div>

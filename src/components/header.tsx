@@ -16,13 +16,22 @@ import Link from 'next/link';
 import { useAttendance } from '@/hooks/use-attendance';
 import { Slider } from '@/components/ui/slider';
 import { useTheme } from '@/hooks/use-theme';
+import { cn } from '@/lib/utils';
+import { useEffect, useState } from 'react';
 
 export function Header() {
   const { overallTarget, setOverallTarget } = useAttendance();
   const { theme, setTheme } = useTheme();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const isRadhaTheme = isClient && theme === 'radha-rani';
 
   return (
-    <header className="flex justify-between items-center py-2">
+    <header className={cn("flex justify-between items-center py-2", isRadhaTheme && 'homepage-section rounded-2xl px-4')}>
       <Logo />
       <div className="flex items-center gap-4">
         <ProfileSection />

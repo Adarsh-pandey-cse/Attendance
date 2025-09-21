@@ -34,7 +34,7 @@ const prompt = ai.definePrompt({
   {{#if theme}}
   Please provide one short, powerful, motivational quote related to Radha Krishna, spiritual love, or devotion. The tone should be uplifting and serene.
   {{else}}
-  Please provide one short, powerful, motivational quote by Premanand ji Maharaj in Hindi. The quote should be inspiring and related to devotion or spiritual life.
+  Please provide one short, powerful, motivational quote by Premanand ji Maharaj in Hindi. The quote MUST be in Hindi script.
   {{/if}}
   
   The quote should be unique and not one of the following:

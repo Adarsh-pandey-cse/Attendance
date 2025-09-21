@@ -6,6 +6,7 @@ import { useAttendance } from '@/hooks/use-attendance';
 import { motion } from 'framer-motion';
 import { calculateClassesToAttend, calculateClassesToBunk } from '@/lib/utils';
 import { useTheme } from '@/hooks/use-theme';
+import { cn } from '@/lib/utils';
 
 const OverallCircularProgress = ({ percentage, target }: { percentage: number, target: number }) => {
     const radius = 60;
@@ -79,16 +80,18 @@ export function OverallAttendance() {
     }, [subjects, overallTarget]);
 
     let statusText, statusColor;
+    const isRadhaTheme = isClient && theme === 'radha-rani';
+
     if (overallPercentage < overallTarget) {
         statusText = `Attend the next ${needed} class${needed !== 1 ? 'es' : ''} to reach your target.`;
-        statusColor = "text-red-400";
+        statusColor = isRadhaTheme ? "text-red-700" : "text-red-400";
     } else {
         statusText = `You can safely miss the next ${bunkable} class${bunkable !== 1 ? 'es' : ''}.`;
-        statusColor = "text-cyan-400";
+        statusColor = isRadhaTheme ? "text-orange-600" : "text-cyan-400";
     }
      if (needed === Infinity) {
         statusText = "Target is unreachable. You may need to edit your attendance data.";
-        statusColor = "text-red-500 font-bold";
+        statusColor = isRadhaTheme ? "text-red-700 font-bold" : "text-red-500 font-bold";
     }
 
 
@@ -96,13 +99,9 @@ export function OverallAttendance() {
         return null;
     }
 
-    const containerClasses = isClient && theme === 'radha-rani'
-        ? "p-6 flex flex-col md:flex-row items-center justify-around gap-6"
-        : "glass-card p-6 flex flex-col md:flex-row items-center justify-around gap-6";
-
     return (
         <motion.div
-            className={containerClasses}
+            className={cn(isRadhaTheme ? "homepage-section" : "glass-card", "p-6 flex flex-col md:flex-row items-center justify-around gap-6")}
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}

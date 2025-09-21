@@ -38,21 +38,17 @@ const attendanceTargetNotificationsPrompt = ai.definePrompt({
   name: 'attendanceTargetNotificationsPrompt',
   input: {schema: AttendanceTargetNotificationsInputSchema},
   output: {schema: AttendanceTargetNotificationsOutputSchema},
-  prompt: `You are a helpful assistant that generates notifications for students regarding their attendance in Hindi.
+  prompt: `You are a helpful assistant that generates motivational notifications for students in Hindi if their attendance is low.
 
-  Generate a notification message based on the student's current attendance percentage, the target attendance percentage, and the number of classes needed to reach the target.
+  Generate a supportive and encouraging message for the student to attend the required number of classes. The tone should be positive and motivating, not scolding.
 
   Subject Name: {{{subjectName}}}
   Attendance Percentage: {{{attendancePercentage}}}
   Attendance Target: {{{attendanceTarget}}}
   Classes Needed: {{{classesNeeded}}}
 
-  Consider these cases when creating a notification:
-  - If the attendance percentage is below the target, encourage the student to attend the required number of classes in a supportive tone.
-  - If the attendance percentage is near the target (e.g., within 5%), gently remind the student to maintain their attendance.
-  - If the number of classes needed to reach the target is zero, then congratulate the student for being at the target already.
-
-  The notification should be short, sensible, and grammatically correct.
+  The notification should be short, sensible, and grammatically correct Hindi.
+  Example: "थोड़ी और मेहनत, और आप लक्ष्य तक पहुँच जाएँगे।"
 
   Notification:`,
 });

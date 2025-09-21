@@ -134,7 +134,7 @@ export function SubjectCard({ subject }: SubjectCardProps) {
       {isAboveTarget && (
          <div className="text-center">
             <p className="text-xl font-bold text-green-400 font-hindi" style={{fontFamily: "'Tiro Devanagari Hindi', serif"}}>
-                Leyyy bete mauj kardi...!! 😎
+                लेय्य बेटे मौज करदी...!! 😎
             </p>
         </div>
       )}

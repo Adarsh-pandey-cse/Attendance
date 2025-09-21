@@ -63,7 +63,7 @@ export function Greeting() {
       {isRadhaTheme && (
         <div className="mb-4">
           <Image 
-            src="/radha-rani-dp.png" 
+            src="https://i.imgur.com/Y0bagua.jpeg" 
             alt="Radha Rani"
             width={96}
             height={96}

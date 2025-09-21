@@ -13,14 +13,14 @@ import { revalidatePath } from 'next/cache';
 
 const BugSchema = z.string().trim().min(1, { message: "Description cannot be empty." });
 
-export async function submitBugReport(description: string): Promise<{ success: boolean; message: string; errors?: any; }> {
+export async function submitBugReport(description: string): Promise<{ success: boolean; message: string; data?: string; }> {
   const validatedFields = BugSchema.safeParse(description);
 
   if (!validatedFields.success) {
     return {
-      errors: validatedFields.error.flatten().formErrors,
-      message: 'Validation failed.',
+      message: 'Validation failed: Description cannot be empty.',
       success: false,
+      data: description,
     };
   }
 
@@ -43,6 +43,7 @@ export async function submitBugReport(description: string): Promise<{ success: b
     return {
       message: 'An unexpected error occurred. Failed to submit bug report.',
       success: false,
+      data: description,
     };
   }
 }

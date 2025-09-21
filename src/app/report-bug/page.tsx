@@ -28,23 +28,28 @@ export default function ReportBugPage() {
     
     setPending(true);
 
+    // Optimistic UI: Show success and clear the form immediately
+    toast({
+      title: 'Success!',
+      description: 'Bug report submitted. Thank you for your feedback!',
+    });
+    setDescription('');
+    
+    // Perform the actual submission in the background
     const result = await submitBugReport(description);
 
-    if (result.success) {
+    setPending(false);
+
+    // If the background submission fails, inform the user.
+    if (!result.success) {
       toast({
-        title: 'Success!',
-        description: result.message,
-      });
-      setDescription('');
-    } else {
-      toast({
-        title: 'Error',
-        description: result.message,
+        title: 'Submission Failed',
+        description: 'There was an error submitting your report. Please try again.',
         variant: 'destructive',
       });
+      // Restore the description so the user doesn't lose their text
+      setDescription(result.data || description);
     }
-    
-    setPending(false);
   };
 
   return (

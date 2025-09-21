@@ -6,7 +6,7 @@
  */
 
 import { db } from '@/lib/firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, addDoc, collection, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { z } from 'zod';
 import { DeveloperInfo } from '@/types';
 import { revalidatePath } from 'next/cache';
@@ -45,4 +45,58 @@ export async function saveDeveloperInfo(
       message: 'An unexpected error occurred while saving developer info.',
     };
   }
+}
+
+// --- Bug Report Actions ---
+
+const BugReportSchema = z.object({
+  description: z.string().min(10, { message: "Description must be at least 10 characters long." }),
+  userName: z.string(),
+});
+
+export async function submitBugReport(
+  prevState: any,
+  formData: FormData
+): Promise<{ success: boolean; message: string; }> {
+    const validatedFields = BugReportSchema.safeParse({
+        description: formData.get('description'),
+        userName: formData.get('userName'),
+    });
+
+    if (!validatedFields.success) {
+        return {
+            success: false,
+            message: validatedFields.error.flatten().fieldErrors.description?.[0] || 'Invalid data provided.',
+        };
+    }
+
+    const { description, userName } = validatedFields.data;
+
+    try {
+        const bugReportsColRef = collection(db, 'bug-reports');
+        await addDoc(bugReportsColRef, {
+            description,
+            userName,
+            timestamp: Date.now(),
+            status: 'open',
+        });
+        
+        revalidatePath('/admin');
+        return { success: true, message: 'Thank you! Your bug report has been received.' };
+    } catch (error) {
+        console.error('Error submitting bug report:', error);
+        return { success: false, message: 'An unexpected error occurred. Please try again.' };
+    }
+}
+
+export async function updateBugStatus(bugId: string, status: 'open' | 'closed'): Promise<{ success: boolean; message: string }> {
+    try {
+        const bugDocRef = doc(db, 'bug-reports', bugId);
+        await updateDoc(bugDocRef, { status });
+        revalidatePath('/admin');
+        return { success: true, message: `Bug marked as ${status}.` };
+    } catch (error) {
+        console.error('Error updating bug status:', error);
+        return { success: false, message: 'Failed to update bug status.' };
+    }
 }

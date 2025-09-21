@@ -218,6 +218,10 @@
       @apply text-yellow-400;
   }
 
+  .light .motivational-quote {
+      @apply text-cyan-600;
+  }
+  
   .radha-rani .motivational-quote {
       @apply text-orange-700;
   }

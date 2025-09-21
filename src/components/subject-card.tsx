@@ -21,6 +21,7 @@ import {
 import { EditSubjectDialog } from './edit-subject-dialog';
 import { useState, useEffect, useRef } from 'react';
 import { motion, useAnimation } from 'framer-motion';
+import { useTheme } from '@/hooks/use-theme';
 
 type SubjectCardProps = {
   subject: Subject;
@@ -29,6 +30,7 @@ type SubjectCardProps = {
 const CircularProgress = ({ percentage, target, animateControls }: { percentage: number, target: number, animateControls: any }) => {
   const radius = 50;
   const circumference = 2 * Math.PI * radius;
+  const { theme } = useTheme();
   
   const a = (percentage / 100) * circumference;
   const [offset, setOffset] = useState(circumference - a)
@@ -43,6 +45,17 @@ const CircularProgress = ({ percentage, target, animateControls }: { percentage:
   } else if (percentage < target * 0.75) { 
     colorClass = 'text-red-500';
   }
+  
+  if (theme === 'radha-rani') {
+    if (percentage >= target) {
+      colorClass = 'text-green-600';
+    } else if (percentage < target * 0.75) { 
+      colorClass = 'text-red-600';
+    } else {
+        colorClass = 'text-orange-500';
+    }
+  }
+
 
   return (
     <div className="relative w-28 h-28">

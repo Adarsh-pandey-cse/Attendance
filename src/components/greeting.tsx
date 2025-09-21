@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAttendance } from '@/hooks/use-attendance';
 import { getDailyQuote } from '@/ai/flows/daily-quote-flow';
 import { format } from 'date-fns';
+import { useTheme } from '@/hooks/use-theme';
 
 export function Greeting() {
   const { userName } = useAttendance();
@@ -11,6 +12,7 @@ export function Greeting() {
   const [quoteLoading, setQuoteLoading] = useState(true);
   const [currentDate, setCurrentDate] = useState('');
   const [isClient, setIsClient] = useState(false);
+  const { theme } = useTheme();
 
   useEffect(() => {
     setIsClient(true);
@@ -32,14 +34,19 @@ export function Greeting() {
     };
     fetchQuote();
   }, []);
+  
+  const greetingText = isClient && theme === 'radha-rani' ? 'राधा वल्लभ श्री हरिवंश,' : 'Hello,';
+  
+  let quoteColorClass = 'text-yellow-300';
+  if (isClient && theme === 'radha-rani') {
+    quoteColorClass = 'text-orange-700';
+  }
 
-  const greetingText = 'Hello,';
-  const quoteColorClass = 'text-yellow-300';
 
   return (
     <div className="glass-card p-6">
       <div className="flex items-center">
-        <h2 className="text-3xl font-bold">
+        <h2 className="text-3xl font-bold font-hindi" style={{fontFamily: "'Tiro Devanagari Hindi', serif"}}>
           {greetingText}
         </h2>
         <span className="text-2xl font-bold ml-2">{isClient ? userName : 'Student'}!</span>

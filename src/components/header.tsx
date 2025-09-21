@@ -11,7 +11,7 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem
 } from '@/components/ui/dropdown-menu';
-import { MoreVertical, Info, Percent, CalendarClock, Shield, Moon, Sun, Palette } from 'lucide-react';
+import { MoreVertical, Info, Percent, CalendarClock, Shield, Moon, Sun, Palette, Star } from 'lucide-react';
 import Link from 'next/link';
 import { useAttendance } from '@/hooks/use-attendance';
 import { Slider } from '@/components/ui/slider';
@@ -64,6 +64,9 @@ export function Header() {
                     </DropdownMenuRadioItem>
                     <DropdownMenuRadioItem value="dark" className='font-semibold'>
                         <Moon className="mr-2" /> Dark
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="radha-rani" className='font-semibold'>
+                        <Star className="mr-2 text-yellow-500" /> Radha Rani
                     </DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
             </div>

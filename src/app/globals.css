@@ -100,6 +100,36 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 147 58% 40%;
   }
+
+  .radha-rani {
+    --background: 30 100% 98%; /* Light yellow */
+    --foreground: 25 80% 20%; /* Dark orange/brown */
+
+    --card: 30 100% 98% / 0.8;
+    --card-foreground: 25 80% 20%;
+
+    --popover: 30 100% 95%;
+    --popover-foreground: 25 80% 20%;
+
+    --primary: 350 70% 50%; /* Red */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 40 100% 85%; /* Lighter yellow */
+    --secondary-foreground: 25 80% 20%;
+
+    --muted: 40 100% 90%;
+    --muted-foreground: 30 50% 40%;
+
+    --accent: 35 100% 60%; /* Orange */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 30 80% 80%;
+    --input: 30 80% 85%;
+    --ring: 350 70% 50%;
+  }
 }
 
 @layer base {
@@ -108,6 +138,10 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  .font-hindi {
+    font-family: 'Tiro Devanagari Hindi', serif;
   }
 }
 
@@ -120,5 +154,38 @@
     .light & {
         @apply bg-card/80 border-black/10;
     }
+    .radha-rani & {
+      @apply bg-card/80 border-primary/20;
+    }
   }
+
+  .radha-rani-background {
+    @apply fixed inset-0 -z-10 w-full h-full;
+    background: linear-gradient(135deg, #ffdd00, #ff5f6d, #ffc371);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+  }
+
+  @keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+}
+
+@layer utilities {
+    .marquee {
+        display: inline-block;
+        white-space: nowrap;
+        animation: marquee 20s linear infinite;
+    }
+
+    @keyframes marquee {
+        0% {
+            transform: translateX(100%);
+        }
+        100% {
+            transform: translateX(-100%);
+        }
+    }
 }

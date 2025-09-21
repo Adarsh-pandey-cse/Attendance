@@ -1,8 +1,6 @@
 
 'use client';
 
-import { useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { AddSubjectDialog } from '@/components/add-subject-dialog';
 import { Greeting } from '@/components/greeting';
 import { Header } from '@/components/header';
@@ -11,25 +9,9 @@ import { SubjectCard } from '@/components/subject-card';
 import { Separator } from '@/components/ui/separator';
 import { useAttendance } from '@/hooks/use-attendance';
 import { PlusCircle, Loader2, BookOpenCheck } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
 
 export default function Home() {
   const { subjects, loading } = useAttendance();
-  const searchParams = useSearchParams();
-  const { toast } = useToast();
-
-  useEffect(() => {
-    // Check for the query parameter and show the toast
-    if (searchParams.get('bug_submitted') === 'true') {
-      toast({
-        title: 'Success!',
-        description: 'Your bug report has been submitted.',
-      });
-      // Optional: remove the query param from URL without reloading the page
-      const newUrl = window.location.pathname;
-      window.history.replaceState({...window.history.state, as: newUrl, url: newUrl}, '', newUrl);
-    }
-  }, [searchParams, toast]);
 
   return (
     <main className="flex justify-center min-h-screen bg-gradient-to-b from-background to-slate-900/50">

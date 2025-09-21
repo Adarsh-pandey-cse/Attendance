@@ -10,11 +10,10 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
-import { MoreVertical, Info, Percent, CalendarClock, Bug, Shield } from 'lucide-react';
+import { MoreVertical, Info, Percent, CalendarClock, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { useAttendance } from '@/hooks/use-attendance';
 import { Slider } from '@/components/ui/slider';
-import { useState } from 'react';
 
 export function Header() {
   const { overallTarget, setOverallTarget } = useAttendance();
@@ -53,12 +52,6 @@ export function Header() {
               <Link href="/timetable" className="flex items-center gap-2 cursor-pointer font-semibold">
                 <CalendarClock className="w-4 h-4" />
                 <span>Timetable</span>
-              </Link>
-            </DropdownMenuItem>
-             <DropdownMenuItem asChild>
-              <Link href="/report-bug" className="flex items-center gap-2 cursor-pointer font-semibold">
-                <Bug className="w-4 h-4" />
-                <span>Report a Bug</span>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />

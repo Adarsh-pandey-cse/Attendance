@@ -33,7 +33,7 @@ const prompt = ai.definePrompt({
   {{#if (eq theme 'radha-rani')}}
   Please provide one short, powerful, motivational quote related to Radha Krishna, spiritual love, or devotion. The tone should be uplifting and serene.
   {{else}}
-  Please provide one short, powerful, motivational quote.
+  Please provide one short, powerful, motivational quote by Premanand ji Maharaj in Hindi. The quote should be inspiring and related to devotion or spiritual life.
   {{/if}}
   
   The quote should be unique and not one of the following:
@@ -72,6 +72,6 @@ const getDailyQuoteFlow = ai.defineFlow(
     if (theme === 'radha-rani') {
       return { quote: "Let your soul be filled with the divine melody of 'Radhe Krishna'."}
     }
-    return { quote: "Believe you can and you're halfway there." };
+    return { quote: "राधा नाम का आश्रय करने से, मनुष्य का जीवन सफल हो जाता है।" };
   }
 );

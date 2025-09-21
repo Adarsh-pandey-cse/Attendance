@@ -3,11 +3,16 @@
 
 import { useState, useEffect } from 'react';
 import { useAttendance } from '@/hooks/use-attendance';
-import { getDailyQuote } from '@/ai/flows/daily-quote-flow';
 import { format } from 'date-fns';
 import { useTheme } from '@/hooks/use-theme';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { quotes } from '@/lib/quotes';
+
+// Function to get a random quote
+const getRandomQuote = () => {
+    return quotes[Math.floor(Math.random() * quotes.length)];
+}
 
 export function Greeting() {
   const { userName } = useAttendance();
@@ -20,37 +25,11 @@ export function Greeting() {
   useEffect(() => {
     setIsClient(true);
     setCurrentDate(format(new Date(), 'EEEE, MMMM do'));
+    setQuote(getRandomQuote());
+    setQuoteLoading(false);
   }, []);
 
   const isRadhaTheme = isClient && theme === 'radha-rani';
-
-  useEffect(() => {
-    if (!isClient) return;
-
-    const fetchQuote = async () => {
-      setQuoteLoading(true);
-      try {
-        const response = await getDailyQuote({});
-        if (response?.quote) {
-          setQuote(response.quote);
-        } else {
-          setQuote("The best way to predict the future is to create it.");
-        }
-      } catch (error) {
-        console.error("Failed to fetch daily quote", error);
-        setQuote("The best way to predict the future is to create it.");
-      } finally {
-        setQuoteLoading(false);
-      }
-    };
-
-    if (isRadhaTheme) {
-        fetchQuote();
-    } else {
-        setQuote("The best way to predict the future is to create it.");
-        setQuoteLoading(false);
-    }
-  }, [isClient, isRadhaTheme]);
   
   const getGreeting = () => {
     if (!isClient) return 'Hello,';

@@ -65,9 +65,6 @@ export function Header() {
                     <DropdownMenuRadioItem value="dark" className='font-semibold'>
                         <Moon className="mr-2" /> Dark
                     </DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="radha-rani" className='font-semibold'>
-                        <span className="mr-2">🪷</span> Radha Rani
-                    </DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
             </div>
              <DropdownMenuSeparator />

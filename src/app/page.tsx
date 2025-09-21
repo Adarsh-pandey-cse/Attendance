@@ -9,48 +9,14 @@ import { SubjectCard } from '@/components/subject-card';
 import { Separator } from '@/components/ui/separator';
 import { useAttendance } from '@/hooks/use-attendance';
 import { PlusCircle, Loader2, BookOpenCheck } from 'lucide-react';
-import { useTheme } from '@/hooks/use-theme';
-import Image from 'next/image';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { useState, useEffect } from 'react';
-
-const DivineImage = () => {
-  const image = PlaceHolderImages.find(img => img.id === "radha-rani-main");
-
-  if (!image) return null;
-
-  return (
-    <div className="relative group my-6 flex justify-center">
-       <div 
-        className="absolute -inset-1 rounded-full bg-gradient-to-r from-yellow-400 via-red-500 to-orange-500 opacity-75 blur transition duration-1000 group-hover:opacity-100 group-hover:duration-200 animate-tilt"
-      ></div>
-      <Image
-        src={image.imageUrl}
-        alt={image.description}
-        width={150}
-        height={150}
-        data-ai-hint={image.imageHint}
-        className="relative rounded-full border border-white/60 shadow-xl"
-      />
-    </div>
-  );
-};
-
 
 export default function Home() {
   const { subjects, loading } = useAttendance();
-  const { theme } = useTheme();
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   return (
     <main className="flex justify-center min-h-screen bg-gradient-to-b from-background to-slate-900/50">
       <div className="w-full max-w-lg p-4 md:p-6 space-y-6">
         <Header />
-        {isClient && theme === 'radha-rani' && <DivineImage />}
         <Greeting />
         <OverallAttendance />
 

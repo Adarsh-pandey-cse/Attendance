@@ -2,7 +2,6 @@ import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/hooks/use-theme';
-import { RadhaRaniThemeElements } from '@/components/radha-rani-theme-elements';
 
 export const metadata: Metadata = {
   title: 'AttendX',
@@ -28,7 +27,6 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
         >
-            <RadhaRaniThemeElements />
             {children}
             <Toaster />
         </ThemeProvider>

@@ -10,7 +10,7 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const DailyQuoteOutputSchema = z.object({
-  quote: z.string().describe('The motivational quote in Hindi.'),
+  quote: z.string().describe('The motivational quote.'),
 });
 export type DailyQuoteOutput = z.infer<typeof DailyQuoteOutputSchema>;
 
@@ -23,10 +23,10 @@ export async function getDailyQuote(): Promise<DailyQuoteOutput> {
 const prompt = ai.definePrompt({
   name: 'dailyQuotePrompt',
   output: {schema: DailyQuoteOutputSchema},
-  prompt: `You are an expert on the teachings of Premanand ji Maharaj.
+  prompt: `You are an expert at providing short, powerful, motivational quotes.
   
-  Please provide one short, powerful, bhakti-type motivational line in Hindi.
-  The line should be unique and not one of the following:
+  Please provide one short, powerful, motivational quote.
+  The quote should be unique and not one of the following:
   {{#if previousQuotes}}
   {{#each previousQuotes}}
   - "{{this}}"
@@ -58,6 +58,6 @@ const getDailyQuoteFlow = ai.defineFlow(
       attempts++;
     }
     // Fallback if we can't get a unique quote after 5 tries
-    return { quote: "राधे राधे" };
+    return { quote: "Believe you can and you're halfway there." };
   }
 );

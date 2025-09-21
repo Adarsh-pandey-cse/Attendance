@@ -1,8 +1,7 @@
 
 'use client';
 
-import { useEffect, useActionState } from 'react';
-import { useFormStatus } from 'react-dom';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,41 +10,42 @@ import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { submitBugReport } from '@/lib/actions';
 
-function SubmitButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button type="submit" className="w-full font-bold h-12 text-lg" disabled={pending}>
-      {pending ? (
-        <>
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
-        </>
-      ) : (
-        'Submit Bug Report'
-      )}
-    </Button>
-  );
-}
-
 export default function ReportBugPage() {
   const { toast } = useToast();
-  const initialState = { message: '', errors: {}, success: false };
-  const [state, dispatch] = useActionState(submitBugReport, initialState);
+  const [description, setDescription] = useState('');
+  const [pending, setPending] = useState(false);
 
-  useEffect(() => {
-    if (state.success) {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!description.trim()) {
+        toast({
+            title: 'Error',
+            description: 'Bug description cannot be empty.',
+            variant: 'destructive'
+        });
+        return;
+    }
+    
+    setPending(true);
+
+    const result = await submitBugReport(description);
+
+    if (result.success) {
       toast({
         title: 'Success!',
-        description: state.message,
+        description: result.message,
       });
-    } else if (state.message) {
+      setDescription('');
+    } else {
       toast({
         title: 'Error',
-        description: state.message,
+        description: result.message,
         variant: 'destructive',
       });
     }
-  }, [state, toast]);
+    
+    setPending(false);
+  };
 
   return (
     <main className="flex justify-center min-h-screen bg-gradient-to-b from-background to-slate-900/50">
@@ -69,7 +69,7 @@ export default function ReportBugPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form action={dispatch} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="description" className="font-semibold mb-2 block">Bug Description (Required)</label>
                 <Textarea
@@ -77,16 +77,20 @@ export default function ReportBugPage() {
                   name="description"
                   placeholder="Please provide as much detail as possible about the bug..."
                   rows={8}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                   required
                 />
-                 {state.errors?.description &&
-                    state.errors.description.map((error: string) => (
-                    <p className="mt-2 text-sm text-destructive" key={error}>
-                        {error}
-                    </p>
-                 ))}
               </div>
-             <SubmitButton />
+             <Button type="submit" className="w-full font-bold h-12 text-lg" disabled={pending}>
+                {pending ? (
+                    <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+                    </>
+                ) : (
+                    'Submit Bug Report'
+                )}
+                </Button>
             </form>
           </CardContent>
         </Card>

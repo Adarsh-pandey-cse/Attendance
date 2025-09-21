@@ -11,18 +11,14 @@ import { z } from 'zod';
 import { DeveloperInfo } from '@/types';
 import { revalidatePath } from 'next/cache';
 
-const BugSchema = z.object({
-  description: z.string().trim().min(1, { message: "Description cannot be empty." }),
-});
+const BugSchema = z.string().trim().min(1, { message: "Description cannot be empty." });
 
-export async function submitBugReport(prevState: any, formData: FormData) {
-  const validatedFields = BugSchema.safeParse({
-    description: formData.get('description'),
-  });
+export async function submitBugReport(description: string): Promise<{ success: boolean; message: string; errors?: any; }> {
+  const validatedFields = BugSchema.safeParse(description);
 
   if (!validatedFields.success) {
     return {
-      errors: validatedFields.error.flatten().fieldErrors,
+      errors: validatedFields.error.flatten().formErrors,
       message: 'Validation failed.',
       success: false,
     };
@@ -30,10 +26,10 @@ export async function submitBugReport(prevState: any, formData: FormData) {
 
   try {
     await addDoc(collection(db, 'bug-reports'), {
-      description: validatedFields.data.description,
+      description: validatedFields.data,
       timestamp: serverTimestamp(),
       status: 'new',
-      userName: 'Anonymous',
+      userName: 'Anonymous', // In a real app, you'd get this from session
     });
     
     revalidatePath('/admin'); // Revalidate admin page to show new bug

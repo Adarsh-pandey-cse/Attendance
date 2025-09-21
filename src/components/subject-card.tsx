@@ -19,6 +19,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { EditSubjectDialog } from './edit-subject-dialog';
+import { useState } from 'react';
 
 type SubjectCardProps = {
   subject: Subject;
@@ -69,6 +70,7 @@ const CircularProgress = ({ percentage }: { percentage: number }) => {
 
 export function SubjectCard({ subject }: SubjectCardProps) {
   const { markAttendance, deleteSubject, overallTarget } = useAttendance();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const percentage = subject.totalClasses > 0 ? (subject.attendedClasses / subject.totalClasses) * 100 : 0;
   
   const needed = calculateClassesToAttend(subject.attendedClasses, subject.totalClasses, overallTarget);
@@ -87,6 +89,11 @@ export function SubjectCard({ subject }: SubjectCardProps) {
     statusColor = "text-red-400";
   }
 
+  const handleDelete = () => {
+    deleteSubject(subject.id);
+    setIsDeleteDialogOpen(false);
+  }
+
   return (
     <div className="glass-card p-4 space-y-4">
       <div className="flex justify-between items-start">
@@ -99,7 +106,7 @@ export function SubjectCard({ subject }: SubjectCardProps) {
               <Edit className="w-4 h-4" />
             </Button>
           </EditSubjectDialog>
-          <AlertDialog>
+          <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
             <AlertDialogTrigger asChild>
               <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive w-8 h-8">
                 <Trash2 className="w-4 h-4" />
@@ -114,7 +121,7 @@ export function SubjectCard({ subject }: SubjectCardProps) {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={() => deleteSubject(subject.id)} className="bg-destructive hover:bg-destructive/80 font-bold">Delete</AlertDialogAction>
+                <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/80 font-bold">Delete</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

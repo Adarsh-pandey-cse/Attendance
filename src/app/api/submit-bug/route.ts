@@ -6,7 +6,7 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { description } = body;
+    const { description, userName } = body;
 
     if (!description || typeof description !== 'string' || description.trim() === '') {
       return NextResponse.json({ message: 'Description is required and cannot be empty.' }, { status: 400 });
@@ -15,9 +15,9 @@ export async function POST(req: Request) {
     // This is the database operation
     await addDoc(collection(db, 'bug-reports'), {
       description: description.trim(),
+      userName: userName || 'Anonymous', // Use the provided username or fallback to Anonymous
       timestamp: serverTimestamp(),
       status: 'new',
-      userName: 'Anonymous', // In a real app, you'd get this from session/auth
     });
 
     // If it gets here, the save was successful

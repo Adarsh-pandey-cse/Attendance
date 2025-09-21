@@ -9,12 +9,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ArrowLeft, Bug, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
+import { useAttendance } from '@/hooks/use-attendance';
 
 export default function ReportBugPage() {
   const { toast } = useToast();
   const router = useRouter();
   const [description, setDescription] = useState('');
   const [pending, setPending] = useState(false);
+  const { userName } = useAttendance(); // Get the current user's name
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +35,8 @@ export default function ReportBugPage() {
       const response = await fetch('/api/submit-bug', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description }),
+        // Include userName in the request body
+        body: JSON.stringify({ description, userName }),
       });
 
       const result = await response.json();

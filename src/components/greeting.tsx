@@ -81,7 +81,7 @@ export function Greeting() {
       {quoteLoading ? (
           <p className="text-lg font-semibold text-yellow-300/80 mt-2 italic text-center">Loading quote...</p>
       ) : (
-          <p className="text-lg font-hindi font-bold mt-2 italic text-center text-yellow-400">&quot;{quote}&quot;</p>
+          <p className="text-lg font-hindi font-bold mt-2 italic text-center motivational-quote">&quot;{quote}&quot;</p>
       )}
     </div>
   );

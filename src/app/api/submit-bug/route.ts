@@ -18,7 +18,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Description is too long.' }, { status: 400 });
     }
 
-    // 3. Save to Firestore
+    // 3. Save to Firestore - AWAIT was missing here
     await addDoc(collection(db, 'bug-reports'), {
       description: sanitizedDescription,
       userName: 'Anonymous', // Simplified for reliability

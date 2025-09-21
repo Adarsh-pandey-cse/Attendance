@@ -27,7 +27,7 @@ export default function ReportBugPage() {
     setIsSending(true);
     
     try {
-      // Call the simplified action with only the description
+      // Call the simplified action with only the description string
       const result = await saveBugReport(description);
 
       if (result.success) {

@@ -5,7 +5,7 @@ export type AttendanceLog = {
 };
 
 export type Subject = {
-  id: string;
+  id:string;
   name: string;
   totalClasses: number;
   attendedClasses: number;
@@ -17,3 +17,11 @@ export type UserData = {
     profilePicture: string | null;
     overallTarget: number;
 }
+
+export type Badge = {
+    id: string;
+    name: string;
+    description: string;
+    icon: React.ComponentType<{ className?: string }>;
+    achieved: boolean;
+};

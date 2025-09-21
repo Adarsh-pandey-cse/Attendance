@@ -160,13 +160,13 @@ export function SubjectCard({ subject }: SubjectCardProps) {
             </Button>
           <EditSubjectDialog subject={subject}>
             <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary w-8 h-8">
-              <Edit className="w-4 h-4" />
+              <Edit className="w-4 w-4" />
             </Button>
           </EditSubjectDialog>
           <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
             <AlertDialogTrigger asChild>
               <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive w-8 h-8">
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-4 w-4" />
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
@@ -188,7 +188,7 @@ export function SubjectCard({ subject }: SubjectCardProps) {
       {isAboveTarget && (
          <div className="text-center">
             <p className="text-xl font-bold text-primary">
-                You're on track! Keep it up!
+                {isRadhaTheme ? "राधे राधे you're on track!" : "You're on track! Keep it up!"}
             </p>
         </div>
       )}

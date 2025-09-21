@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -23,7 +24,7 @@ export function Greeting() {
     const fetchQuote = async () => {
       setQuoteLoading(true);
       try {
-        const response = await getDailyQuote();
+        const response = await getDailyQuote(theme);
         setQuote(response.quote);
       } catch (error) {
         console.error("Failed to fetch daily quote", error);
@@ -33,7 +34,7 @@ export function Greeting() {
       }
     };
     fetchQuote();
-  }, []);
+  }, [theme]);
   
   const greetingText = isClient && theme === 'radha-rani' ? 'राधा वल्लभ श्री हरिवंश,' : 'Hello,';
   

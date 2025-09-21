@@ -11,12 +11,18 @@ import { useAttendance } from '@/hooks/use-attendance';
 import { PlusCircle, Loader2, BookOpenCheck } from 'lucide-react';
 import { useTheme } from '@/hooks/use-theme';
 import { cn } from '@/lib/utils';
+import { useState, useEffect } from 'react';
 
 export default function Home() {
   const { subjects, loading } = useAttendance();
   const { theme } = useTheme();
+  const [isClient, setIsClient] = useState(false);
 
-  const isRadhaTheme = theme === 'radha-rani';
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const isRadhaTheme = isClient && theme === 'radha-rani';
 
   return (
     <main className="flex justify-center min-h-screen">

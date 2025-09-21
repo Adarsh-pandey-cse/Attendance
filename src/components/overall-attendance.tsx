@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useAttendance } from '@/hooks/use-attendance';
 import { motion } from 'framer-motion';
 import { calculateClassesToAttend, calculateClassesToBunk } from '@/lib/utils';
@@ -62,6 +63,11 @@ const OverallCircularProgress = ({ percentage, target }: { percentage: number, t
 export function OverallAttendance() {
     const { subjects, overallTarget } = useAttendance();
     const { theme } = useTheme();
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     const { totalAttended, totalClasses, overallPercentage, needed, bunkable } = useMemo(() => {
         const totalAttended = subjects.reduce((acc, subject) => acc + subject.attendedClasses, 0);
@@ -90,7 +96,7 @@ export function OverallAttendance() {
         return null;
     }
 
-    const containerClasses = theme === 'radha-rani'
+    const containerClasses = isClient && theme === 'radha-rani'
         ? "p-6 flex flex-col md:flex-row items-center justify-around gap-6"
         : "glass-card p-6 flex flex-col md:flex-row items-center justify-around gap-6";
 

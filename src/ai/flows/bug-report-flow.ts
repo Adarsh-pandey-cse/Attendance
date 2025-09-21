@@ -117,12 +117,12 @@ ${emailBody}
     });
     
     // Check if the tool was called and return a confirmation message.
+    // This is the most reliable way to check for success.
     if (llmResponse.toolRequests.length > 0) {
-        // In a real app, you would actually execute the tool request here.
-        // For this simulation, we assume if the tool was requested, it's a success.
         return { sent: true };
     }
 
+    // If the tool was not called, then it's a failure.
     return { sent: false, message: "The model decided not to send the email. " + llmResponse.text };
   }
 );

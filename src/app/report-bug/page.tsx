@@ -2,6 +2,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +10,6 @@ import { ArrowLeft, Bug, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { saveBugReport } from '@/lib/actions';
-import { useRouter } from 'next/navigation';
 
 export default function ReportBugPage() {
   const [description, setDescription] = useState('');
@@ -27,7 +27,6 @@ export default function ReportBugPage() {
     setIsSending(true);
     
     try {
-      // Call the simplified action with only the description string
       const result = await saveBugReport(description);
 
       if (result.success) {

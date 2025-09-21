@@ -136,6 +136,7 @@ export default function BugDetailPage() {
               <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><FileText className='w-4 h-4' />Description</h3>
               <p className="whitespace-pre-wrap p-3 bg-slate-900/50 rounded-md">{bugReport.description}</p>
             </div>
+            
           </CardContent>
         </Card>
       </div>

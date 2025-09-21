@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -47,7 +48,7 @@ export default function DeveloperInfoPage() {
   }
 
   return (
-    <main className="flex justify-center min-h-screen bg-gradient-to-b from-background to-slate-900/50">
+    <main className="flex justify-center min-h-screen">
       <div className="w-full max-w-lg p-4 md:p-6 space-y-6">
         <div className="flex items-center gap-2">
           <Button asChild variant="ghost" size="icon">

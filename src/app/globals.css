@@ -58,33 +58,35 @@
   }
 
   .running-border {
-    border: 2px solid hsl(var(--border));
     position: relative;
+    border-radius: 16px;
     overflow: visible;
   }
+  
   .running-border::before {
     content: "";
     position: absolute;
-    z-index: -1;
-    top: -3px; left: -3px; right: -3px; bottom: -3px;
-    border-radius: inherit;
+    inset: -5px;
+    border-radius: 20px;
     background: linear-gradient(
-        120deg,
-        #00f0ff, #00ff8f, #a800ff, #ff0084, #00f0ff
+      270deg,
+      #00f0ff,
+      #00ff8f,
+      #ff00de,
+      #00f0ff
     );
-    background-size: 400% 400%;
-    filter: blur(8px);
-    animation: neonrun 6s linear infinite;
-    pointer-events: none;
-    -webkit-mask:
-      linear-gradient(#fff 0 0) content-box,
-      linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
+    background-size: 600% 600%;
+    filter: blur(4px);
+    animation: neonBorderAnimation 8s linear infinite;
+    z-index: -1;
   }
 
-  @keyframes neonrun {
-    0% { background-position: 0% 50%; }
-    100% { background-position: 100% 50%; }
+  @keyframes neonBorderAnimation {
+    0% {
+      background-position: 0% 50%;
+    }
+    100% {
+      background-position: 600% 50%;
+    }
   }
 }

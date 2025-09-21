@@ -38,9 +38,9 @@ const attendanceTargetNotificationsPrompt = ai.definePrompt({
   name: 'attendanceTargetNotificationsPrompt',
   input: {schema: AttendanceTargetNotificationsInputSchema},
   output: {schema: AttendanceTargetNotificationsOutputSchema},
-  prompt: `You are an assistant that generates motivational notifications for students in Hindi.
+  prompt: `You are an assistant that generates motivational notifications for students.
 
-  Your task is to generate a supportive and encouraging message in HINDI for a student whose attendance is low. The tone should be positive and motivating, not scolding.
+  Your task is to generate a supportive and encouraging message for a student whose attendance is low. The tone should be positive and motivating, not scolding.
 
   Here is the student's data:
   Subject Name: {{{subjectName}}}
@@ -48,10 +48,8 @@ const attendanceTargetNotificationsPrompt = ai.definePrompt({
   Attendance Target: {{{attendanceTarget}}}
   Classes Needed to reach target: {{{classesNeeded}}}
 
-  The notification MUST be short, sensible, and written in grammatically correct Hindi.
-  Example: "थोड़ी और मेहनत, और आप लक्ष्य तक पहुँच जाएँगे।"
-  
-  Do not use any English words. The entire response must be in Hindi script.
+  The notification MUST be short, sensible, and written in grammatically correct English.
+  Example: "A little more effort and you'll reach your goal!"
 
   Generate the notification now.`,
 });

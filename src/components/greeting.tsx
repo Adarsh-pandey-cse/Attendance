@@ -6,6 +6,7 @@ import { useAttendance } from '@/hooks/use-attendance';
 import { getDailyQuote } from '@/ai/flows/daily-quote-flow';
 import { format } from 'date-fns';
 import { useTheme } from '@/hooks/use-theme';
+import { cn } from '@/lib/utils';
 
 export function Greeting() {
   const { userName } = useAttendance();
@@ -20,12 +21,15 @@ export function Greeting() {
     setCurrentDate(format(new Date(), 'EEEE, MMMM do'));
   }, []);
 
+  const isRadhaTheme = isClient && theme === 'radha-rani';
+
   useEffect(() => {
     if (!isClient) return;
+
     const fetchQuote = async () => {
       setQuoteLoading(true);
       try {
-        const response = await getDailyQuote();
+        const response = await getDailyQuote({ isRadhaRaniTheme: isRadhaTheme });
         if (response?.quote) {
             setQuote(response.quote);
         } else {
@@ -39,18 +43,18 @@ export function Greeting() {
       }
     };
     fetchQuote();
-  }, [isClient]);
+  }, [isClient, isRadhaTheme]);
   
-  const greetingText = isClient && theme === 'radha-rani' ? 'राधा वल्लभ श्री हरिवंश,' : 'Hello,';
+  const greetingText = isRadhaTheme ? 'राधा वल्लभ श्री हरिवंश,' : 'Hello,';
   
   let quoteColorClass = 'text-yellow-400';
-  if (isClient && theme === 'radha-rani') {
+  if (isRadhaTheme) {
     quoteColorClass = 'text-orange-700';
   }
 
   return (
-    <div className="text-center">
-        <h2 className="text-3xl font-bold font-hindi" style={{fontFamily: "'Tiro Devanagari Hindi', serif"}}>
+    <div className={cn("text-center", isRadhaTheme && "homepage-section")}>
+        <h2 className="text-3xl font-bold font-hindi text-center" style={{fontFamily: "'Tiro Devanagari Hindi', serif"}}>
             {greetingText}
         </h2>
         <div className="text-center">

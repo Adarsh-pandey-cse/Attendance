@@ -6,9 +6,16 @@ import { Header } from '@/components/header';
 import { SubjectCard } from '@/components/subject-card';
 import { useAttendance } from '@/hooks/use-attendance';
 import { PlusCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
   const { subjects } = useAttendance();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
 
   return (
     <main className="flex justify-center min-h-screen bg-gradient-to-b from-background to-slate-900/50">
@@ -27,7 +34,7 @@ export default function Home() {
             </AddSubjectDialog>
           </div>
 
-          {subjects.length === 0 ? (
+          {!isClient || subjects.length === 0 ? (
             <div className="text-center py-16 px-4 glass-card">
               <h3 className="text-lg font-bold text-foreground">Welcome to AttendX!</h3>
               <p className="text-muted-foreground mt-2">

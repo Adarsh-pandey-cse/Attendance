@@ -6,13 +6,50 @@
  */
 
 import { db } from '@/lib/firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { collection, addDoc, doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { z } from 'zod';
 import { DeveloperInfo } from '@/types';
 import { revalidatePath } from 'next/cache';
 
-// This file is being kept for other actions, but the bug submission logic
-// has been moved to a dedicated API route at /api/submit-bug for greater stability.
+const BugSchema = z.object({
+  description: z.string().trim().min(1, { message: "Description cannot be empty." }),
+});
+
+export async function submitBugReport(prevState: any, formData: FormData) {
+  const validatedFields = BugSchema.safeParse({
+    description: formData.get('description'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Validation failed.',
+      success: false,
+    };
+  }
+
+  try {
+    await addDoc(collection(db, 'bug-reports'), {
+      description: validatedFields.data.description,
+      timestamp: serverTimestamp(),
+      status: 'new',
+      userName: 'Anonymous',
+    });
+    
+    revalidatePath('/admin'); // Revalidate admin page to show new bug
+    
+    return {
+      message: 'Bug report submitted successfully!',
+      success: true,
+    };
+  } catch (error) {
+    console.error('Error submitting bug report:', error);
+    return {
+      message: 'An unexpected error occurred. Failed to submit bug report.',
+      success: false,
+    };
+  }
+}
 
 
 // --- Developer Info Actions ---

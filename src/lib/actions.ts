@@ -10,43 +10,34 @@ import { collection, addDoc, serverTimestamp, doc, setDoc } from 'firebase/fires
 import { z } from 'zod';
 import { DeveloperInfo } from '@/types';
 
-// --- Bug Report Actions ---
-
-const BugReportSchema = z.object({
-  description: z.string().min(1, 'Description is required.'),
-  userName: z.string(),
-  deviceInfo: z.string().optional(),
-});
 
 /**
  * Saves a bug report to Firestore.
- * This version is simplified to handle only text data for maximum reliability.
- * @param reportData - An object containing the bug report details.
+ * This is a simplified version that only takes the description to ensure reliability.
+ * @param description - The bug description string.
  * @returns An object indicating success or failure with a message.
  */
 export async function saveBugReport(
-  reportData: z.infer<typeof BugReportSchema>
+  description: string
 ): Promise<{ success: boolean; message: string }> {
   try {
-    // 1. Validate the incoming text data
-    const validatedData = BugReportSchema.parse(reportData);
+    if (!description || description.trim() === '') {
+      return { success: false, message: 'Description is required.' };
+    }
 
-    // 2. Add the validated data to Firestore
     await addDoc(collection(db, 'bug-reports'), {
-      ...validatedData,
+      description,
+      userName: 'Anonymous', // Hardcoded for reliability
+      deviceInfo: 'Not provided', // Hardcoded for reliability
       timestamp: serverTimestamp(),
       status: 'new',
-      attachments: [], // Set attachments to an empty array
+      attachments: [], 
     });
 
     return { success: true, message: 'Bug report submitted successfully!' };
 
   } catch (error) {
     console.error('Error in saveBugReport server action:', error);
-    if (error instanceof z.ZodError) {
-      return { success: false, message: `Invalid data: ${error.errors.map(e => e.message).join(', ')}` };
-    }
-    // Generic error for any other failure
     return {
       success: false,
       message: 'An unexpected server error occurred while saving the report.',

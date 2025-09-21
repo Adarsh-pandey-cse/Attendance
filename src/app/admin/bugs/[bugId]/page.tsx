@@ -6,7 +6,7 @@ import { db } from '@/lib/firebase';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Loader2, User, Calendar, Smartphone, Paperclip, FileText, Download } from 'lucide-react';
+import { ArrowLeft, Loader2, User, Calendar, Smartphone, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { BugReport } from '@/types';
@@ -136,13 +136,6 @@ export default function BugDetailPage() {
               <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><FileText className='w-4 h-4' />Description</h3>
               <p className="whitespace-pre-wrap p-3 bg-slate-900/50 rounded-md">{bugReport.description}</p>
             </div>
-
-            {bugReport.attachments && bugReport.attachments.length > 0 && (
-              <div className="space-y-2">
-                <h3 className="font-semibold flex items-center gap-2 text-muted-foreground"><Paperclip className='w-4 h-4' /> Attachments</h3>
-                 <p className="text-sm text-muted-foreground italic">File attachments are temporarily disabled.</p>
-              </div>
-            )}
           </CardContent>
         </Card>
       </div>

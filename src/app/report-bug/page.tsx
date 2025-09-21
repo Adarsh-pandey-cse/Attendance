@@ -1,29 +1,21 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Bug, Loader2, Paperclip } from 'lucide-react';
+import { ArrowLeft, Bug, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
-import { useAttendance } from '@/hooks/use-attendance';
 import { saveBugReport } from '@/lib/actions';
 import { useRouter } from 'next/navigation';
 
 export default function ReportBugPage() {
   const [description, setDescription] = useState('');
   const [isSending, setIsSending] = useState(false);
-  const [deviceInfo, setDeviceInfo] = useState('');
   const { toast } = useToast();
-  const { userName } = useAttendance();
   const router = useRouter();
-
-  useEffect(() => {
-    // Auto-fetch device info
-    setDeviceInfo(navigator.userAgent);
-  }, []);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,16 +27,13 @@ export default function ReportBugPage() {
     setIsSending(true);
     
     try {
-      const result = await saveBugReport({
-        description,
-        userName: userName || 'Anonymous',
-        deviceInfo,
-      });
+      // Call the simplified action with only the description
+      const result = await saveBugReport(description);
 
       if (result.success) {
         toast({
           title: 'Report Sent!',
-          description: 'Thank you for your feedback! The admin will review it shortly.',
+          description: 'Thank you for your feedback!',
         });
         router.push('/');
       } else {
@@ -54,7 +43,7 @@ export default function ReportBugPage() {
       console.error('Error submitting bug report:', error);
       toast({
         title: 'Submission Failed',
-        description: error.message || 'An unexpected error occurred. Please check your connection and try again.',
+        description: error.message || 'An unexpected error occurred.',
         variant: 'destructive',
       });
     } finally {
@@ -81,7 +70,7 @@ export default function ReportBugPage() {
               <span>Submit a New Bug Report</span>
             </CardTitle>
             <CardDescription>
-              Help us improve AttendX by describing the issue you've encountered. Your report will be sent to the admin.
+              Help us improve AttendX by describing the issue you've encountered.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -93,15 +82,10 @@ export default function ReportBugPage() {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Please provide as much detail as possible about the bug..."
-                  rows={6}
+                  rows={8}
                   required
                   disabled={isSending}
                 />
-              </div>
-
-              <div>
-                <label className="font-semibold mb-2 block">Device Information (Auto-detected)</label>
-                <p className="text-sm p-3 bg-slate-900 rounded-md font-mono whitespace-normal break-words">{deviceInfo}</p>
               </div>
 
               <Button type="submit" disabled={isSending || !description.trim()} className="w-full font-bold h-12 text-lg">
@@ -111,10 +95,7 @@ export default function ReportBugPage() {
                     Submitting Report...
                   </>
                 ) : (
-                  <>
-                    <Paperclip className="mr-2 h-5 w-5" />
-                    Submit Bug Report
-                  </>
+                  'Submit Bug Report'
                 )}
               </Button>
             </form>

@@ -5,7 +5,7 @@
  */
 
 import { db } from '@/lib/firebase';
-import { collection, addDoc, serverTimestamp, doc, updateDoc, setDoc } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, doc, setDoc } from 'firebase/firestore';
 import { z } from 'zod';
 import { DeveloperInfo } from '@/types';
 
@@ -49,6 +49,14 @@ export async function saveBugReport(
 
 // --- Developer Info Actions ---
 
+const DeveloperInfoSchema = z.object({
+  name: z.string().optional(),
+  email: z.string().email().optional(),
+  bio: z.string().optional(),
+  profilePicture: z.string().nullable().optional(),
+});
+
+
 /**
  * Saves developer information to Firestore.
  * @param devInfo - The developer info object.
@@ -58,11 +66,15 @@ export async function saveDeveloperInfo(
   devInfo: Partial<DeveloperInfo>
 ): Promise<{ success: boolean; message: string }> {
   try {
+    const validatedDevInfo = DeveloperInfoSchema.parse(devInfo);
     const devInfoDocRef = doc(db, 'settings', 'developerInfo');
-    await setDoc(devInfoDocRef, devInfo, { merge: true });
+    await setDoc(devInfoDocRef, validatedDevInfo, { merge: true });
     return { success: true, message: 'Developer information updated successfully!' };
   } catch (error) {
     console.error('Error saving developer info to Firestore:', error);
+     if (error instanceof z.ZodError) {
+      return { success: false, message: error.errors[0]?.message || 'Invalid data provided.' };
+    }
     return {
       success: false,
       message: 'An unexpected error occurred while saving developer info.',

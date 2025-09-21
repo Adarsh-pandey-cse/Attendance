@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Logo } from '@/components/logo';
@@ -11,20 +12,18 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem
 } from '@/components/ui/dropdown-menu';
-import { MoreVertical, Info, Percent, CalendarClock, Shield, Moon, Sun, Palette, Star, Bug } from 'lucide-react';
+import { MoreVertical, Info, Percent, CalendarClock, Shield, Moon, Sun, Palette, Star } from 'lucide-react';
 import Link from 'next/link';
 import { useAttendance } from '@/hooks/use-attendance';
 import { Slider } from '@/components/ui/slider';
 import { useTheme } from '@/hooks/use-theme';
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
-import { BugReportDialog } from './bug-report-dialog';
 
 export function Header() {
   const { overallTarget, setOverallTarget } = useAttendance();
   const { theme, setTheme } = useTheme();
   const [isClient, setIsClient] = useState(false);
-  const [isBugReportOpen, setIsBugReportOpen] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
@@ -90,10 +89,6 @@ export function Header() {
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />
-            <DropdownMenuItem onSelect={() => setIsBugReportOpen(true)} className="flex items-center gap-2 cursor-pointer font-semibold">
-                <Bug className="w-4 h-4" />
-                <span>Report a Bug</span>
-            </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link href="/admin" className="flex items-center gap-2 cursor-pointer font-semibold">
                 <Shield className="w-4 h-4" />
@@ -109,7 +104,6 @@ export function Header() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <BugReportDialog isOpen={isBugReportOpen} setIsOpen={setIsBugReportOpen} />
     </header>
   );
 }

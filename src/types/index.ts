@@ -1,3 +1,4 @@
+
 'use client';
 import { Timestamp } from "firebase/firestore";
 
@@ -38,12 +39,4 @@ export type DeveloperInfo = {
     email: string;
     bio: string;
     profilePicture: string | null;
-}
-
-export type BugReport = {
-  id: string;
-  title: string;
-  description: string;
-  submittedAt: Timestamp;
-  status: 'new' | 'in-progress' | 'resolved';
 }

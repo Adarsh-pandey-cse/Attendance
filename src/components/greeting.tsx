@@ -11,6 +11,11 @@ export function Greeting() {
   const [currentDate, setCurrentDate] = useState('');
   const [quote, setQuote] = useState('');
   const [quoteLoading, setQuoteLoading] = useState(true);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
     const updateDateTime = () => {
@@ -48,7 +53,7 @@ export function Greeting() {
 
   return (
     <div className="p-6 glass-card">
-      <h2 className="text-2xl font-bold">{greeting}, {userName}!</h2>
+      <h2 className="text-2xl font-bold">{greeting}, {isClient ? userName : 'Student'}!</h2>
       <p className="text-muted-foreground">{currentDate}</p>
       {quoteLoading ? (
          <p className="text-sm text-cyan-400/80 mt-2 italic">Loading quote...</p>

@@ -1,10 +1,38 @@
 
+'use client';
+
+import { Suspense } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Bug } from 'lucide-react';
 import Link from 'next/link';
 import { submitBugReport } from '@/lib/actions';
+import { useSearchParams } from 'next/navigation';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { TriangleAlert } from 'lucide-react';
+
+function ErrorDisplay() {
+  const searchParams = useSearchParams();
+  const error = searchParams.get('error');
+
+  if (!error) return null;
+
+  let errorMessage = 'An unknown error occurred.';
+  if (error === 'description_too_short') {
+    errorMessage = 'The bug description must be at least 10 characters long.';
+  } else if (error === 'submit_failed') {
+    errorMessage = 'Failed to submit bug report to the database. Please try again.';
+  }
+
+  return (
+    <Alert variant="destructive" className="mb-4">
+      <TriangleAlert className="h-4 w-4" />
+      <AlertTitle>Submission Failed</AlertTitle>
+      <AlertDescription>{errorMessage}</AlertDescription>
+    </Alert>
+  );
+}
 
 export default function ReportBugPage() {
   return (
@@ -26,21 +54,22 @@ export default function ReportBugPage() {
               <span>Submit a New Bug Report</span>
             </CardTitle>
             <CardDescription>
-              Help us improve AttendX by describing the issue you've encountered. Your feedback is valuable.
+              Help us improve the app by describing the issue you've encountered. Your feedback is valuable.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {/*
-              This form uses a Server Action. When submitted, it will trigger the
-              `submitBugReport` function on the server.
-            */}
+            <Suspense fallback={<div>Loading...</div>}>
+              <ErrorDisplay />
+            </Suspense>
+            {/* This form uses a Server Action. When submitted, it will trigger the
+                `submitBugReport` function on the server. */}
             <form action={submitBugReport} className="space-y-6">
               <div>
                 <label htmlFor="description" className="font-semibold mb-2 block">Bug Description (Required)</label>
                 <Textarea
                   id="description"
                   name="description" // The name attribute is crucial for server actions
-                  placeholder="Please provide as much detail as possible about the bug..."
+                  placeholder="Please provide as much detail as possible about the bug... (min. 10 characters)"
                   rows={8}
                   required
                   minLength={10}

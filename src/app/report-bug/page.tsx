@@ -1,8 +1,8 @@
 
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useActionState, useEffect, useRef } from 'react';
+import { useFormStatus } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,55 +10,47 @@ import { ArrowLeft, Bug, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { useAttendance } from '@/hooks/use-attendance';
+import { submitBugReport } from '@/lib/actions';
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button type="submit" className="w-full font-bold h-12 text-lg" disabled={pending}>
+      {pending ? (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+        </>
+      ) : (
+        'Submit Bug Report'
+      )}
+    </Button>
+  );
+}
 
 export default function ReportBugPage() {
   const { toast } = useToast();
-  const router = useRouter();
-  const [description, setDescription] = useState('');
-  const [pending, setPending] = useState(false);
-  const { userName } = useAttendance(); // Get the current user's name
+  const { userName } = useAttendance();
+  const formRef = useRef<HTMLFormElement>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!description.trim()) {
+  const initialState = { message: '', errors: {}, success: false };
+  const [state, formAction] = useActionState(submitBugReport, initialState);
+
+  useEffect(() => {
+    if (state.success) {
+      toast({
+        title: 'Success!',
+        description: state.message,
+      });
+      formRef.current?.reset(); // Reset the form fields on success
+    } else if (state.message) {
       toast({
         title: 'Error',
-        description: 'Bug description cannot be empty.',
+        description: state.message,
         variant: 'destructive',
       });
-      return;
     }
-
-    setPending(true);
-
-    try {
-      const response = await fetch('/api/submit-bug', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        // Include userName in the request body
-        body: JSON.stringify({ description, userName }),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.message || 'An error occurred.');
-      }
-      
-      // On success, redirect to the home page with a query param
-      router.push('/?bug_submitted=true');
-
-    } catch (error) {
-      console.error('Submission failed:', error);
-      toast({
-        title: 'Submission Failed',
-        description: error instanceof Error ? error.message : 'Please try again.',
-        variant: 'destructive',
-      });
-    } finally {
-      setPending(false);
-    }
-  };
+  }, [state, toast]);
 
   return (
     <main className="flex justify-center min-h-screen bg-gradient-to-b from-background to-slate-900/50">
@@ -82,7 +74,7 @@ export default function ReportBugPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form ref={formRef} action={formAction} className="space-y-6">
               <div>
                 <label htmlFor="description" className="font-semibold mb-2 block">Bug Description (Required)</label>
                 <Textarea
@@ -90,21 +82,17 @@ export default function ReportBugPage() {
                   name="description"
                   placeholder="Please provide as much detail as possible about the bug..."
                   rows={8}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
                   required
-                  disabled={pending}
                 />
+                {state.errors?.description &&
+                  state.errors.description.map((error: string) => (
+                    <p className="text-sm font-medium text-destructive mt-2" key={error}>
+                      {error}
+                    </p>
+                  ))}
               </div>
-              <Button type="submit" className="w-full font-bold h-12 text-lg" disabled={pending}>
-                {pending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
-                  </>
-                ) : (
-                  'Submit Bug Report'
-                )}
-              </Button>
+              <input type="hidden" name="userName" value={userName} />
+              <SubmitButton />
             </form>
           </CardContent>
         </Card>

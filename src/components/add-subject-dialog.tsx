@@ -78,10 +78,10 @@ export function AddSubjectDialog({ children }: AddSubjectDialogProps) {
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px] glass-card">
         <DialogHeader>
-          <DialogTitle className={cn("flex items-center gap-2 font-bold", isRadhaTheme && "text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-red-500")}>
+          <DialogTitle className={cn("flex items-center gap-2 font-bold", isRadhaTheme && "text-transparent bg-clip-text bg-gradient-to-r from-black to-pink-500")}>
             <Plus className={cn("text-primary", isRadhaTheme && "text-pink-500")} /> Add New Subject
           </DialogTitle>
-          <DialogDescription className={cn(isRadhaTheme && "text-pink-900/80")}>
+          <DialogDescription className={cn(isRadhaTheme && "text-white")}>
             Enter the details for your new subject below. You can mark attendance later.
           </DialogDescription>
         </DialogHeader>
@@ -92,7 +92,7 @@ export function AddSubjectDialog({ children }: AddSubjectDialogProps) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={cn('font-semibold', isRadhaTheme && "text-pink-600")}>Subject Name</FormLabel>
+                  <FormLabel className={cn('font-semibold', isRadhaTheme && "text-white")}>Subject Name</FormLabel>
                   <FormControl>
                     <Input placeholder="e.g., Quantum Physics" {...field} />
                   </FormControl>
@@ -106,7 +106,7 @@ export function AddSubjectDialog({ children }: AddSubjectDialogProps) {
                 name="attendedClasses"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className={cn('font-semibold', isRadhaTheme && "text-pink-600")}>Classes Attended</FormLabel>
+                    <FormLabel className={cn('font-semibold', isRadhaTheme && "text-white")}>Classes Attended</FormLabel>
                     <FormControl>
                       <Input type="number" {...field} onFocus={(e) => e.target.select()} />
                     </FormControl>
@@ -119,7 +119,7 @@ export function AddSubjectDialog({ children }: AddSubjectDialogProps) {
                 name="totalClasses"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className={cn('font-semibold', isRadhaTheme && "text-pink-600")}>Total Classes</FormLabel>
+                    <FormLabel className={cn('font-semibold', isRadhaTheme && "text-white")}>Total Classes</FormLabel>
                     <FormControl>
                       <Input type="number" {...field} onFocus={(e) => e.target.select()} />
                     </FormControl>
@@ -129,7 +129,7 @@ export function AddSubjectDialog({ children }: AddSubjectDialogProps) {
               />
             </div>
             <DialogFooter>
-              <Button type="submit" className={cn("text-white w-full font-bold", isRadhaTheme ? "bg-gradient-to-r from-pink-500 to-red-500" : "bg-gradient-to-r from-primary to-green-500")}>Add Subject</Button>
+              <Button type="submit" className={cn("text-white w-full font-bold", isRadhaTheme ? "bg-gradient-to-r from-black to-pink-500" : "bg-gradient-to-r from-primary to-green-500")}>Add Subject</Button>
             </DialogFooter>
           </form>
         </Form>

@@ -2,6 +2,7 @@
 
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import type { Subject, AttendanceLog } from '@/types';
+import { useState, useCallback } from 'react';
 
 // Simple UUID generator for client-side use
 const v4 = () => {
@@ -21,6 +22,10 @@ export const useAttendance = () => {
   const [profilePicture, setProfilePicture] = useLocalStorage<string | null>('profilePicture', null);
   const [overallTarget, setOverallTarget] = useLocalStorage<number>('overallTarget', 75);
 
+  // This state is used to force re-renders when local storage changes.
+  const [, setTick] = useState(0);
+  const forceUpdate = useCallback(() => setTick(tick => tick + 1), []);
+
   const addSubject = (newSubject: Omit<Subject, 'id' | 'history'>) => {
     const subjectWithId: Subject = {
       ...newSubject,
@@ -28,6 +33,7 @@ export const useAttendance = () => {
       history: [],
     };
     setSubjects(prevSubjects => [...prevSubjects, subjectWithId]);
+    forceUpdate();
   };
 
   const updateSubject = (updatedSubject: Subject) => {
@@ -36,10 +42,12 @@ export const useAttendance = () => {
         subject.id === updatedSubject.id ? updatedSubject : subject
       )
     );
+    forceUpdate();
   };
   
   const deleteSubject = (subjectId: string) => {
     setSubjects(subjects.filter((subject) => subject.id !== subjectId));
+    forceUpdate();
   };
 
   const markAttendance = (subjectId: string, status: 'present' | 'absent') => {
@@ -59,7 +67,8 @@ export const useAttendance = () => {
       }
       return subject;
     });
-    setSubjects([...updatedSubjects]);
+    setSubjects(updatedSubjects);
+    forceUpdate();
   };
 
   const getSubjectById = (subjectId: string): Subject | undefined => {

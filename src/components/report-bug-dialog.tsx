@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useActionState } from 'react';
-import { useFormStatus } from 'react-dom';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -9,7 +8,6 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-  DialogClose,
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -24,10 +22,10 @@ type ReportBugDialogProps = {
 };
 
 function SubmitButton() {
-  const { pending } = useFormStatus();
+  const [isPending] = useTransition();
   return (
-    <Button type="submit" className="w-full font-bold gap-2" disabled={pending}>
-      {pending ? (
+    <Button type="submit" className="w-full font-bold gap-2" disabled={isPending}>
+      {isPending ? (
         <>
           <Loader2 className="animate-spin" /> Submitting...
         </>
@@ -42,27 +40,34 @@ function SubmitButton() {
 
 function BugReportForm({ setDialogOpen }: { setDialogOpen: (open: boolean) => void }) {
   const { userName } = useAttendance();
-  const initialState = { message: '', success: false };
-  // Bind the userName to the server action
-  const submitBugReportWithUser = submitBugReport.bind(null, userName);
-  const [state, dispatch] = useActionState(submitBugReportWithUser, initialState);
   const { toast } = useToast();
-  const formRef = useRef<HTMLFormElement>(null);
+  const [description, setDescription] = useState('');
+  const [isPending, startTransition] = useTransition();
 
-  useEffect(() => {
-    if (state.message) {
-      if (state.success) {
-        toast({ title: 'Success!', description: state.message });
-        formRef.current?.reset();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (description.trim().length < 10) {
+      toast({
+        title: 'Error',
+        description: 'Description must be at least 10 characters long.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    startTransition(async () => {
+      const result = await submitBugReport(userName, description);
+      if (result.success) {
+        toast({ title: 'Success!', description: result.message });
         setDialogOpen(false);
       } else {
-        toast({ title: 'Error', description: state.message, variant: 'destructive' });
+        toast({ title: 'Error', description: result.message, variant: 'destructive' });
       }
-    }
-  }, [state, toast, setDialogOpen]);
+    });
+  };
 
   return (
-    <form ref={formRef} action={dispatch} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <Textarea
           name="description"
@@ -71,10 +76,23 @@ function BugReportForm({ setDialogOpen }: { setDialogOpen: (open: boolean) => vo
           className="text-base"
           required
           autoFocus
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          minLength={10}
         />
       </div>
       <DialogFooter>
-        <SubmitButton />
+        <Button type="submit" className="w-full font-bold gap-2" disabled={isPending}>
+          {isPending ? (
+            <>
+              <Loader2 className="animate-spin" /> Submitting...
+            </>
+          ) : (
+            <>
+              <Send /> Submit Report
+            </>
+          )}
+        </Button>
       </DialogFooter>
     </form>
   );
@@ -82,8 +100,7 @@ function BugReportForm({ setDialogOpen }: { setDialogOpen: (open: boolean) => vo
 
 export function ReportBugDialog({ isOpen, onOpenChange }: ReportBugDialogProps) {
   // By giving the form a new key each time the dialog opens,
-  // we ensure it remounts with a fresh state, which is the correct
-  // way to "reset" the useActionState hook.
+  // we ensure it remounts with a fresh state.
   const [formKey, setFormKey] = useState(() => Date.now().toString());
 
   useEffect(() => {

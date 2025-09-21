@@ -6,7 +6,7 @@
  */
 
 import { db } from '@/lib/firebase';
-import { doc, setDoc, addDoc, collection, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { doc, setDoc, addDoc, collection, updateDoc } from 'firebase/firestore';
 import { z } from 'zod';
 import { DeveloperInfo } from '@/types';
 import { revalidatePath } from 'next/cache';
@@ -34,6 +34,7 @@ export async function saveDeveloperInfo(
     const devInfoDocRef = doc(db, 'settings', 'developerInfo');
     await setDoc(devInfoDocRef, validatedDevInfo, { merge: true });
     revalidatePath('/developer-info');
+    revalidatePath('/admin');
     return { success: true, message: 'Developer information updated successfully!' };
   } catch (error) {
     console.error('Error saving developer info to Firestore:', error);
@@ -51,31 +52,27 @@ export async function saveDeveloperInfo(
 
 const BugReportSchema = z.object({
   description: z.string().min(10, { message: "Description must be at least 10 characters long." }),
+  userName: z.string(),
 });
 
 export async function submitBugReport(
   userName: string,
-  prevState: any,
-  formData: FormData
+  description: string
 ): Promise<{ success: boolean; message: string; }> {
-    const validatedFields = BugReportSchema.safeParse({
-        description: formData.get('description'),
-    });
-
-    if (!validatedFields.success) {
-        return {
-            success: false,
-            message: validatedFields.error.flatten().fieldErrors.description?.[0] || 'Invalid data provided.',
-        };
-    }
-
-    const { description } = validatedFields.data;
-
     try {
+        const validatedFields = BugReportSchema.safeParse({ description, userName });
+
+        if (!validatedFields.success) {
+            return {
+                success: false,
+                message: validatedFields.error.flatten().fieldErrors.description?.[0] || 'Invalid data provided.',
+            };
+        }
+
         const bugReportsColRef = collection(db, 'bug-reports');
         await addDoc(bugReportsColRef, {
-            description,
-            userName,
+            description: validatedFields.data.description,
+            userName: validatedFields.data.userName,
             timestamp: Date.now(),
             status: 'open',
         });
@@ -84,7 +81,8 @@ export async function submitBugReport(
         return { success: true, message: 'Thank you! Your bug report has been received.' };
     } catch (error) {
         console.error('Error submitting bug report:', error);
-        return { success: false, message: 'An unexpected error occurred. Please try again.' };
+        // This is a generic error message to avoid exposing implementation details.
+        return { success: false, message: 'An unexpected server error occurred. Please try again later.' };
     }
 }
 

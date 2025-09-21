@@ -11,6 +11,7 @@ import {z} from 'genkit';
 
 const DailyQuoteInputSchema = z.object({
   theme: z.string().optional().describe('The current theme of the app.'),
+  previousQuotes: z.array(z.string()).optional(),
 });
 
 const DailyQuoteOutputSchema = z.object({
@@ -29,7 +30,7 @@ const prompt = ai.definePrompt({
   input: {schema: DailyQuoteInputSchema},
   output: {schema: DailyQuoteOutputSchema},
   prompt: `You are an expert at providing short, powerful, motivational quotes.
-  {{#if theme=='radha-rani'}}
+  {{#if (eq theme 'radha-rani')}}
   Please provide one short, powerful, motivational quote related to Radha Krishna, spiritual love, or devotion. The tone should be uplifting and serene.
   {{else}}
   Please provide one short, powerful, motivational quote.
@@ -48,7 +49,7 @@ const prompt = ai.definePrompt({
 const getDailyQuoteFlow = ai.defineFlow(
   {
     name: 'getDailyQuoteFlow',
-    inputSchema: DailyQuoteInputSchema,
+    inputSchema: z.object({ theme: z.string().optional() }),
     outputSchema: DailyQuoteOutputSchema,
   },
   async ({ theme }) => {

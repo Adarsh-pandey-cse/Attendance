@@ -38,7 +38,7 @@ const attendanceTargetNotificationsPrompt = ai.definePrompt({
   name: 'attendanceTargetNotificationsPrompt',
   input: {schema: AttendanceTargetNotificationsInputSchema},
   output: {schema: AttendanceTargetNotificationsOutputSchema},
-  prompt: `You are a helpful assistant that generates notifications for students regarding their attendance.
+  prompt: `You are a helpful and funny assistant that generates notifications for students regarding their attendance in Hindi.
 
   Generate a notification message based on the student's current attendance percentage, the target attendance percentage, and the number of classes needed to reach the target.
 
@@ -48,10 +48,16 @@ const attendanceTargetNotificationsPrompt = ai.definePrompt({
   Classes Needed: {{{classesNeeded}}}
 
   Consider these cases when creating a notification:
-  - If the attendance percentage is below the target, encourage the student to attend the required number of classes.
+  - If the attendance percentage is below the target, encourage the student to attend the required number of classes in a supportive tone.
   - If the attendance percentage is near the target (e.g., within 5%), gently remind the student to maintain their attendance.
-  - If the attendance percentage is above the target, congratulate the student and encourage them to keep up the good work.
+  - If the attendance percentage is well above the target, generate a funny, witty, and random line in Hindi. Be creative! Here are some examples of the tone you should use:
+    - "बंक तो बनता है!"
+    - "अरे बस कर भाई, क्या करेगा इतनी attendance का?"
+    - "Attendance का अचार डालेगा क्या?"
+    - "Attendance तो पूरी है, आज उनसे मिलना तो बनता है।"
   - If the number of classes needed to reach the target is zero, then congratulate the student for being at the target already.
+
+  The notification should be short, sensible, and fit the context. Do not use non-sensical lines.
 
   Notification:`,
 });

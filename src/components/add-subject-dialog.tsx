@@ -20,7 +20,6 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Slider } from '@/components/ui/slider';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -31,7 +30,6 @@ const formSchema = z.object({
   name: z.string().min(1, 'Subject name is required.'),
   attendedClasses: z.coerce.number().min(0, 'Cannot be negative.').default(0),
   totalClasses: z.coerce.number().min(0, 'Cannot be negative.').default(0),
-  target: z.number().min(1).max(100).default(75),
 }).refine(data => data.attendedClasses <= data.totalClasses, {
   message: 'Attended classes cannot exceed total classes.',
   path: ['attendedClasses'],
@@ -51,18 +49,15 @@ export function AddSubjectDialog({ children }: AddSubjectDialogProps) {
       name: '',
       attendedClasses: 0,
       totalClasses: 0,
-      target: 75,
     },
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    addSubject(values);
+    addSubject({name: values.name, attendedClasses: values.attendedClasses, totalClasses: values.totalClasses});
     form.reset();
     setOpen(false);
   };
   
-  const targetValue = form.watch('target');
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -118,27 +113,6 @@ export function AddSubjectDialog({ children }: AddSubjectDialogProps) {
                 )}
               />
             </div>
-             <FormField
-                control={form.control}
-                name="target"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex justify-between items-center mb-2">
-                      <FormLabel>Attendance Target</FormLabel>
-                      <span className="font-bold text-primary">{targetValue}%</span>
-                    </div>
-                    <FormControl>
-                      <Slider
-                        min={1}
-                        max={100}
-                        step={1}
-                        value={[field.value]}
-                        onValueChange={(value) => field.onChange(value[0])}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
             <DialogFooter>
               <Button type="submit" className="bg-gradient-to-r from-primary to-green-500 text-white w-full">Add Subject</Button>
             </DialogFooter>

@@ -67,14 +67,14 @@ const CircularProgress = ({ percentage }: { percentage: number }) => {
 
 
 export function SubjectCard({ subject }: SubjectCardProps) {
-  const { markAttendance, deleteSubject } = useAttendance();
+  const { markAttendance, deleteSubject, overallTarget } = useAttendance();
   const percentage = subject.totalClasses > 0 ? (subject.attendedClasses / subject.totalClasses) * 100 : 0;
   
-  const needed = calculateClassesToAttend(subject.attendedClasses, subject.totalClasses, subject.target);
-  const bunkable = calculateClassesToBunk(subject.attendedClasses, subject.totalClasses, subject.target);
+  const needed = calculateClassesToAttend(subject.attendedClasses, subject.totalClasses, overallTarget);
+  const bunkable = calculateClassesToBunk(subject.attendedClasses, subject.totalClasses, overallTarget);
 
   let statusText, statusColor;
-  if (percentage < subject.target) {
+  if (percentage < overallTarget) {
     statusText = `Attend next ${needed} class${needed !== 1 ? 'es' : ''} to reach target.`;
     statusColor = "text-red-400";
   } else {
@@ -91,7 +91,6 @@ export function SubjectCard({ subject }: SubjectCardProps) {
       <div className="flex justify-between items-start">
         <div className="flex-1">
           <h3 className="text-xl font-bold">{subject.name}</h3>
-          <p className="text-sm text-muted-foreground">Target: {subject.target}%</p>
         </div>
          <AlertDialog>
           <AlertDialogTrigger asChild>

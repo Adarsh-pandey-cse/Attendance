@@ -9,6 +9,5 @@ export type Subject = {
   name: string;
   totalClasses: number;
   attendedClasses: number;
-  target: number; // 1-100
   history: AttendanceLog[];
 };

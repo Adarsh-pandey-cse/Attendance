@@ -5,10 +5,12 @@ import { Subject } from '@/types';
 import { calculateClassesToAttend } from '@/lib/utils';
 import { attendanceTargetNotifications } from '@/ai/flows/attendance-target-notifications';
 import { Sparkles } from 'lucide-react';
+import { useAttendance } from '@/hooks/use-attendance';
 
 export function AttendanceNotification({ subject }: { subject: Subject }) {
   const [notification, setNotification] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
+  const { overallTarget } = useAttendance();
 
   const attendancePercentage = useMemo(() => {
     return subject.totalClasses > 0
@@ -20,9 +22,9 @@ export function AttendanceNotification({ subject }: { subject: Subject }) {
     return calculateClassesToAttend(
       subject.attendedClasses,
       subject.totalClasses,
-      subject.target
+      overallTarget
     );
-  }, [subject.attendedClasses, subject.totalClasses, subject.target]);
+  }, [subject.attendedClasses, subject.totalClasses, overallTarget]);
 
   useEffect(() => {
     const fetchNotification = async () => {
@@ -35,7 +37,7 @@ export function AttendanceNotification({ subject }: { subject: Subject }) {
         const response = await attendanceTargetNotifications({
           subjectName: subject.name,
           attendancePercentage,
-          attendanceTarget: subject.target,
+          attendanceTarget: overallTarget,
           classesNeeded,
         });
         setNotification(response.notificationMessage);
@@ -49,7 +51,7 @@ export function AttendanceNotification({ subject }: { subject: Subject }) {
 
     const timer = setTimeout(fetchNotification, 500); // Debounce
     return () => clearTimeout(timer);
-  }, [subject.name, attendancePercentage, subject.target, classesNeeded]);
+  }, [subject.name, attendancePercentage, overallTarget, classesNeeded]);
 
   if (isLoading) {
     return (

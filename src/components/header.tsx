@@ -7,11 +7,16 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
-import { MoreVertical, Info } from 'lucide-react';
+import { MoreVertical, Info, Percent } from 'lucide-react';
 import Link from 'next/link';
+import { useAttendance } from '@/hooks/use-attendance';
+import { Slider } from '@/components/ui/slider';
 
 export function Header() {
+  const { overallTarget, setOverallTarget } = useAttendance();
+
   return (
     <header className="flex justify-between items-center py-2">
       <Logo />
@@ -23,7 +28,25 @@ export function Header() {
               <MoreVertical className="w-5 h-5 text-muted-foreground" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="glass-card">
+          <DropdownMenuContent align="end" className="glass-card w-56">
+             <div className="p-2">
+                <label htmlFor="overall-target" className="flex items-center justify-between text-sm font-medium mb-2 px-2">
+                  <div className="flex items-center gap-2">
+                     <Percent className="w-4 h-4" />
+                    <span>Overall Target</span>
+                  </div>
+                  <span className="font-bold text-primary">{overallTarget}%</span>
+                </label>
+                <Slider
+                  id="overall-target"
+                  min={1}
+                  max={100}
+                  step={1}
+                  value={[overallTarget]}
+                  onValueChange={(value) => setOverallTarget(value[0])}
+                />
+            </div>
+            <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link href="/developer-info" className="flex items-center gap-2 cursor-pointer">
                 <Info className="w-4 h-4" />

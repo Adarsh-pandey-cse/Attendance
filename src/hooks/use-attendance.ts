@@ -2,19 +2,32 @@
 
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import type { Subject, AttendanceLog } from '@/types';
-import { v4 as uuidv4 } from 'uuid';
+
+// Simple UUID generator for client-side use
+const v4 = () => {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+        return crypto.randomUUID();
+    }
+    // Fallback for older environments
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+};
 
 export const useAttendance = () => {
   const [subjects, setSubjects] = useLocalStorage<Subject[]>('subjects', []);
   const [userName, setUserName] = useLocalStorage<string>('userName', 'Student');
+  const [profilePicture, setProfilePicture] = useLocalStorage<string | null>('profilePicture', null);
+  const [overallTarget, setOverallTarget] = useLocalStorage<number>('overallTarget', 75);
 
   const addSubject = (newSubject: Omit<Subject, 'id' | 'history'>) => {
     const subjectWithId: Subject = {
       ...newSubject,
-      id: uuidv4(),
+      id: v4(),
       history: [],
     };
-    setSubjects([...subjects, subjectWithId]);
+    setSubjects(prevSubjects => [...prevSubjects, subjectWithId]);
   };
 
   const updateSubject = (updatedSubject: Subject) => {
@@ -34,7 +47,7 @@ export const useAttendance = () => {
     if (!subject) return;
 
     const newLog: AttendanceLog = {
-      id: uuidv4(),
+      id: v4(),
       timestamp: Date.now(),
       status,
     };
@@ -62,17 +75,9 @@ export const useAttendance = () => {
     getSubjectById,
     userName,
     setUserName,
+    profilePicture,
+    setProfilePicture,
+    overallTarget,
+    setOverallTarget,
   };
-};
-
-// Dummy uuidv4 for environments where crypto is not available (like initial SSR)
-const v4 = () => {
-    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-        return crypto.randomUUID();
-    }
-    // Fallback for older environments
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
 };

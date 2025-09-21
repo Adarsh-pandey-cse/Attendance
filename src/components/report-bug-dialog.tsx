@@ -60,7 +60,6 @@ export function ReportBugDialog({ children, isOpen, setIsOpen }: ReportBugDialog
     let attempts = 0;
     let success = false;
 
-    // Format the bug report details here in the frontend
     const bugReportDetails = `
 New Bug Report:
 User: ${userName || "N/A"}
@@ -74,9 +73,8 @@ Time: ${new Date().toLocaleString()}
       attempts++;
       console.log(`Bug report submission attempt ${attempts}...`);
       try {
-        // Pass only the formatted description to the flow
         const result = await sendBugReport({
-          userName: userName, // Keep for potential future use or logging
+          userName: userName,
           description: bugReportDetails,
           severity: severity,
         });
@@ -93,21 +91,30 @@ Time: ${new Date().toLocaleString()}
           setSeverity('Medium');
           setIsOpen(false);
         } else {
-          // This error is now more meaningful as it comes from the flow's failure check
-          throw new Error(result.message || 'The AI model failed to send the report.');
+          // If it fails, we'll let the loop continue to the retry logic.
+          // The final error will be shown after all retries are exhausted.
+          console.error(`Attempt ${attempts} failed with message: ${result.message}`);
+           if (attempts >= maxRetries) {
+             toast({
+                title: "Submission Failed",
+                description: result.message || "Bug report notification failed. Please try again later.",
+                variant: "destructive",
+            });
+           }
         }
       } catch (error) {
-        console.error(`Attempt ${attempts} failed:`, error);
-        if (attempts >= maxRetries) {
-          console.error("All submission attempts failed.");
-          toast({
-            title: "Submission Failed",
-            description: "Bug report notification failed. Please try again later.",
-            variant: "destructive",
-          });
-        } else {
-          await wait(2000); // Wait 2 seconds before retrying
+        console.error(`Attempt ${attempts} failed with exception:`, error);
+         if (attempts >= maxRetries) {
+            toast({
+                title: "Submission Failed",
+                description: "An unexpected error occurred. Please try again later.",
+                variant: "destructive",
+            });
         }
+      }
+      
+      if (!success && attempts < maxRetries) {
+        await wait(2000);
       }
     }
 

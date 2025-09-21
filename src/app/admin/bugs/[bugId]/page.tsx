@@ -140,21 +140,7 @@ export default function BugDetailPage() {
             {bugReport.attachments && bugReport.attachments.length > 0 && (
               <div className="space-y-2">
                 <h3 className="font-semibold flex items-center gap-2 text-muted-foreground"><Paperclip className='w-4 h-4' /> Attachments</h3>
-                <div className='space-y-2'>
-                  {bugReport.attachments.map(file => (
-                    <div key={file.url} className='flex items-center justify-between p-2 glass-card rounded-md'>
-                        <div className='flex items-center gap-2'>
-                            <FileText className='w-5 h-5 text-primary' />
-                            <span className='font-semibold truncate max-w-xs'>{file.name}</span>
-                        </div>
-                        <Button asChild size='sm' variant='outline'>
-                            <a href={file.url} target="_blank" rel="noopener noreferrer">
-                                <Download className='mr-2' /> View/Download
-                            </a>
-                        </Button>
-                    </div>
-                  ))}
-                </div>
+                 <p className="text-sm text-muted-foreground italic">File attachments are temporarily disabled.</p>
               </div>
             )}
           </CardContent>

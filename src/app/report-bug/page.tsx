@@ -1,33 +1,19 @@
 
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
-import { useDropzone } from 'react-dropzone';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Bug, Loader2, Paperclip, UploadCloud, X, File as FileIcon } from 'lucide-react';
+import { ArrowLeft, Bug, Loader2, Paperclip } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { useAttendance } from '@/hooks/use-attendance';
 import { saveBugReport } from '@/lib/actions';
 import { useRouter } from 'next/navigation';
-import { storage } from '@/lib/firebase';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { BugReportAttachment } from '@/types';
-
-
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ACCEPTED_FILE_TYPES = {
-  'image/jpeg': ['.jpg', '.jpeg'],
-  'image/png': ['.png'],
-  'text/plain': ['.txt'],
-  'application/pdf': ['.pdf'],
-};
 
 export default function ReportBugPage() {
   const [description, setDescription] = useState('');
-  const [files, setFiles] = useState<File[]>([]);
   const [isSending, setIsSending] = useState(false);
   const [deviceInfo, setDeviceInfo] = useState('');
   const { toast } = useToast();
@@ -38,29 +24,6 @@ export default function ReportBugPage() {
     // Auto-fetch device info
     setDeviceInfo(navigator.userAgent);
   }, []);
-
-  const onDrop = useCallback((acceptedFiles: File[], fileRejections: any[]) => {
-    const newFiles = [...files, ...acceptedFiles.filter(file => !files.some(f => f.name === file.name))];
-    setFiles(newFiles);
-    
-    fileRejections.forEach((rejection: any) => {
-      toast({
-        title: "File Rejected",
-        description: `${rejection.file.name}: ${rejection.errors[0].message}`,
-        variant: "destructive",
-      });
-    });
-  }, [files, toast]);
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    maxSize: MAX_FILE_SIZE,
-    accept: ACCEPTED_FILE_TYPES,
-  });
-
-  const removeFile = (fileName: string) => {
-    setFiles(files.filter(file => file.name !== fileName));
-  };
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,21 +35,10 @@ export default function ReportBugPage() {
     setIsSending(true);
     
     try {
-      // 1. Upload files to Firebase Storage directly from the client
-      const attachmentUrls: BugReportAttachment[] = [];
-      for (const file of files) {
-        const storageRef = ref(storage, `bug-attachments/${Date.now()}-${file.name}`);
-        const snapshot = await uploadBytes(storageRef, file);
-        const downloadURL = await getDownloadURL(snapshot.ref);
-        attachmentUrls.push({ name: file.name, url: downloadURL });
-      }
-
-      // 2. Call the server action with text data and the file URLs
       const result = await saveBugReport({
         description,
         userName: userName || 'Anonymous',
         deviceInfo,
-        attachments: attachmentUrls,
       });
 
       if (result.success) {
@@ -147,40 +99,6 @@ export default function ReportBugPage() {
                 />
               </div>
 
-              <div>
-                <label className="font-semibold mb-2 block">Attach Files (Screenshots, Logs, etc.)</label>
-                <div {...getRootProps()} className={`p-6 border-2 border-dashed rounded-lg cursor-pointer text-center transition-colors ${isDragActive ? 'border-primary bg-primary/10' : 'border-border hover:border-primary/50'}`}>
-                  <input {...getInputProps()} />
-                  <UploadCloud className="w-10 h-10 mx-auto text-muted-foreground mb-2" />
-                  {isDragActive ? (
-                    <p className="font-semibold text-primary">Drop the files here ...</p>
-                  ) : (
-                    <p className="text-muted-foreground">Drag 'n' drop files here, or click to select files</p>
-                  )}
-                  <p className="text-xs text-muted-foreground mt-1">Max 5MB per file. Supports PNG, JPG, PDF, TXT.</p>
-                </div>
-                 {files.length > 0 && (
-                  <div className="mt-4 space-y-2">
-                    <h4 className="font-semibold">Selected files:</h4>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                        {files.map(file => (
-                            <div key={file.name} className="relative group glass-card p-2 rounded-lg flex items-center gap-2 overflow-hidden">
-                                {file.type.startsWith('image/') ? (
-                                    <img src={URL.createObjectURL(file)} alt={file.name} className="w-10 h-10 object-cover rounded-md" />
-                                ) : (
-                                    <FileIcon className="w-10 h-10 text-primary" />
-                                )}
-                                <span className="text-sm truncate flex-1">{file.name}</span>
-                                <button type="button" onClick={() => removeFile(file.name)} className="absolute top-1 right-1 p-0.5 bg-destructive/80 rounded-full text-destructive-foreground opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <X className="w-3 h-3" />
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-              
               <div>
                 <label className="font-semibold mb-2 block">Device Information (Auto-detected)</label>
                 <p className="text-sm p-3 bg-slate-900 rounded-md font-mono whitespace-normal break-words">{deviceInfo}</p>

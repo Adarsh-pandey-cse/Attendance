@@ -1,3 +1,4 @@
+
 export type AttendanceLog = {
   id: string;
   timestamp: number;

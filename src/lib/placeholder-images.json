@@ -1,10 +1,10 @@
 {
   "placeholderImages": [
     {
-      "id": "radha-rani",
-      "description": "A divine painting of Radha Rani.",
-      "imageUrl": "https://picsum.photos/seed/radharani/300/300",
-      "imageHint": "radha krishna painting"
+      "id": "radha-rani-main",
+      "description": "A divine painting of Radha Rani with a flute.",
+      "imageUrl": "https://storage.googleapis.com/maker-studio-project-files-prod/f757d599-23a4-4f81-a83d-3fc972b94a11/user_ask/radha-rani-in-blue-saree-2-d-hd-wallpaper-thumb.jpg",
+      "imageHint": "radha rani flute"
     },
     {
       "id": "premanand-maharaj",

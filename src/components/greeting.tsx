@@ -36,6 +36,7 @@ export function Greeting() {
   }, []);
 
   const greetingText = theme === 'radha-rani' ? 'राधा वल्लभ श्री हरिवंश,' : 'राधे राधे,';
+  const quoteColorClass = theme === 'radha-rani' ? 'text-orange-700' : 'text-yellow-300';
 
   return (
     <div className="glass-card p-6">
@@ -50,7 +51,7 @@ export function Greeting() {
       {quoteLoading ? (
          <p className="text-lg font-semibold text-yellow-300/80 mt-2 italic">Loading quote...</p>
       ) : (
-        <p className="text-lg font-semibold text-yellow-300 mt-2 italic">&quot;{quote}&quot;</p>
+        <p className={`text-lg font-semibold ${quoteColorClass} mt-2 italic`}>&quot;{quote}&quot;</p>
       )}
     </div>
   );

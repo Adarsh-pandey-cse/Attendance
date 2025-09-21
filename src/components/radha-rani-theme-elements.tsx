@@ -79,9 +79,6 @@ export function RadhaRaniThemeElements() {
   return (
     <>
         <div className="radha-rani-background"></div>
-        <div className="fixed top-4 left-4 z-50">
-            <DivineImage imageId="radha-rani" alt="Radha Rani" />
-        </div>
         <div className="fixed top-4 right-4 z-50">
             <DivineImage imageId="premanand-maharaj" alt="Premanand ji Maharaj" />
         </div>

@@ -111,7 +111,7 @@
     --popover: 34 90% 98%;
     --popover-foreground: 25 60% 25%;
 
-    --primary: 15 85% 55%; /* Saffron Orange */
+    --primary: 25 90% 55%; /* Saffron Orange */
     --primary-foreground: 0 0% 100%; /* White */
 
     --secondary: 45 90% 80%; /* Light Yellow */
@@ -120,7 +120,7 @@
     --muted: 45 85% 85%;
     --muted-foreground: 25 50% 45%;
 
-    --accent: 355 80% 60%; /* Vermilion Red */
+    --accent: 355 90% 65%; /* Vermilion Red */
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 70% 50%;

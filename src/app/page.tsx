@@ -22,14 +22,14 @@ export default function Home() {
             <AddSubjectDialog>
               <button className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors">
                 <PlusCircle className="w-5 h-5" />
-                <span className="font-semibold">Add New</span>
+                <span className="font-bold">Add New</span>
               </button>
             </AddSubjectDialog>
           </div>
 
           {subjects.length === 0 ? (
             <div className="text-center py-16 px-4 glass-card">
-              <h3 className="text-lg font-semibold text-foreground">Welcome to AttendX!</h3>
+              <h3 className="text-lg font-bold text-foreground">Welcome to AttendX!</h3>
               <p className="text-muted-foreground mt-2">
                 You haven&apos;t added any subjects yet.
               </p>

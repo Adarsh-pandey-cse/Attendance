@@ -99,7 +99,7 @@ export function ProfileSection() {
           </div>
         ) : (
           <div className="flex items-center gap-2" onClick={() => setIsEditingName(true)}>
-            <span className="font-semibold text-lg cursor-pointer hover:text-primary/80 transition-colors">
+            <span className="font-bold text-lg cursor-pointer hover:text-primary/80 transition-colors">
               {isClient ? userName : 'Student'}
             </span>
              <Edit2 className="w-4 h-4 text-muted-foreground cursor-pointer" />

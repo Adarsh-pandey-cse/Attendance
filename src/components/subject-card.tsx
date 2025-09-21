@@ -5,7 +5,7 @@ import { Button } from './ui/button';
 import { useAttendance } from '@/hooks/use-attendance';
 import { calculateClassesToAttend, calculateClassesToBunk } from '@/lib/utils';
 import { AttendanceNotification } from './attendance-notification';
-import { History, Plus, Minus, Trash2 } from 'lucide-react';
+import { History, Plus, Minus, Trash2, Edit } from 'lucide-react';
 import Link from 'next/link';
 import {
   AlertDialog,
@@ -18,6 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { EditSubjectDialog } from './edit-subject-dialog';
 
 type SubjectCardProps = {
   subject: Subject;
@@ -92,25 +93,32 @@ export function SubjectCard({ subject }: SubjectCardProps) {
         <div className="flex-1">
           <h3 className="text-xl font-bold">{subject.name}</h3>
         </div>
-         <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive w-8 h-8">
-              <Trash2 className="w-4 h-4" />
+        <div className="flex items-center">
+          <EditSubjectDialog subject={subject}>
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary w-8 h-8">
+              <Edit className="w-4 h-4" />
             </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This will permanently delete the subject &quot;{subject.name}&quot; and all its attendance history. This action cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={() => deleteSubject(subject.id)} className="bg-destructive hover:bg-destructive/80">Delete</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+          </EditSubjectDialog>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive w-8 h-8">
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="font-bold">Are you sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently delete the subject &quot;{subject.name}&quot; and all its attendance history. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={() => deleteSubject(subject.id)} className="bg-destructive hover:bg-destructive/80 font-bold">Delete</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </div>
       
       <div className="flex items-center justify-around gap-4">
@@ -119,20 +127,20 @@ export function SubjectCard({ subject }: SubjectCardProps) {
             <p className="text-3xl font-bold">
               {subject.attendedClasses}/{subject.totalClasses}
             </p>
-            <p className="text-sm text-muted-foreground">Classes</p>
+            <p className="text-sm text-muted-foreground font-semibold">Classes</p>
         </div>
       </div>
       
       <div className="text-center">
-        <p className={`font-semibold ${statusColor}`}>{statusText}</p>
+        <p className={`font-bold ${statusColor}`}>{statusText}</p>
         <AttendanceNotification subject={subject} />
       </div>
 
       <div className="flex gap-2">
-        <Button onClick={() => markAttendance(subject.id, 'present')} className="flex-1 bg-green-600/20 text-green-300 border border-green-600/50 hover:bg-green-600/30">
+        <Button onClick={() => markAttendance(subject.id, 'present')} className="flex-1 bg-green-600/20 text-green-300 border border-green-600/50 hover:bg-green-600/30 font-bold">
           <Plus className="mr-2 h-4 w-4"/> Attended
         </Button>
-        <Button onClick={() => markAttendance(subject.id, 'absent')} className="flex-1 bg-red-600/20 text-red-300 border border-red-600/50 hover:bg-red-600/30">
+        <Button onClick={() => markAttendance(subject.id, 'absent')} className="flex-1 bg-red-600/20 text-red-300 border border-red-600/50 hover:bg-red-600/30 font-bold">
           <Minus className="mr-2 h-4 w-4"/> Missed
         </Button>
         <Button asChild variant="outline" size="icon">

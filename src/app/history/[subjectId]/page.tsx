@@ -22,7 +22,7 @@ export default function HistoryPage() {
   if (!subject) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center">
-        <p className="text-lg font-semibold">Subject not found.</p>
+        <p className="text-lg font-bold">Subject not found.</p>
         <Button asChild variant="link" className="mt-4">
           <Link href="/">Go Back Home</Link>
         </Button>
@@ -59,7 +59,7 @@ export default function HistoryPage() {
           </Button>
           <div className='flex-1'>
             <h1 className="text-2xl font-bold tracking-tight">{subject.name}</h1>
-            <p className="text-sm text-muted-foreground">Attendance History</p>
+            <p className="text-sm font-semibold text-muted-foreground">Attendance History</p>
           </div>
         </div>
 
@@ -68,7 +68,7 @@ export default function HistoryPage() {
             {subject.history.length === 0 ? (
                <div className="text-center py-16 px-4">
                 <Calendar className="w-12 h-12 mx-auto text-muted-foreground"/>
-                <h3 className="text-lg font-semibold text-foreground mt-4">No History Yet</h3>
+                <h3 className="text-lg font-bold text-foreground mt-4">No History Yet</h3>
                 <p className="text-muted-foreground mt-2">
                   Mark attendance on the main screen to see the history here.
                 </p>
@@ -87,9 +87,9 @@ export default function HistoryPage() {
                                 ) : (
                                     <XCircle className="w-5 h-5 text-red-400"/>
                                 )}
-                                <span className="font-medium capitalize">{log.status}</span>
+                                <span className="font-bold capitalize">{log.status}</span>
                             </div>
-                            <span className="text-sm text-muted-foreground">
+                            <span className="text-sm text-muted-foreground font-semibold">
                                 {format(new Date(log.timestamp), 'h:mm a')}
                             </span>
                         </li>

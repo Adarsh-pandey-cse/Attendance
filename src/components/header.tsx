@@ -30,7 +30,7 @@ export function Header() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="glass-card w-56">
              <div className="p-2">
-                <label htmlFor="overall-target" className="flex items-center justify-between text-sm font-medium mb-2 px-2">
+                <label htmlFor="overall-target" className="flex items-center justify-between text-sm font-bold mb-2 px-2">
                   <div className="flex items-center gap-2">
                      <Percent className="w-4 h-4" />
                     <span>Overall Target</span>
@@ -48,7 +48,7 @@ export function Header() {
             </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link href="/developer-info" className="flex items-center gap-2 cursor-pointer">
+              <Link href="/developer-info" className="flex items-center gap-2 cursor-pointer font-semibold">
                 <Info className="w-4 h-4" />
                 <span>Developer Info</span>
               </Link>

@@ -29,7 +29,7 @@ export function Greeting() {
     const fetchQuote = async () => {
       setQuoteLoading(true);
       try {
-        const response = await getDailyQuote();
+        const response = await getDailyQuote({});
         if (response?.quote) {
           setQuote(response.quote);
         } else {
@@ -43,7 +43,7 @@ export function Greeting() {
       }
     };
     fetchQuote();
-  }, [isClient, theme]);
+  }, [isClient]);
   
   const greetingText = isRadhaTheme ? 'राधा वल्लभ श्री हरिवंश,' : 'Hello,';
   

@@ -4,11 +4,7 @@ import { z } from 'zod';
 
 const GoogleFormInputSchema = z.object({
   userName: z.string().optional(),
-  userEmail: z.string().optional(),
   description: z.string(),
-  steps: z.string().optional(),
-  severity: z.string(),
-  deviceInfo: z.string(),
 });
 
 export type GoogleFormInput = z.infer<typeof GoogleFormInputSchema>;
@@ -22,24 +18,16 @@ export async function submitToGoogleForm(
   // IMPORTANT: Replace these placeholder IDs with the actual 'entry.xxxx' IDs from your Google Form's source code.
   // To find them:
   // 1. Open your Google Form in your browser.
-  // 2. Right-click on a form field (e.g., "User Name") and select "Inspect".
+  // 2. Right-click on a form field and select "Inspect".
   // 3. Find the <input> or <textarea> element and look for the 'name' attribute, which will be something like 'entry.123456789'.
   const fieldMapping = {
-    userName: 'entry.YOUR_USER_NAME_ENTRY_ID',       // Replace with actual ID
-    userEmail: 'entry.YOUR_USER_EMAIL_ENTRY_ID',      // Replace with actual ID
-    description: 'entry.YOUR_DESCRIPTION_ENTRY_ID', // Replace with actual ID
-    steps: 'entry.YOUR_STEPS_ENTRY_ID',          // Replace with actual ID
-    severity: 'entry.YOUR_SEVERITY_ENTRY_ID',       // Replace with actual ID
-    deviceInfo: 'entry.YOUR_DEVICE_INFO_ENTRY_ID',    // Replace with actual ID
+    userName: 'entry.YOUR_USERNAME_FIELD_ID',       // Replace with actual ID
+    description: 'entry.YOUR_BUGDESCRIPTION_FIELD_ID', // Replace with actual ID
   };
   
   const formData = new URLSearchParams();
   formData.append(fieldMapping.userName, input.userName || 'Not provided');
-  formData.append(fieldMapping.userEmail, input.userEmail || 'Not provided');
   formData.append(fieldMapping.description, input.description);
-  formData.append(fieldMapping.steps, input.steps || 'Not provided');
-  formData.append(fieldMapping.severity, input.severity);
-  formData.append(fieldMapping.deviceInfo, input.deviceInfo);
 
   try {
     const response = await fetch(formUrl, {

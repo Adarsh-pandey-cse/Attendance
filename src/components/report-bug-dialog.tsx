@@ -12,15 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Bug, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAttendance } from '@/hooks/use-attendance';
@@ -36,19 +28,9 @@ const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export function ReportBugDialog({ children, isOpen, setIsOpen }: ReportBugDialogProps) {
   const [description, setDescription] = useState('');
-  const [steps, setSteps] = useState('');
-  const [severity, setSeverity] = useState('Medium');
-  const [userEmail, setUserEmail] = useState('');
   const [isSending, setIsSending] = useState(false);
   const { toast } = useToast();
   const { userName } = useAttendance();
-  const [deviceInfo, setDeviceInfo] = useState('');
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setDeviceInfo(`${navigator.userAgent}`);
-    }
-  }, []);
 
   const handleSubmit = async () => {
     if (description.trim() === '') {
@@ -71,31 +53,23 @@ export function ReportBugDialog({ children, isOpen, setIsOpen }: ReportBugDialog
       try {
         const result = await submitToGoogleForm({
           userName: userName,
-          userEmail: userEmail,
           description: description,
-          steps: steps,
-          severity: severity,
-          deviceInfo: deviceInfo,
         });
 
         if (result.success) {
           success = true;
           toast({
             title: 'Report Sent!',
-            description: 'Thank you! Your bug report has been submitted.',
+            description: 'Thank you for your bug report! Our team will review it shortly.',
           });
           setDescription('');
-          setSteps('');
-          setSeverity('Medium');
-          setUserEmail('');
           setIsOpen(false);
         } else {
           console.error(`Attempt ${attempts} failed:`, result.message);
           if (attempts >= maxRetries) {
             toast({
               title: 'Submission Failed',
-              description:
-                'Failed to submit bug report. Please try again later.',
+              description: 'Failed to submit bug report. Please try again later.',
               variant: 'destructive',
             });
           }
@@ -148,64 +122,6 @@ export function ReportBugDialog({ children, isOpen, setIsOpen }: ReportBugDialog
               rows={4}
               className="resize-none"
               disabled={isSending}
-            />
-          </div>
-           <div className="space-y-2">
-            <Label htmlFor="bug-email" className="font-semibold">
-              Your Email (Optional)
-            </Label>
-            <Input
-              id="bug-email"
-              type="email"
-              placeholder="So we can contact you if needed"
-              value={userEmail}
-              onChange={(e) => setUserEmail(e.target.value)}
-              disabled={isSending}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="bug-steps" className="font-semibold">
-              Steps to Reproduce
-            </Label>
-            <Textarea
-              id="bug-steps"
-              placeholder="e.g., 1. Go to Timetable page. 2. Click 'Add Class'. 3. See error."
-              value={steps}
-              onChange={(e) => setSteps(e.target.value)}
-              rows={3}
-              className="resize-none"
-              disabled={isSending}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="bug-severity" className="font-semibold">
-              Severity Level
-            </Label>
-            <Select
-              value={severity}
-              onValueChange={setSeverity}
-              disabled={isSending}
-            >
-              <SelectTrigger id="bug-severity">
-                <SelectValue placeholder="Select severity" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Low">Low</SelectItem>
-                <SelectItem value="Medium">Medium</SelectItem>
-                <SelectItem value="High">High</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="bug-device" className="font-semibold">
-              Device/App Info
-            </Label>
-            <Input
-              id="bug-device"
-              value={deviceInfo}
-              readOnly
-              disabled
-              className="bg-muted/50"
             />
           </div>
         </div>

@@ -29,7 +29,7 @@ type SubjectCardProps = {
   subject: Subject;
 };
 
-const CircularProgress = ({ percentage, target }: { percentage: number, target: number }) => {
+const CircularProgress = ({ percentage, target, attendedClasses, totalClasses }: { percentage: number, target: number, attendedClasses: number, totalClasses: number }) => {
   const radius = 50;
   const circumference = 2 * Math.PI * radius;
   const { theme } = useTheme();
@@ -84,7 +84,7 @@ const CircularProgress = ({ percentage, target }: { percentage: number, target: 
       </svg>
       <motion.div 
         className="absolute inset-0 flex flex-col items-center justify-center"
-        key={`${subject.attendedClasses}-${subject.totalClasses}`}
+        key={`${attendedClasses}-${totalClasses}`}
         initial={{ scale: 1.2 }}
         animate={{ scale: 1 }}
         transition={{ duration: 0.4, type: 'spring', stiffness: 200, damping: 15 }}
@@ -177,7 +177,7 @@ export function SubjectCard({ subject }: SubjectCardProps) {
       )}
 
       <div className="flex items-center justify-around gap-4">
-        <CircularProgress percentage={percentage} target={overallTarget} />
+        <CircularProgress percentage={percentage} target={overallTarget} attendedClasses={subject.attendedClasses} totalClasses={subject.totalClasses} />
         <motion.div 
             className="text-center"
             key={`${subject.attendedClasses}-${subject.totalClasses}-text`}
@@ -208,3 +208,4 @@ export function SubjectCard({ subject }: SubjectCardProps) {
     </div>
   );
 }
+

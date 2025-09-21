@@ -2,53 +2,60 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Bug, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
-import { submitBugReport } from '@/lib/actions';
 
 export default function ReportBugPage() {
   const { toast } = useToast();
+  const router = useRouter();
   const [description, setDescription] = useState('');
   const [pending, setPending] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!description.trim()) {
-        toast({
-            title: 'Error',
-            description: 'Bug description cannot be empty.',
-            variant: 'destructive'
-        });
-        return;
-    }
-    
-    setPending(true);
-
-    // Optimistic UI: Show success and clear the form immediately
-    toast({
-      title: 'Success!',
-      description: 'Bug report submitted. Thank you for your feedback!',
-    });
-    setDescription('');
-    
-    // Perform the actual submission in the background
-    const result = await submitBugReport(description);
-
-    setPending(false);
-
-    // If the background submission fails, inform the user.
-    if (!result.success) {
       toast({
-        title: 'Submission Failed',
-        description: 'There was an error submitting your report. Please try again.',
+        title: 'Error',
+        description: 'Bug description cannot be empty.',
         variant: 'destructive',
       });
-      // Restore the description so the user doesn't lose their text
-      setDescription(result.data || description);
+      return;
+    }
+
+    setPending(true);
+
+    try {
+      const response = await fetch('/api/submit-bug', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ description }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || 'An error occurred.');
+      }
+
+      toast({
+        title: 'Success!',
+        description: 'Bug report submitted. Thank you for your feedback!',
+      });
+      router.push('/?bug_submitted=true');
+    } catch (error) {
+      console.error('Submission failed:', error);
+      toast({
+        title: 'Submission Failed',
+        description: error instanceof Error ? error.message : 'Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setPending(false);
     }
   };
 
@@ -85,17 +92,18 @@ export default function ReportBugPage() {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   required
+                  disabled={pending}
                 />
               </div>
-             <Button type="submit" className="w-full font-bold h-12 text-lg" disabled={pending}>
+              <Button type="submit" className="w-full font-bold h-12 text-lg" disabled={pending}>
                 {pending ? (
-                    <>
+                  <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
-                    </>
+                  </>
                 ) : (
-                    'Submit Bug Report'
+                  'Submit Bug Report'
                 )}
-                </Button>
+              </Button>
             </form>
           </CardContent>
         </Card>

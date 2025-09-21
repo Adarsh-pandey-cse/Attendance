@@ -11,43 +11,6 @@ import { z } from 'zod';
 import { DeveloperInfo } from '@/types';
 import { revalidatePath } from 'next/cache';
 
-const BugSchema = z.string().trim().min(1, { message: "Description cannot be empty." });
-
-export async function submitBugReport(description: string): Promise<{ success: boolean; message: string; data?: string; }> {
-  const validatedFields = BugSchema.safeParse(description);
-
-  if (!validatedFields.success) {
-    return {
-      message: 'Validation failed: Description cannot be empty.',
-      success: false,
-      data: description,
-    };
-  }
-
-  try {
-    await addDoc(collection(db, 'bug-reports'), {
-      description: validatedFields.data,
-      timestamp: serverTimestamp(),
-      status: 'new',
-      userName: 'Anonymous', // In a real app, you'd get this from session
-    });
-    
-    revalidatePath('/admin'); // Revalidate admin page to show new bug
-    
-    return {
-      message: 'Bug report submitted successfully!',
-      success: true,
-    };
-  } catch (error) {
-    console.error('Error submitting bug report:', error);
-    return {
-      message: 'An unexpected error occurred. Failed to submit bug report.',
-      success: false,
-      data: description,
-    };
-  }
-}
-
 
 // --- Developer Info Actions ---
 

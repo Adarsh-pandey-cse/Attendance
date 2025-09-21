@@ -12,6 +12,11 @@ export function ProfileSection() {
   const [name, setName] = useState(userName);
   const nameInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
     setName(userName);
@@ -95,7 +100,7 @@ export function ProfileSection() {
         ) : (
           <div className="flex items-center gap-2" onClick={() => setIsEditingName(true)}>
             <span className="font-semibold text-lg cursor-pointer hover:text-primary/80 transition-colors">
-              {userName}
+              {isClient ? userName : 'Student'}
             </span>
              <Edit2 className="w-4 h-4 text-muted-foreground cursor-pointer" />
           </div>

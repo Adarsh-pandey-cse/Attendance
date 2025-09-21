@@ -113,7 +113,7 @@ ${emailBody}
 """
 `,
       tools: [sendEmailTool],
-      model: 'googleai/gemini-2.5-flash',
+      model: 'googleai/gemini-pro',
     });
     
     // Check if the tool was called and return a confirmation message.

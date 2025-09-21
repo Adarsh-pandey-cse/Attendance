@@ -29,6 +29,8 @@ export const getDailyQuote = ai.defineFlow(
       Please provide a unique, powerful, and grammatically correct quote by Premanand ji Maharaj. The quote should be inspiring and thought-provoking.
       
       The quote MUST be in Hindi script. Ensure the Hindi is accurate and well-formed.
+      
+      IMPORTANT: The quote MUST be short, ideally one line, and at most two lines.
 
       Focus on themes like:
       - The glory and name of Radha Rani (राधा नाम की महिमा).

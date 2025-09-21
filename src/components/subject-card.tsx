@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Subject } from '@/types';
@@ -152,6 +153,11 @@ export function SubjectCard({ subject }: SubjectCardProps) {
           <h3 className="text-xl font-bold">{subject.name}</h3>
         </div>
         <div className="flex items-center">
+            <Button asChild variant="ghost" size="icon" className="text-muted-foreground hover:text-accent w-8 h-8">
+              <Link href={`/history/${subject.id}`}>
+                <History className="h-4 w-4" />
+              </Link>
+            </Button>
           <EditSubjectDialog subject={subject}>
             <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary w-8 h-8">
               <Edit className="w-4 h-4" />
@@ -207,16 +213,11 @@ export function SubjectCard({ subject }: SubjectCardProps) {
       </div>
 
       <div className="flex gap-2">
-        <Button onClick={() => markAttendance(subject.id, 'present')} className="flex-1 bg-primary text-primary-foreground hover:bg-primary/80 shadow-lg shadow-green-600/20 font-bold transition-all duration-300 hover:scale-[1.03]">
+        <Button onClick={() => markAttendance(subject.id, 'present')} size="sm" className="flex-1 bg-primary text-primary-foreground hover:bg-primary/80 shadow-lg shadow-green-600/20 font-bold transition-all duration-300 hover:scale-[1.03]">
           <Plus className="mr-2 h-4 w-4"/> Attended
         </Button>
-        <Button onClick={() => markAttendance(subject.id, 'absent')} className="flex-1 bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/20 font-bold transition-all duration-300 hover:scale-[1.03]">
+        <Button onClick={() => markAttendance(subject.id, 'absent')} size="sm" className="flex-1 bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/20 font-bold transition-all duration-300 hover:scale-[1.03]">
           <Minus className="mr-2 h-4 w-4"/> Missed
-        </Button>
-        <Button asChild variant="outline" size="icon" className="transition-all duration-300 hover:scale-105 hover:bg-accent/50">
-          <Link href={`/history/${subject.id}`}>
-            <History className="h-4 w-4" />
-          </Link>
         </Button>
       </div>
     </div>

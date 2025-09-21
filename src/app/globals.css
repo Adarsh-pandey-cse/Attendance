@@ -153,7 +153,7 @@
         @apply bg-card/80 border-black/10;
     }
     .radha-rani & {
-      @apply bg-yellow-100/30 border-primary/20 backdrop-blur-sm;
+      @apply bg-yellow-100/70 border-primary/20 backdrop-blur-sm;
     }
   }
 
@@ -201,7 +201,7 @@
   .bead-column-down { animation: scroll-down 40s linear infinite; }
 
   .bead {
-    @apply inline-block font-hindi text-lg font-bold my-1 text-pink-500;
+    @apply inline-block font-hindi text-xl font-bold my-1 text-pink-500;
     text-shadow: 0 0 2px black, 0 0 8px hsl(330, 80%, 70%);
     animation: bead-glow 3s ease-in-out infinite;
   }

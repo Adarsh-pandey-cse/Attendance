@@ -32,7 +32,7 @@ export function Header() {
   const isRadhaTheme = isClient && theme === 'radha-rani';
 
   return (
-    <header className={cn("flex justify-between items-center py-2", isRadhaTheme && 'homepage-section rounded-2xl px-4')}>
+    <header className={cn("flex justify-between items-center py-2", isRadhaTheme && 'homepage-section rounded-2xl px-2')}>
       <Logo />
       <div className="flex items-center gap-4">
         <ProfileSection />

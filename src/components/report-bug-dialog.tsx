@@ -13,8 +13,9 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Bug } from 'lucide-react';
+import { Bug, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { sendBugReport } from '@/ai/flows/bug-report-flow';
 
 type ReportBugDialogProps = {
   children: React.ReactNode;
@@ -24,11 +25,10 @@ type ReportBugDialogProps = {
 
 export function ReportBugDialog({ children, isOpen, setIsOpen }: ReportBugDialogProps) {
   const [bugDescription, setBugDescription] = useState('');
+  const [isSending, setIsSending] = useState(false);
   const { toast } = useToast();
-  
-  const recipientEmail = 'pandeyji5544@gmail.com';
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (bugDescription.trim() === '') {
       toast({
         title: "Error",
@@ -38,14 +38,25 @@ export function ReportBugDialog({ children, isOpen, setIsOpen }: ReportBugDialog
       return;
     }
 
-    const subject = encodeURIComponent('Bug Report from AttendX App');
-    const body = encodeURIComponent(`Bug Description:\n----------------\n\n${bugDescription}`);
-    
-    // Create a mailto link
-    window.location.href = `mailto:${recipientEmail}?subject=${subject}&body=${body}`;
-
-    setBugDescription('');
-    setIsOpen(false);
+    setIsSending(true);
+    try {
+      await sendBugReport(bugDescription);
+      toast({
+        title: "Report Sent!",
+        description: "Thank you for your feedback. The developer has been notified.",
+      });
+      setBugDescription('');
+      setIsOpen(false);
+    } catch (error) {
+      console.error("Failed to send bug report", error);
+      toast({
+        title: "Submission Failed",
+        description: "Could not send the bug report. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
@@ -69,12 +80,18 @@ export function ReportBugDialog({ children, isOpen, setIsOpen }: ReportBugDialog
                 onChange={(e) => setBugDescription(e.target.value)}
                 rows={5}
                 className="resize-none"
+                disabled={isSending}
             />
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
-          <Button onClick={handleSubmit} className="bg-destructive hover:bg-destructive/80 text-white font-bold">
-            Send Report via Email
+          <Button variant="outline" onClick={() => setIsOpen(false)} disabled={isSending}>Cancel</Button>
+          <Button onClick={handleSubmit} className="bg-destructive hover:bg-destructive/80 text-white font-bold" disabled={isSending}>
+            {isSending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Sending...
+              </>
+            ) : "Send Report"}
           </Button>
         </DialogFooter>
       </DialogContent>

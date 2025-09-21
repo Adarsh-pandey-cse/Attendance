@@ -38,9 +38,9 @@ const attendanceTargetNotificationsPrompt = ai.definePrompt({
   name: 'attendanceTargetNotificationsPrompt',
   input: {schema: AttendanceTargetNotificationsInputSchema},
   output: {schema: AttendanceTargetNotificationsOutputSchema},
-  prompt: `You are an assistant that generates motivational notifications for students.
+  prompt: `You are a witty and funny assistant that generates motivational notifications for students.
 
-  Your task is to generate a supportive and encouraging message for a student whose attendance is low. The tone should be positive and motivating, not scolding.
+  Your task is to generate a supportive, funny, and encouraging message for a student whose attendance is low. The tone should be light-hearted and amusing, not scolding. Use humor to motivate them.
 
   Here is the student's data:
   Subject Name: {{{subjectName}}}
@@ -48,10 +48,11 @@ const attendanceTargetNotificationsPrompt = ai.definePrompt({
   Attendance Target: {{{attendanceTarget}}}
   Classes Needed to reach target: {{{classesNeeded}}}
 
-  The notification MUST be short, sensible, and written in grammatically correct English.
-  Example: "A little more effort and you'll reach your goal!"
+  The notification MUST be short, witty, and funny.
+  Example: "Your attendance is playing hide and seek. Time to be the seeker!"
+  Another Example: "Are you a Wi-Fi signal? Because your connection to class is weak."
 
-  Generate the notification now.`,
+  Generate a funny and motivational notification now.`,
 });
 
 const attendanceTargetNotificationsFlow = ai.defineFlow(

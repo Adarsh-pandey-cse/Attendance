@@ -20,7 +20,8 @@ const DailyQuoteOutputSchema = z.object({
 export type DailyQuoteOutput = z.infer<typeof DailyQuoteOutputSchema>;
 
 export async function getDailyQuote(theme?: string): Promise<DailyQuoteOutput> {
-  return getDailyQuoteFlow({ isRadhaRaniTheme: theme === 'radha-rani' });
+  const {output} = await getDailyQuoteFlow({ isRadhaRaniTheme: theme === 'radha-rani' });
+  return output!;
 }
 
 const prompt = ai.definePrompt({
@@ -29,9 +30,9 @@ const prompt = ai.definePrompt({
   output: {schema: DailyQuoteOutputSchema},
   prompt: `You are an expert at providing short, powerful, motivational quotes. You will provide a unique quote each time.
   {{#if isRadhaRaniTheme}}
-  Please provide one short, powerful, motivational quote related to Radha Krishna, spiritual love, or devotion. The tone should be uplifting and serene.
-  {{else}}
   Please provide one short, powerful, motivational quote by Premanand ji Maharaj in Hindi. The quote MUST be in Hindi script.
+  {{else}}
+  Please provide one short, powerful, motivational quote related to Radha Krishna, spiritual love, or devotion. The tone should be uplifting and serene.
   {{/if}}
 
   Quote:`,

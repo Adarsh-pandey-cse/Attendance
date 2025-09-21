@@ -30,7 +30,7 @@ const prompt = ai.definePrompt({
   input: {schema: DailyQuoteInputSchema},
   output: {schema: DailyQuoteOutputSchema},
   prompt: `You are an expert at providing short, powerful, motivational quotes.
-  {{#if (eq theme 'radha-rani')}}
+  {{#if theme}}
   Please provide one short, powerful, motivational quote related to Radha Krishna, spiritual love, or devotion. The tone should be uplifting and serene.
   {{else}}
   Please provide one short, powerful, motivational quote by Premanand ji Maharaj in Hindi. The quote should be inspiring and related to devotion or spiritual life.
@@ -55,7 +55,7 @@ const getDailyQuoteFlow = ai.defineFlow(
   async ({ theme }) => {
     let attempts = 0;
     while (attempts < 5) {
-      const {output} = await prompt({ previousQuotes, theme });
+      const {output} = await prompt({ previousQuotes, theme: theme === 'radha-rani' ? theme : undefined });
       const newQuote = output!.quote;
 
       if (!previousQuotes.includes(newQuote)) {

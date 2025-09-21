@@ -51,8 +51,8 @@ const OverallCircularProgress = ({ percentage, target }: { percentage: number, t
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.5 }}
             >
-                <span className="text-3xl font-bold">{percentage.toFixed(1)}%</span>
-                <span className="text-xs font-semibold text-muted-foreground">Overall</span>
+                <span className="text-2xl font-bold">{percentage.toFixed(1)}%</span>
+                <span className="text-sm font-semibold text-muted-foreground mt-1">Overall</span>
             </motion.div>
         </div>
     );

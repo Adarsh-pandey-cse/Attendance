@@ -28,17 +28,17 @@ export default function Home() {
     <main className="flex justify-center min-h-screen">
       <div className="w-full max-w-lg p-4 md:p-6 space-y-6">
         <Header />
-        <div className={cn(isRadhaTheme && 'homepage-section')}>
+        <div className={cn(isRadhaTheme ? 'homepage-section' : 'boxed-section')}>
           <Greeting />
         </div>
-        <div className={cn(isRadhaTheme && 'homepage-section')}>
+        <div className={cn(isRadhaTheme ? 'homepage-section' : 'boxed-section')}>
           <OverallAttendance />
         </div>
 
         <Separator className="my-6 bg-white/10" />
 
-        <div className={cn('space-y-4', isRadhaTheme && 'homepage-section')}>
-          <div className="flex justify-between items-center">
+        <div className={cn('space-y-4', isRadhaTheme ? 'homepage-section' : 'boxed-section')}>
+          <div className="flex justify-between items-center px-4 pt-4 md:px-6 md:pt-6">
             <h2 className="text-2xl font-bold tracking-tight">Subjects</h2>
             <AddSubjectDialog>
               <button className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors duration-300">
@@ -64,7 +64,7 @@ export default function Home() {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-4 p-4 md:p-6 pt-2 md:pt-2">
               {subjects.map((subject) => (
                 <SubjectCard key={subject.id} subject={subject} />
               ))}

@@ -51,16 +51,15 @@ export async function saveDeveloperInfo(
 
 const BugReportSchema = z.object({
   description: z.string().min(10, { message: "Description must be at least 10 characters long." }),
-  userName: z.string(),
 });
 
 export async function submitBugReport(
+  userName: string,
   prevState: any,
   formData: FormData
 ): Promise<{ success: boolean; message: string; }> {
     const validatedFields = BugReportSchema.safeParse({
         description: formData.get('description'),
-        userName: formData.get('userName'),
     });
 
     if (!validatedFields.success) {
@@ -70,7 +69,7 @@ export async function submitBugReport(
         };
     }
 
-    const { description, userName } = validatedFields.data;
+    const { description } = validatedFields.data;
 
     try {
         const bugReportsColRef = collection(db, 'bug-reports');

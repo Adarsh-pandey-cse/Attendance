@@ -40,11 +40,13 @@ function SubmitButton() {
 }
 
 function BugReportForm({ setDialogOpen }: { setDialogOpen: (open: boolean) => void }) {
+  const { userName } = useAttendance();
   const initialState = { message: '', success: false };
-  const [state, dispatch] = useActionState(submitBugReport, initialState);
+  // Bind the userName to the server action
+  const submitBugReportWithUser = submitBugReport.bind(null, userName);
+  const [state, dispatch] = useActionState(submitBugReportWithUser, initialState);
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
-  const { userName } = useAttendance();
 
   useEffect(() => {
     if (state.message) {
@@ -60,7 +62,6 @@ function BugReportForm({ setDialogOpen }: { setDialogOpen: (open: boolean) => vo
 
   return (
     <form ref={formRef} action={dispatch} className="space-y-4">
-      <input type="hidden" name="userName" value={userName} />
       <div>
         <Textarea
           name="description"

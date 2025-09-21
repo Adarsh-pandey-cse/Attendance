@@ -26,25 +26,23 @@ export function Greeting() {
   useEffect(() => {
     if (!isClient) return;
 
-    if (theme !== 'radha-rani') {
-      const fetchQuote = async () => {
-        setQuoteLoading(true);
-        try {
-          const response = await getDailyQuote({ isRadhaRaniTheme: false });
-          if (response?.quote) {
-            setQuote(response.quote);
-          } else {
-            setQuote("The best way to predict the future is to create it.");
-          }
-        } catch (error) {
-          console.error("Failed to fetch daily quote", error);
+    const fetchQuote = async () => {
+      setQuoteLoading(true);
+      try {
+        const response = await getDailyQuote();
+        if (response?.quote) {
+          setQuote(response.quote);
+        } else {
           setQuote("The best way to predict the future is to create it.");
-        } finally {
-          setQuoteLoading(false);
         }
-      };
-      fetchQuote();
-    }
+      } catch (error) {
+        console.error("Failed to fetch daily quote", error);
+        setQuote("The best way to predict the future is to create it.");
+      } finally {
+        setQuoteLoading(false);
+      }
+    };
+    fetchQuote();
   }, [isClient, theme]);
   
   const greetingText = isRadhaTheme ? 'राधा वल्लभ श्री हरिवंश,' : 'Hello,';
@@ -64,7 +62,7 @@ export function Greeting() {
       </div>
       {isClient && <p className="text-muted-foreground font-semibold mt-1 text-center">{currentDate}</p>}
 
-      {isClient && theme !== 'radha-rani' && (
+      {isClient && (
         <>
           {quoteLoading ? (
               <p className="text-lg font-semibold text-yellow-300/80 mt-2 italic text-center">Loading quote...</p>

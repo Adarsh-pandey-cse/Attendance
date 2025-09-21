@@ -6,7 +6,7 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
+import { z } from 'zod';
 
 const BugReportInputSchema = z.string().describe('The description of the bug.');
 export type BugReportInput = z.infer<typeof BugReportInputSchema>;
@@ -18,7 +18,8 @@ const BugReportOutputSchema = z.object({
 export type BugReportOutput = z.infer<typeof BugReportOutputSchema>;
 
 export async function sendBugReport(input: BugReportInput): Promise<BugReportOutput> {
-  return sendBugReportFlow(input);
+  const result = await bugReporter(input);
+  return { success: true, message: result };
 }
 
 // This is a mock tool. In a real application, this would use an email service
@@ -51,31 +52,32 @@ const sendEmailTool = ai.defineTool(
 );
 
 
-const bugReportPrompt = ai.definePrompt({
-  name: 'bugReportPrompt',
-  tools: [sendEmailTool],
-  prompt: `A user has submitted a bug report. You must use the sendEmailTool to send this report to 'pandeyji5544@gmail.com'.
-
-  The subject of the email should be "Bug Report from AttendX App".
-
-  The body of the email should be the user's report, which is provided below:
-  
-  {{{prompt}}}
-  `,
-});
-
-
-const sendBugReportFlow = ai.defineFlow(
+const bugReporter = ai.defineFlow(
   {
-    name: 'sendBugReportFlow',
+    name: 'bugReporter',
     inputSchema: BugReportInputSchema,
-    outputSchema: BugReportOutputSchema,
+    outputSchema: z.string(),
   },
-  async (bugDescription) => {
-    // We just call the prompt and let the LLM call the tool.
-    // The prompt already knows the recipient and the subject line.
-    await bugReportPrompt({ prompt: bugDescription });
+  async (bugReport) => {
+    const { output: llmResponse } = await ai.generate({
+      prompt: `A user has submitted the following bug report. Your task is to send this report to 'pandeyji5544@gmail.com' using the provided sendEmailTool.
 
-    return { success: true, message: 'Bug report sent successfully.' };
+The subject of the email must be "Bug Report from AttendX App".
+The body of the email must be the user's report.
+
+Bug Report:
+"""
+${bugReport}
+"""
+`,
+      tools: [sendEmailTool],
+    });
+    
+    // Check if the tool was called and return a confirmation message.
+    if (llmResponse?.toolRequests?.length > 0) {
+      return "Bug report has been sent successfully.";
+    }
+
+    return "The model did not send the bug report. You may need to try again.";
   }
 );

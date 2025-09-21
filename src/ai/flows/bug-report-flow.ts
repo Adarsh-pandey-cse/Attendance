@@ -92,7 +92,6 @@ const bugReporter = ai.defineFlow(
 Bug Report Details:
 
 User Name: ${report.userName}
-User Email: Not provided
 Description: ${report.description}
 Steps to Reproduce: ${report.steps}
 Severity: ${report.severity}

@@ -7,11 +7,11 @@ import { format } from 'date-fns';
 import { useTheme } from '@/hooks/use-theme';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import { quotes } from '@/lib/quotes';
+import { premanandJiQuotes } from '@/lib/quotes';
 
 // Function to get a random quote
 const getRandomQuote = () => {
-    return quotes[Math.floor(Math.random() * quotes.length)];
+    return premanandJiQuotes[Math.floor(Math.random() * premanandJiQuotes.length)];
 }
 
 export function Greeting() {
@@ -79,7 +79,7 @@ export function Greeting() {
       <p className="text-muted-foreground font-semibold mt-1 text-center">{currentDate}</p>
       
       {quoteLoading ? (
-          <p className="text-lg font-semibold text-yellow-300/80 mt-2 italic text-center">Loading quote...</p>
+          <p className="text-lg font-semibold mt-2 italic text-center motivational-quote">Loading quote...</p>
       ) : (
           <p className="text-lg font-hindi font-bold mt-2 italic text-center motivational-quote">&quot;{quote}&quot;</p>
       )}

@@ -4,14 +4,14 @@
 import { useState, useEffect } from 'react';
 import { Subject } from '@/types';
 import { Star } from 'lucide-react';
-import { quotes } from '@/lib/quotes';
+import { lowAttendanceQuotes } from '@/lib/quotes';
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/hooks/use-theme';
 
 
 // Function to get a random quote
 const getRandomQuote = () => {
-    return quotes[Math.floor(Math.random() * quotes.length)];
+    return lowAttendanceQuotes[Math.floor(Math.random() * lowAttendanceQuotes.length)];
 }
 
 export function AttendanceNotification({ subject }: { subject: Subject }) {

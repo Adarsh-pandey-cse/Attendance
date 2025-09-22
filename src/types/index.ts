@@ -39,10 +39,3 @@ export type DeveloperInfo = {
     bio: string;
     profilePicture: string | null;
 }
-
-export type BugReport = {
-  id: string;
-  report: string;
-  createdAt: Date; // Changed from Timestamp to Date for client-side compatibility
-  status: 'new' | 'in-progress' | 'resolved';
-}

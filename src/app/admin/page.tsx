@@ -4,7 +4,7 @@
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, LogOut, Wrench, ShieldCheck, FileText, Bug } from 'lucide-react';
+import { ArrowLeft, LogOut, Wrench, ShieldCheck, FileText } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminPage() {
@@ -43,18 +43,13 @@ export default function AdminPage() {
               <span>App Management</span>
             </CardTitle>
              <CardDescription>
-              Manage application settings, content, and feedback.
+              Manage application settings and content.
             </CardDescription>
           </CardHeader>
           <CardContent className='grid grid-cols-1 md:grid-cols-2 gap-4 text-center'>
             <Link href="/admin/developer-info/edit">
                  <Button className="font-bold text-base w-full">
                     <FileText className="mr-2 h-5 w-5" /> Edit Developer Info
-                </Button>
-            </Link>
-            <Link href="/admin/bug-reports">
-                <Button className="font-bold text-base w-full">
-                    <Bug className="mr-2 h-5 w-5" /> View Bug Reports
                 </Button>
             </Link>
           </CardContent>

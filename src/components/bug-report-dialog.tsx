@@ -12,8 +12,9 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Bug, Loader2, CheckCircle, AlertTriangle } from 'lucide-react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { Bug, Loader2 } from 'lucide-react';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { submitBugReport } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 
@@ -38,7 +39,7 @@ function SubmitButton() {
 
 export function BugReportDialog({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
-  const [state, formAction] = useFormState(submitBugReport, initialState);
+  const [state, formAction] = useActionState(submitBugReport, initialState);
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
 

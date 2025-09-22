@@ -9,44 +9,37 @@ import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { premanandJiQuotes } from '@/lib/quotes';
 
-// Function to get a random quote
-const getRandomQuote = () => {
-    return premanandJiQuotes[Math.floor(Math.random() * premanandJiQuotes.length)];
-}
-
 export function Greeting() {
   const { userName } = useAttendance();
   const [quote, setQuote] = useState('');
-  const [quoteLoading, setQuoteLoading] = useState(true);
+  const [greetingText, setGreetingText] = useState('');
   const [currentDate, setCurrentDate] = useState('');
   const [isClient, setIsClient] = useState(false);
   const { theme } = useTheme();
+  
+  const isRadhaTheme = isClient && theme === 'radha-rani';
 
   useEffect(() => {
     setIsClient(true);
     setCurrentDate(format(new Date(), 'EEEE, MMMM do'));
-    setQuote(getRandomQuote());
-    setQuoteLoading(false);
-  }, []);
+    setQuote(premanandJiQuotes[Math.floor(Math.random() * premanandJiQuotes.length)]);
 
-  const isRadhaTheme = isClient && theme === 'radha-rani';
-  
-  const getGreeting = () => {
-    if (!isClient) return 'Hello,';
-    if (isRadhaTheme) {
-      return 'राधा वल्लभ श्री हरिवंश,';
-    }
-    const currentHour = new Date().getHours();
-    if (currentHour < 12) {
-      return 'Good morning,';
-    } else if (currentHour < 18) {
-      return 'Good afternoon,';
-    } else {
-      return 'Good evening,';
-    }
-  };
-  
-  const greetingText = getGreeting();
+    const getGreeting = () => {
+      if (theme === 'radha-rani') {
+        return 'राधा वल्लभ श्री हरिवंश,';
+      }
+      const currentHour = new Date().getHours();
+      if (currentHour < 12) {
+        return 'Good morning,';
+      } else if (currentHour < 18) {
+        return 'Good afternoon,';
+      } else {
+        return 'Good evening,';
+      }
+    };
+    setGreetingText(getGreeting());
+
+  }, [theme]);
   
   if (!isClient) {
     return (
@@ -78,7 +71,7 @@ export function Greeting() {
       </div>
       <p className="text-muted-foreground font-semibold mt-1 text-center">{currentDate}</p>
       
-      {quoteLoading ? (
+      {!quote ? (
           <p className="text-lg font-semibold mt-2 italic text-center motivational-quote">Loading quote...</p>
       ) : (
           <p className="text-lg font-hindi font-bold mt-2 italic text-center motivational-quote">&quot;{quote}&quot;</p>

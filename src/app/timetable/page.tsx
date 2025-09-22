@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DayOfWeek } from '@/types';
 import { TimetableTab } from '@/components/timetable-tab';
+import { useState, useEffect } from 'react';
 
 const daysOfWeek: DayOfWeek[] = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
@@ -22,7 +23,19 @@ function getToday(): DayOfWeek {
 
 export default function TimetablePage() {
   const { loading } = useAttendance();
-  const today = getToday();
+  const [today, setToday] = useState<DayOfWeek | null>(null);
+
+  useEffect(() => {
+    setToday(getToday());
+  }, []);
+
+  if (!today) {
+      return (
+        <div className="flex justify-center items-center min-h-screen">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      );
+  }
 
   return (
     <main className="flex justify-center min-h-screen">

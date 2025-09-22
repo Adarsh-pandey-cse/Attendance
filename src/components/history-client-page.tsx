@@ -33,11 +33,13 @@ export function HistoryClientPage({ subjectId }: HistoryClientPageProps) {
   }
 
   const groupedLogs = subject.history.reduce((acc: GroupedLogs, log) => {
-    const date = format(new Date(log.timestamp), 'yyyy-MM-dd');
-    if (!acc[date]) {
-      acc[date] = [];
+    // Timestamps from Firestore are numbers (milliseconds), create Date object
+    const logDate = new Date(log.timestamp); 
+    const dateKey = format(logDate, 'yyyy-MM-dd');
+    if (!acc[dateKey]) {
+      acc[dateKey] = [];
     }
-    acc[date].push(log);
+    acc[dateKey].push(log);
     return acc;
   }, {});
 
@@ -51,7 +53,7 @@ export function HistoryClientPage({ subjectId }: HistoryClientPageProps) {
   }
 
   return (
-    <main className="flex justify-center min-h-screen bg-gradient-to-b from-background to-slate-900/50">
+    <main className="flex justify-center min-h-screen">
       <div className="w-full max-w-lg p-4 md:p-6 space-y-6">
         <div className="flex items-center gap-2">
           <Button asChild variant="ghost" size="icon">

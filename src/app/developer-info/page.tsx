@@ -7,7 +7,7 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Code, Mail, User, Loader2 } from 'lucide-react';
+import { ArrowLeft, Mail, User, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DeveloperInfo } from '@/types';
@@ -27,12 +27,18 @@ export default function DeveloperInfoPage() {
           name: 'Adarsh Pandey',
           email: 'adarshpandey880079@gmail.com',
           bio: 'This application was built with modern web technologies, showcasing a professional and intuitive user experience for students.',
-          profilePicture: null,
+          profilePicture: 'https://i.postimg.cc/5tkHkcXR/Gemini-Generated-Image-bb97vlbb97vlbb97.png',
         });
       }
       setLoading(false);
     }, (error) => {
       console.error("Error fetching developer info:", error);
+       setDevInfo({
+          name: 'Adarsh Pandey',
+          email: 'adarshpandey880079@gmail.com',
+          bio: 'This application was built with modern web technologies, showcasing a professional and intuitive user experience for students.',
+          profilePicture: 'https://i.postimg.cc/5tkHkcXR/Gemini-Generated-Image-bb97vlbb97vlbb97.png',
+        });
       setLoading(false);
     });
 
@@ -48,9 +54,9 @@ export default function DeveloperInfoPage() {
   }
 
   return (
-    <main className="flex justify-center min-h-screen">
-      <div className="w-full max-w-lg p-4 md:p-6 space-y-6">
-        <div className="flex items-center gap-2">
+    <main className="flex items-center justify-center min-h-screen p-4">
+      <div className="w-full max-w-md">
+        <div className="flex items-center gap-2 mb-6">
           <Button asChild variant="ghost" size="icon">
             <Link href="/">
               <ArrowLeft />
@@ -60,32 +66,30 @@ export default function DeveloperInfoPage() {
         </div>
 
         <Card className="glass-card">
-          <CardHeader>
-            <div className="flex items-center gap-4">
-              <Avatar className="w-20 h-20 border-2 border-primary">
-                <AvatarImage src={devInfo?.profilePicture || ''} alt={devInfo?.name} />
-                <AvatarFallback className="bg-primary/20 text-primary">
-                  <Code className="w-10 h-10" />
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <CardTitle className="text-3xl font-bold">{devInfo?.name}</CardTitle>
-                <p className="font-semibold text-accent hover:underline">
-                    {devInfo?.email}
-                </p>
-              </div>
-            </div>
+          <CardHeader className="items-center text-center">
+             <div className="glowing-border-wrapper p-1">
+                <Avatar className="w-32 h-32">
+                    <AvatarImage src={devInfo?.profilePicture || ''} alt={devInfo?.name} />
+                    <AvatarFallback className="bg-primary/20 text-primary text-4xl font-bold">
+                    {devInfo?.name?.charAt(0) || 'A'}
+                    </AvatarFallback>
+                </Avatar>
+             </div>
+            <CardTitle className="text-3xl font-bold pt-4">{devInfo?.name}</CardTitle>
+            <p className="font-semibold text-accent hover:underline">
+                {devInfo?.email}
+            </p>
           </CardHeader>
-          <CardContent className="space-y-4 pt-4">
-             <p className="text-sm text-muted-foreground">
+          <CardContent className="space-y-4 pt-4 text-center">
+             <p className="text-sm text-muted-foreground text-center px-4">
               {devInfo?.bio}
             </p>
             <Separator />
-             <div className="flex items-center gap-4">
+             <div className="flex items-center justify-center gap-4">
               <User className="w-5 h-5 text-muted-foreground" />
               <span className="font-semibold text-lg">{devInfo?.name}</span>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center justify-center gap-4">
               <Mail className="w-5 h-5 text-muted-foreground" />
               <a href={`mailto:${devInfo?.email}`} className="font-semibold text-lg text-accent hover:underline">
                 {devInfo?.email}

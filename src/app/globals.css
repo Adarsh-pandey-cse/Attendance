@@ -225,6 +225,18 @@
   .radha-rani .motivational-quote {
       @apply text-yellow-950;
   }
+    
+  .glowing-border-wrapper {
+      @apply rounded-full transition-all duration-300;
+      background: conic-gradient(from 180deg at 50% 50%, #10e0f8, #f810e0, #10e0f8);
+      animation: gradient 3s linear infinite;
+  }
+
+  .glowing-border-wrapper:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px 5px hsla(var(--primary), 0.5);
+  }
+
 }
 
 @layer utilities {

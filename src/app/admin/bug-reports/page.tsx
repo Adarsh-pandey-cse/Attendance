@@ -21,7 +21,8 @@ async function getBugReports(): Promise<BugReport[]> {
       return {
         id: doc.id,
         report: data.report,
-        createdAt: data.createdAt, // This will be a Firestore Timestamp
+        // Firestore Timestamps need to be converted to JS Dates for serialization
+        createdAt: data.createdAt.toDate(), 
         status: data.status,
       } as BugReport;
     });
@@ -34,9 +35,10 @@ async function getBugReports(): Promise<BugReport[]> {
 export default async function BugReportsPage() {
   const reports = await getBugReports();
 
-  const formatDate = (timestamp: any) => {
-    if (!timestamp || !timestamp.toDate) return 'Date not available';
-    return format(timestamp.toDate(), "PPP 'at' p"); // e.g., Jun 9, 2024 at 5:03 PM
+  const formatDate = (date: Date) => {
+    if (!date) return 'Date not available';
+    // format expects a Date object, which we've already converted to.
+    return format(date, "PPP 'at' p"); // e.g., Jun 9, 2024 at 5:03 PM
   };
 
   const statusVariant = (status: BugReport['status']): "default" | "secondary" | "destructive" => {

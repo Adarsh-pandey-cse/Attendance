@@ -1,6 +1,5 @@
 
 'use client';
-import { Timestamp } from "firebase/firestore";
 
 export type AttendanceLog = {
   id: string;
@@ -44,6 +43,6 @@ export type DeveloperInfo = {
 export type BugReport = {
   id: string;
   report: string;
-  createdAt: Timestamp;
+  createdAt: Date; // Changed from Timestamp to Date for client-side compatibility
   status: 'new' | 'in-progress' | 'resolved';
 }

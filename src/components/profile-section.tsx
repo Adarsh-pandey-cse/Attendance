@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -69,7 +70,6 @@ export function ProfileSection() {
       };
       reader.readAsDataURL(e.target.files[0]);
     }
-    // Close the management dialog if it's open
     setManagementDialogOpen(false);
   };
 
@@ -89,23 +89,20 @@ export function ProfileSection() {
   return (
     <>
       <div className="flex items-center gap-3">
-        <div className="relative group">
-          <Dialog open={managementDialogOpen} onOpenChange={setManagementDialogOpen}>
-            <DialogTrigger asChild>
-              <button onClick={handleAvatarClick}>
+        <Dialog open={managementDialogOpen} onOpenChange={setManagementDialogOpen}>
+          <div className="relative group">
+              <button onClick={handleAvatarClick} className='rounded-full'>
                 <Avatar className="w-12 h-12 border-2 border-primary/50 cursor-pointer">
-                  <AvatarImage src={profilePicture} alt={userName} />
+                  <AvatarImage src={profilePicture || ''} alt={userName} />
                   <AvatarFallback className="bg-primary/20">
                     <User className="w-6 h-6 text-primary" />
                   </AvatarFallback>
                 </Avatar>
-                {!profilePicture && (
-                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Camera className="w-5 h-5 text-white" />
-                    </div>
-                )}
+                <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Camera className="w-5 h-5 text-white" />
+                </div>
               </button>
-            </DialogTrigger>
+          </div>
             {profilePicture && (
               <DialogContent className="sm:max-w-xs glass-card">
                 <DialogHeader>
@@ -116,7 +113,7 @@ export function ProfileSection() {
                         <DialogTrigger asChild>
                             <Button variant="outline" className="justify-start"><Eye className="mr-2"/> View Image</Button>
                         </DialogTrigger>
-                        <DialogContent className="p-0 max-w-md glass-card border-0">
+                        <DialogContent className="p-0 max-w-md glass-card border-0 bg-transparent">
                            <DialogHeader>
                               <DialogTitle className="sr-only">Full-size profile picture</DialogTitle>
                             </DialogHeader>
@@ -128,16 +125,15 @@ export function ProfileSection() {
                 </div>
               </DialogContent>
             )}
-          </Dialog>
+        </Dialog>
 
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handlePictureChange}
-            className="hidden"
-            accept="image/*"
-          />
-        </div>
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handlePictureChange}
+          className="hidden"
+          accept="image/*"
+        />
 
         <div className="relative">
           {isEditingName ? (

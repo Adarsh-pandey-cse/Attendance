@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Loader2, ArrowLeft, Save, User, Mail, FileText, Camera, Eye, Trash2 } from 'lucide-react';
+import { Loader2, ArrowLeft, Save, User, Mail, FileText, Camera, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { DeveloperInfo } from '@/types';
@@ -23,6 +23,7 @@ import {
   DialogTrigger,
   DialogClose,
 } from '@/components/ui/dialog';
+import { ImageCropDialog } from '@/components/image-crop-dialog';
 
 export default function EditDeveloperInfoPage() {
   const [devInfo, setDevInfo] = useState<Partial<DeveloperInfo>>({
@@ -35,6 +36,8 @@ export default function EditDeveloperInfoPage() {
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [imageToCrop, setImageToCrop] = useState<string | null>(null);
+
 
   useEffect(() => {
     const devInfoDocRef = doc(db, 'settings', 'developerInfo');
@@ -56,9 +59,10 @@ export default function EditDeveloperInfoPage() {
     if (e.target.files && e.target.files[0]) {
       const reader = new FileReader();
       reader.onload = (event) => {
-        setDevInfo(prev => ({...prev, profilePicture: event.target?.result as string}));
+        setImageToCrop(event.target?.result as string);
       };
       reader.readAsDataURL(e.target.files[0]);
+       e.target.value = ''; // Reset file input
     }
   };
 
@@ -89,6 +93,7 @@ export default function EditDeveloperInfoPage() {
   }
 
   return (
+    <>
     <main className="flex justify-center min-h-screen">
       <div className="w-full max-w-2xl p-4 md:p-6 space-y-6">
         <div className="flex items-center gap-2">
@@ -107,61 +112,36 @@ export default function EditDeveloperInfoPage() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className='flex items-center gap-6'>
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <div className="relative group cursor-pointer">
-                            <Avatar className="w-24 h-24 border-4 border-primary/30">
-                            <AvatarImage src={devInfo.profilePicture || ''} alt={devInfo.name} />
-                            <AvatarFallback className="bg-primary/10">
-                                <User className="w-10 h-10 text-primary" />
-                            </AvatarFallback>
-                            </Avatar>
-                            <div className="absolute inset-0 bg-black/60 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                                <Camera className="w-8 h-8 text-white" />
-                            </div>
-                        </div>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-xs glass-card">
-                        <DialogHeader>
-                            <DialogTitle>Profile Picture</DialogTitle>
-                        </DialogHeader>
-                        {devInfo.profilePicture ? (
-                            <div className="space-y-4">
-                                <Avatar className="w-48 h-48 mx-auto border-4 border-primary">
-                                    <AvatarImage src={devInfo.profilePicture} alt={devInfo.name} />
-                                </Avatar>
-                                <div className="grid grid-cols-1 gap-2">
-                                     <Button onClick={() => fileInputRef.current?.click()}><Camera className="mr-2" /> Change Picture</Button>
-                                     <Button variant="destructive" onClick={() => setDevInfo(prev => ({...prev, profilePicture: null}))}><Trash2 className="mr-2" /> Remove Picture</Button>
-                                     <DialogClose asChild><Button variant="outline">Close</Button></DialogClose>
-                                </div>
-                            </div>
-                        ) : (
-                             <div className="text-center py-4">
-                                <p className='mb-4'>No profile picture set.</p>
-                                <Button onClick={() => fileInputRef.current?.click()}><Camera className="mr-2" /> Upload Picture</Button>
-                            </div>
-                        )}
-                    </DialogContent>
-                </Dialog>
+                <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                    <Avatar className="w-24 h-24 border-4 border-primary/30">
+                    <AvatarImage src={devInfo.profilePicture || ''} alt={devInfo.name} />
+                    <AvatarFallback className="bg-primary/10">
+                        <User className="w-10 h-10 text-primary" />
+                    </AvatarFallback>
+                    </Avatar>
+                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Camera className="w-8 h-8 text-white" />
+                    </div>
+                </div>
                 <input type="file" ref={fileInputRef} onChange={handlePictureChange} className="hidden" accept="image/*" />
-                <div className='space-y-1 flex-1'>
-                    <h2 className='text-3xl font-bold'>{devInfo.name || 'Developer Name'}</h2>
-                    <p className='text-accent font-semibold'>{devInfo.email || 'developer@example.com'}</p>
+                
+                <div className='flex-1 space-y-2'>
+                    <Button onClick={() => fileInputRef.current?.click()}><Camera className="mr-2" /> Change Picture</Button>
+                    <Button variant="destructive" onClick={() => setDevInfo(prev => ({...prev, profilePicture: null}))}><Trash2 className="mr-2" /> Remove Picture</Button>
                 </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="name" className='font-semibold flex items-center gap-2'><User className='w-4 h-4' />Name</Label>
-              <Input id="name" name="name" value={devInfo.name} onChange={handleInputChange} placeholder="Your Name" />
+              <Input id="name" name="name" value={devInfo.name || ''} onChange={handleInputChange} placeholder="Your Name" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email" className='font-semibold flex items-center gap-2'><Mail className='w-4 h-4' />Email</Label>
-              <Input id="email" name="email" type="email" value={devInfo.email} onChange={handleInputChange} placeholder="your.email@example.com" />
+              <Input id="email" name="email" type="email" value={devInfo.email || ''} onChange={handleInputChange} placeholder="your.email@example.com" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="bio" className='font-semibold flex items-center gap-2'><FileText className='w-4 h-4' />Bio / About</Label>
-              <Textarea id="bio" name="bio" value={devInfo.bio} onChange={handleInputChange} placeholder="Tell us a bit about yourself or the app." rows={4} />
+              <Textarea id="bio" name="bio" value={devInfo.bio || ''} onChange={handleInputChange} placeholder="Tell us a bit about yourself or the app." rows={4} />
             </div>
             
             <Button onClick={handleSave} disabled={saving || loading} className="w-full font-bold">
@@ -172,5 +152,17 @@ export default function EditDeveloperInfoPage() {
         </Card>
       </div>
     </main>
+    
+    {imageToCrop && (
+        <ImageCropDialog
+            imageSrc={imageToCrop}
+            onCropComplete={(croppedImageUrl) => {
+                setDevInfo(prev => ({ ...prev, profilePicture: croppedImageUrl}));
+                setImageToCrop(null);
+            }}
+            onClose={() => setImageToCrop(null)}
+        />
+      )}
+    </>
   );
 }

@@ -74,8 +74,8 @@ export async function submitBugReport(
       status: 'new', // 'new', 'in-progress', 'resolved'
     });
     
-    // No need to revalidate here, it slows down the user's submission.
-    // The admin page will fetch fresh data on navigation.
+    // Revalidate the path to ensure the admin panel shows the new report.
+    revalidatePath('/admin/bug-reports');
 
     return { success: true, message: 'Thank you! Your bug report has been submitted.' };
   } catch (error) {
@@ -89,3 +89,4 @@ export async function submitBugReport(
     };
   }
 }
+

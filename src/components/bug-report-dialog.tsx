@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useTransition } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -18,39 +18,32 @@ import { useToast } from '@/hooks/use-toast';
 
 export function BugReportDialog({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setIsSubmitting(true);
-
     const formData = new FormData(event.currentTarget);
     
-    // Optimistically close dialog and show toast
-    setOpen(false);
-    toast({
-      title: 'Thank You!',
-      description: 'Your bug report has been submitted.',
+    startTransition(async () => {
+      const result = await submitBugReport(formData);
+      
+      if (result.success) {
+        toast({
+          title: 'Thank You!',
+          description: 'Your bug report has been submitted.',
+        });
+        setOpen(false);
+        formRef.current?.reset();
+      } else {
+        toast({
+          title: 'Submission Failed',
+          description: result.message,
+          variant: 'destructive',
+        });
+      }
     });
-
-    // Perform submission in the background
-    const result = await submitBugReport(formData);
-
-    setIsSubmitting(false);
-
-    if (!result.success) {
-      // If submission fails, show an error toast
-      // We also need to re-open the dialog and restore the content
-      // but for simplicity and a lighter UX, we just show an error.
-       toast({
-        title: 'Submission Failed',
-        description: result.message,
-        variant: 'destructive',
-      });
-      console.error("Bug report submission failed:", result.message);
-    }
   };
 
   return (
@@ -71,10 +64,10 @@ export function BugReportDialog({ children }: { children: React.ReactNode }) {
             placeholder="Describe the bug you encountered. For example: 'When I click on the history button, the app crashes.'"
             rows={6}
             required
-            disabled={isSubmitting}
+            disabled={isPending}
           />
-          <Button type="submit" disabled={isSubmitting} className="w-full font-bold">
-            {isSubmitting ? (
+          <Button type="submit" disabled={isPending} className="w-full font-bold">
+            {isPending ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
               <Bug className="mr-2 h-4 w-4" />

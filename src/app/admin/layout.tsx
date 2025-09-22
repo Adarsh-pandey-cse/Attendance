@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -30,7 +31,7 @@ export default function AdminLayout({
     }
   }, [pathname, router]);
 
-  if (isVerifying) {
+  if (isVerifying && pathname !== '/admin/login') {
     return (
       <div className="flex justify-center items-center min-h-screen bg-background">
         <Loader2 className="w-12 h-12 animate-spin text-primary" />

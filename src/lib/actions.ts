@@ -60,7 +60,6 @@ const BugReportSchema = z.object({
  * @returns An object indicating success or failure.
  */
 export async function submitBugReport(
-  prevState: any,
   formData: FormData
 ): Promise<{ success: boolean; message: string }> {
   try {

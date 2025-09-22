@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -13,59 +13,45 @@ import {
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Bug, Loader2 } from 'lucide-react';
-import { useActionState } from 'react';
-import { useFormStatus } from 'react-dom';
 import { submitBugReport } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 
-const initialState = {
-  success: false,
-  message: '',
-};
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" disabled={pending} className="w-full font-bold">
-      {pending ? (
-        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-      ) : (
-        <Bug className="mr-2 h-4 w-4" />
-      )}
-      Submit Report
-    </Button>
-  );
-}
-
 export function BugReportDialog({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
-  const [state, formAction] = useActionState(submitBugReport, initialState);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
 
-  useEffect(() => {
-    if (state.message) {
-      if (state.success) {
-        toast({
-          title: 'Success!',
-          description: state.message,
-        });
-        setOpen(false); // Close dialog on success
-      } else {
-        toast({
-          title: 'Error',
-          description: state.message,
-          variant: 'destructive',
-        });
-      }
-    }
-  }, [state, toast]);
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsSubmitting(true);
 
-  useEffect(() => {
-    if (!open) {
-      formRef.current?.reset();
+    const formData = new FormData(event.currentTarget);
+    
+    // Optimistically close dialog and show toast
+    setOpen(false);
+    toast({
+      title: 'Thank You!',
+      description: 'Your bug report has been submitted.',
+    });
+
+    // Perform submission in the background
+    const result = await submitBugReport(formData);
+
+    setIsSubmitting(false);
+
+    if (!result.success) {
+      // If submission fails, show an error toast
+      // We also need to re-open the dialog and restore the content
+      // but for simplicity and a lighter UX, we just show an error.
+       toast({
+        title: 'Submission Failed',
+        description: result.message,
+        variant: 'destructive',
+      });
+      console.error("Bug report submission failed:", result.message);
     }
-  }, [open]);
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -79,14 +65,22 @@ export function BugReportDialog({ children }: { children: React.ReactNode }) {
             Found an issue? Let us know! Please describe the bug in detail.
           </DialogDescription>
         </DialogHeader>
-        <form ref={formRef} action={formAction} className="space-y-4">
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
           <Textarea
             name="report"
             placeholder="Describe the bug you encountered. For example: 'When I click on the history button, the app crashes.'"
             rows={6}
             required
+            disabled={isSubmitting}
           />
-          <SubmitButton />
+          <Button type="submit" disabled={isSubmitting} className="w-full font-bold">
+            {isSubmitting ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Bug className="mr-2 h-4 w-4" />
+            )}
+            Submit Report
+          </Button>
         </form>
       </DialogContent>
     </Dialog>

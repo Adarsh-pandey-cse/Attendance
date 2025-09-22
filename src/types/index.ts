@@ -40,3 +40,10 @@ export type DeveloperInfo = {
     bio: string;
     profilePicture: string | null;
 }
+
+export type BugReport = {
+  id: string;
+  report: string;
+  createdAt: Timestamp;
+  status: 'new' | 'in-progress' | 'resolved';
+}

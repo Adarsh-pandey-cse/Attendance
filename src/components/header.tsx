@@ -12,13 +12,14 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem
 } from '@/components/ui/dropdown-menu';
-import { MoreVertical, Info, Percent, CalendarClock, Shield, Moon, Sun, Palette, Star } from 'lucide-react';
+import { MoreVertical, Info, Percent, CalendarClock, Shield, Moon, Sun, Palette, Star, Bug } from 'lucide-react';
 import Link from 'next/link';
 import { useAttendance } from '@/hooks/use-attendance';
 import { Slider } from '@/components/ui/slider';
 import { useTheme } from '@/hooks/use-theme';
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
+import { BugReportDialog } from './bug-report-dialog';
 
 export function Header() {
   const { overallTarget, setOverallTarget } = useAttendance();
@@ -89,6 +90,13 @@ export function Header() {
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />
+                <BugReportDialog>
+                    <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="flex items-center gap-2 cursor-pointer font-semibold">
+                        <Bug className="w-4 h-4" />
+                        <span>Report a Bug</span>
+                    </DropdownMenuItem>
+                </BugReportDialog>
+
                 <DropdownMenuItem asChild>
                 <Link href="/admin" className="flex items-center gap-2 cursor-pointer font-semibold">
                     <Shield className="w-4 h-4" />

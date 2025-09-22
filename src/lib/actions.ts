@@ -48,3 +48,44 @@ export async function saveDeveloperInfo(
   }
 }
 
+// --- Bug Report Actions ---
+
+const BugReportSchema = z.object({
+  report: z.string().min(10, { message: 'Please provide a more detailed report (min. 10 characters).' }).max(2000, { message: 'Report is too long (max. 2000 characters).'}),
+});
+
+/**
+ * Submits a bug report to Firestore.
+ * @param formData - The form data containing the report.
+ * @returns An object indicating success or failure.
+ */
+export async function submitBugReport(
+  prevState: any,
+  formData: FormData
+): Promise<{ success: boolean; message: string }> {
+  try {
+    const validatedData = BugReportSchema.parse({
+        report: formData.get('report'),
+    });
+
+    const bugReportsColRef = collection(db, 'bugReports');
+    await addDoc(bugReportsColRef, {
+      report: validatedData.report,
+      createdAt: serverTimestamp(),
+      status: 'new', // 'new', 'in-progress', 'resolved'
+    });
+    
+    revalidatePath('/admin/bug-reports');
+
+    return { success: true, message: 'Thank you! Your bug report has been submitted.' };
+  } catch (error) {
+    console.error('Error submitting bug report:', error);
+     if (error instanceof z.ZodError) {
+      return { success: false, message: error.errors[0]?.message || 'Invalid data provided.' };
+    }
+    return {
+      success: false,
+      message: 'An unexpected error occurred. Please try again.',
+    };
+  }
+}

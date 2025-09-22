@@ -180,7 +180,7 @@
   }
 
   .radha-rani .homepage-section {
-    @apply bg-yellow-100/70 p-6 rounded-2xl border-2 border-yellow-300/50 shadow-lg;
+    @apply bg-yellow-100/70 p-4 rounded-2xl border-2 border-yellow-300/50 shadow-lg;
   }
   
   .radha-rani .header-dropdown-menu {
@@ -189,7 +189,7 @@
 
 
   .boxed-section {
-    @apply rounded-2xl border bg-secondary/30 p-4 md:p-6;
+    @apply rounded-2xl border bg-secondary/30 p-4;
   }
 
   /* Bead animation styles */

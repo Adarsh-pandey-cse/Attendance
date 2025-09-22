@@ -30,7 +30,7 @@ type SubjectCardProps = {
 };
 
 const CircularProgress = ({ percentage, target, attendedClasses, totalClasses }: { percentage: number, target: number, attendedClasses: number, totalClasses: number }) => {
-  const radius = 50;
+  const radius = 36;
   const circumference = 2 * Math.PI * radius;
   const { theme } = useTheme();
   
@@ -55,28 +55,28 @@ const CircularProgress = ({ percentage, target, attendedClasses, totalClasses }:
 
 
   return (
-    <div className="relative w-28 h-28">
-      <svg className="w-full h-full" viewBox="0 0 120 120">
+    <div className="relative w-24 h-24">
+      <svg className="w-full h-full" viewBox="0 0 90 90">
         <circle
           className="text-gray-600/50"
-          strokeWidth="10"
+          strokeWidth="8"
           stroke="currentColor"
           fill="transparent"
           r={radius}
-          cx="60"
-          cy="60"
+          cx="45"
+          cy="45"
         />
         <motion.circle
           className={cn(colorClass, "transition-colors duration-300")}
-          strokeWidth="10"
+          strokeWidth="8"
           strokeDasharray={circumference}
           strokeLinecap="round"
           stroke="currentColor"
           fill="transparent"
           r={radius}
-          cx="60"
-          cy="60"
-          transform="rotate(-90 60 60)"
+          cx="45"
+          cy="45"
+          transform="rotate(-90 45 45)"
           initial={{ strokeDashoffset: circumference }}
           animate={{ strokeDashoffset: offset }}
           transition={{ duration: 0.5, ease: "easeOut" }}
@@ -89,7 +89,7 @@ const CircularProgress = ({ percentage, target, attendedClasses, totalClasses }:
         animate={{ scale: 1 }}
         transition={{ duration: 0.4, type: 'spring', stiffness: 200, damping: 15 }}
       >
-        <span className="text-2xl font-bold">{percentage.toFixed(0)}%</span>
+        <span className="text-xl font-bold">{percentage.toFixed(0)}%</span>
       </motion.div>
     </div>
   );
@@ -130,10 +130,10 @@ export function SubjectCard({ subject }: SubjectCardProps) {
   }
 
   return (
-    <div className="glass-card p-4 space-y-4 transition-all duration-300 homepage-section">
+    <div className="glass-card p-4 space-y-3 transition-all duration-300 homepage-section">
       <div className="flex justify-between items-start">
         <div className="flex-1">
-          <h3 className="text-xl font-bold">{subject.name}</h3>
+          <h3 className="text-lg font-bold">{subject.name}</h3>
         </div>
         <div className="flex items-center">
             <Button asChild variant="ghost" size="icon" className="text-muted-foreground hover:text-accent w-8 h-8">
@@ -170,7 +170,7 @@ export function SubjectCard({ subject }: SubjectCardProps) {
       
       {isAboveTarget && (
          <div className="text-center">
-            <p className="text-xl font-bold text-primary">
+            <p className="text-lg font-bold text-primary">
                 {isRadhaTheme ? "राधे राधे you're on track!" : "You're on track! Keep it up!"}
             </p>
         </div>
@@ -193,7 +193,7 @@ export function SubjectCard({ subject }: SubjectCardProps) {
       </div>
       
       <div className="text-center">
-        <p className={cn("font-bold", statusColor)}>{statusText}</p>
+        <p className={cn("font-bold text-sm", statusColor)}>{statusText}</p>
         {!isAboveTarget && <AttendanceNotification subject={subject} />}
       </div>
 
@@ -208,4 +208,3 @@ export function SubjectCard({ subject }: SubjectCardProps) {
     </div>
   );
 }
-

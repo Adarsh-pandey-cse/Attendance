@@ -29,7 +29,7 @@ export function DeveloperInfoClient({ devInfo }: { devInfo: DeveloperInfo }) {
         <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
           <div className="relative">
              <div className="glowing-border-wrapper p-1.5">
-                <Avatar className="w-32 h-32 md:w-40 md:h-40 border-4 border-background">
+                <Avatar className="w-24 h-24 md:w-40 md:h-40 border-4 border-background">
                     <AvatarImage src={devInfo?.profilePicture || ''} alt={devInfo?.name} />
                     <AvatarFallback className="bg-primary/20 text-primary text-5xl font-bold">
                     {devInfo?.name?.charAt(0) || 'A'}
@@ -42,12 +42,12 @@ export function DeveloperInfoClient({ devInfo }: { devInfo: DeveloperInfo }) {
             <h2 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
               {devInfo?.name}
             </h2>
-            <div className="flex items-center justify-center md:justify-start gap-2">
-                <a href={`mailto:${devInfo?.email}`} className="font-semibold text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
+            <div className="flex items-center justify-center md:justify-start gap-1">
+                <a href={`mailto:${devInfo?.email}`} className="font-semibold text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 text-sm md:text-base break-all">
                     <Mail className='w-4 h-4' />
                     {devInfo?.email}
                 </a>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground" onClick={handleCopyEmail}>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground shrink-0" onClick={handleCopyEmail}>
                     <Copy className="h-4 w-4" />
                 </Button>
             </div>
@@ -72,4 +72,5 @@ export function DeveloperInfoClient({ devInfo }: { devInfo: DeveloperInfo }) {
     </Card>
   );
 }
+
 

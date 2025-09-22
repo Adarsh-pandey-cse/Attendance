@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef } from 'react';
@@ -29,7 +30,7 @@ export function ImageCropDialog({ imageSrc, onCropComplete, onClose }: ImageCrop
           unit: '%',
           width: 90,
         },
-        1, 
+        1 / 1, // Enforce 1:1 aspect ratio
         width,
         height
       ),

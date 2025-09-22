@@ -92,7 +92,8 @@ export default function DeveloperInfoPage() {
                 <h2 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
                   {devInfo?.name}
                 </h2>
-                <a href={`mailto:${devInfo?.email}`} className="font-semibold text-muted-foreground hover:text-primary transition-colors">
+                <a href={`mailto:${devInfo?.email}`} className="font-semibold text-muted-foreground hover:text-primary transition-colors flex items-center justify-center md:justify-start gap-2">
+                  <Mail className='w-4 h-4' />
                   {devInfo?.email}
                 </a>
                 <div className="mt-4 flex gap-2 justify-center md:justify-start flex-wrap">

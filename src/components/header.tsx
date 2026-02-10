@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Logo } from '@/components/logo';
@@ -61,7 +62,7 @@ export function Header() {
                             size="icon"
                             className="h-8 w-8 shrink-0 rounded-full"
                             onClick={() => handleTargetChange((overallTarget || 75) - 1)}
-                            disabled={overallTarget <= 1}
+                            disabled={(overallTarget || 75) <= 1}
                         >
                             <Minus className="h-4 w-4" />
                             <span className="sr-only">Decrease target</span>
@@ -72,6 +73,7 @@ export function Header() {
                                 type="number"
                                 className="h-8 w-full text-center font-bold pr-7"
                                 value={overallTarget || ''}
+                                onFocus={(e) => e.target.select()}
                                 onChange={(e) => {
                                     const value = e.target.value;
                                     if (value === '') {
@@ -97,7 +99,7 @@ export function Header() {
                             size="icon"
                             className="h-8 w-8 shrink-0 rounded-full"
                             onClick={() => handleTargetChange((overallTarget || 75) + 1)}
-                            disabled={overallTarget >= 100}
+                            disabled={(overallTarget || 75) >= 100}
                         >
                             <Plus className="h-4 w-4" />
                             <span className="sr-only">Increase target</span>

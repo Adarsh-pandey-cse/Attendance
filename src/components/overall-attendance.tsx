@@ -107,13 +107,13 @@ export function OverallAttendance() {
                     <Separator className="my-2 bg-border/40" />
                     <div className="text-center text-sm font-semibold text-muted-foreground w-full">
                         {overallPercentage < target ? (
-                            <p className="flex items-center justify-center gap-1.5">
-                                <TrendingUp className="w-4 h-4 text-accent" />
+                            <p>
+                                <TrendingUp className="w-4 h-4 text-accent inline-block align-middle mr-1" />
                                 Attend the next <span className="text-foreground font-bold">{classesToAttend}</span> class{classesToAttend !== 1 ? 'es' : ''} to reach {target}%.
                             </p>
                         ) : (
-                            <p className="flex items-center justify-center gap-1.5">
-                                <TrendingDown className="w-4 h-4 text-primary" />
+                            <p>
+                                <TrendingDown className="w-4 h-4 text-primary inline-block align-middle mr-1" />
                                 You can miss <span className="text-foreground font-bold">{classesToBunk}</span> more class{classesToBunk !== 1 ? 'es' : ''} and stay above {target}%.
                             </p>
                         )}

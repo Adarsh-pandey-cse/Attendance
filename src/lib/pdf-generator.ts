@@ -15,12 +15,21 @@ export const generatePdf = (subject: Subject, studentName: string) => {};
 export const generateOverallPdf = (subjects: Subject[], userName: string, profilePicture: string | null) => {
     const doc = new jsPDF() as jsPDFWithAutoTable;
     
+    const titleColor = '#132A52';
+    const textColor = '#2d3748'; // Gray-800
+    const lightTextColor = '#718096'; // Gray-500
+
     // --- Header ---
-    doc.setFontSize(22);
     doc.setFont('helvetica', 'bold');
+    doc.setFontSize(22);
+    doc.setTextColor(titleColor);
     doc.text('Overall Attendance Report', doc.internal.pageSize.getWidth() / 2, 22, { align: 'center' });
+    doc.setDrawColor(titleColor);
+    doc.setLineWidth(0.2);
+    doc.line(14, 25, doc.internal.pageSize.getWidth() - 14, 25);
     
     doc.setFontSize(12);
+    doc.setTextColor(textColor);
     doc.setFont('helvetica', 'normal');
     doc.text(`Student Name:`, 14, 40);
     doc.setFont('helvetica', 'bold');
@@ -35,7 +44,7 @@ export const generateOverallPdf = (subjects: Subject[], userName: string, profil
             const borderRadius = imgSize / 2;
 
             // Draw a border circle
-            doc.setDrawColor(34, 197, 94); // Emerald Green
+            doc.setDrawColor(226, 232, 240); // Slate-200
             doc.setLineWidth(1);
             doc.circle(imgX + borderRadius, imgY + borderRadius, borderRadius + 0.5);
             doc.stroke();
@@ -43,7 +52,6 @@ export const generateOverallPdf = (subjects: Subject[], userName: string, profil
             // Clipping path for the image
             doc.save();
             doc.circle(imgX + borderRadius, imgY + borderRadius, borderRadius);
-            doc.clip();
             doc.addImage(profilePicture, 'JPEG', imgX, imgY, imgSize, imgSize);
             doc.restore();
         } catch (error) {
@@ -79,14 +87,22 @@ export const generateOverallPdf = (subjects: Subject[], userName: string, profil
     ];
 
     doc.autoTable({
-        startY: 55,
+        startY: 60,
         head: [tableColumn],
         body: tableRows,
         foot: [summaryRow],
         theme: 'striped',
-        headStyles: { fillColor: '#132A52', textColor: '#F8FAFC', fontStyle: 'bold' },
+        headStyles: { fillColor: '#132A52', textColor: '#F8FAFC', fontStyle: 'bold', halign: 'center' },
         footStyles: { fillColor: '#162F5C', textColor: '#F8FAFC', fontStyle: 'bold' },
-        styles: { font: 'helvetica', fontSize: 10 },
+        styles: { font: 'helvetica', fontSize: 10, cellPadding: 3 },
+        bodyStyles: { textColor: textColor, halign: 'center' },
+        alternateRowStyles: { fillColor: '#F1F5F9' },
+        didParseCell: function (data) {
+            // Align first column (Subject name) to the left
+            if (data.column.index === 0 && data.section === 'body') {
+                data.cell.styles.halign = 'left';
+            }
+        }
     });
 
     // --- Footer ---
@@ -95,6 +111,7 @@ export const generateOverallPdf = (subjects: Subject[], userName: string, profil
         doc.setPage(i);
         doc.setFontSize(9);
         doc.setFont('helvetica', 'italic');
+        doc.setTextColor(lightTextColor);
         const footerText = `Report generated on: ${format(new Date(), 'PPp')} | Page ${i} of ${pageCount}`;
         doc.text(footerText, 14, doc.internal.pageSize.height - 10);
     }

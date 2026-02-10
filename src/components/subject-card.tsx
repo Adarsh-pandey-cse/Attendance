@@ -111,13 +111,13 @@ export function SubjectCard({ subject }: SubjectCardProps) {
             {subject.totalClasses > 0 && (
                 <div className="text-center text-xs font-semibold text-muted-foreground">
                 {percentage < target ? (
-                    <p className="flex items-center justify-center gap-1">
-                        <TrendingUp className="w-4 h-4 text-accent" />
+                    <p>
+                        <TrendingUp className="w-3 h-3 text-accent inline-block align-text-bottom mr-1" />
                         Attend the next <span className="text-foreground font-bold">{classesToAttend}</span> class{classesToAttend !== 1 ? 'es' : ''} to reach {target}%.
                     </p>
                 ) : (
-                    <p className="flex items-center justify-center gap-1">
-                        <TrendingDown className="w-4 h-4 text-primary" />
+                    <p>
+                        <TrendingDown className="w-3 h-3 text-primary inline-block align-text-bottom mr-1" />
                         You can miss <span className="text-foreground font-bold">{classesToBunk}</span> class{classesToBunk !== 1 ? 'es' : ''} and stay above {target}%.
                     </p>
                 )}

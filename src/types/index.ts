@@ -31,6 +31,10 @@ export type UserData = {
     timetable: {
       [key in DayOfWeek]?: TimetableEntry[];
     };
+    currentStreak: number;
+    longestStreak: number;
+    lastWeekEvaluated: number; // Using timestamp
+    perfectWeeks: number;
 }
 
 export type DeveloperInfo = {
@@ -38,4 +42,11 @@ export type DeveloperInfo = {
     email: string;
     bio: string;
     profilePicture: string | null;
+}
+
+// for analytics
+export type AnalyticsData = {
+    name: string;
+    value: number;
+    fill: string;
 }

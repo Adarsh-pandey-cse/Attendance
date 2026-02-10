@@ -29,10 +29,10 @@ export function Header() {
     setIsClient(true);
   }, []);
 
-  const isRadhaTheme = isClient && theme === 'radha-rani';
+  const isLightTheme = isClient && theme === 'light';
 
   return (
-    <header className={cn("flex flex-col gap-4 items-center py-2", isRadhaTheme && 'homepage-section rounded-2xl px-2')}>
+    <header className="flex flex-col gap-4 items-center py-2">
         <Logo />
         <div className="flex justify-between items-center w-full">
             <ProfileSection />
@@ -42,7 +42,7 @@ export function Header() {
                 <MoreVertical className="w-5 h-5 text-muted-foreground" />
                 </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className={cn("glass-card w-56", isRadhaTheme && 'header-dropdown-menu')}>
+            <DropdownMenuContent align="end" className={cn(isLightTheme ? 'bg-white' : 'glass-card', "w-56")}>
                 <div className="p-2">
                     <label htmlFor="overall-target" className="flex items-center justify-between text-sm font-bold mb-2 px-2">
                     <div className="flex items-center gap-2">
@@ -56,7 +56,7 @@ export function Header() {
                     min={1}
                     max={100}
                     step={1}
-                    value={[overallTarget]}
+                    value={[overallTarget || 75]}
                     onValueChange={(value) => setOverallTarget(value[0])}
                     />
                 </div>

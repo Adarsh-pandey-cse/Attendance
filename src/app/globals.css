@@ -73,7 +73,7 @@
   }
 
   .light {
-    --background: 0 0% 100%;
+    --background: 240 5% 96%; /* slightly off-white */
     --foreground: 222 47% 11%;
  
     --card: 0 0% 100%;
@@ -148,16 +148,7 @@
 
 @layer components {
   .glass-card {
-    @apply bg-card/50 border-2 border-white/10 rounded-2xl shadow-lg;
-    .dark & {
-        @apply border-white/10;
-    }
-    .light & {
-        @apply bg-card/80 border-black/10;
-    }
-    .radha-rani & {
-      @apply bg-yellow-100/70 border-primary/20 backdrop-blur-sm;
-    }
+    @apply bg-card/50 border-2 border-white/10 rounded-xl shadow-lg backdrop-blur-sm;
   }
 
   .radha-rani-background {
@@ -174,54 +165,7 @@
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
   }
-
-  .yellow-stripped-background {
-    background-color: hsl(45 100% 80% / 0.7); /* Light yellow with some transparency */
-  }
-
-  .radha-rani .homepage-section {
-    @apply bg-yellow-100/70 p-2 rounded-2xl border-2 border-yellow-300/50 shadow-lg;
-  }
-  
-  .radha-rani .header-dropdown-menu {
-      @apply bg-card/95 backdrop-blur-sm;
-  }
-
-
-  .boxed-section {
-    @apply rounded-2xl border bg-secondary/30 p-2;
-  }
-
-  /* Bead animation styles */
-  .bead-container {
-    @apply fixed top-0 h-full w-12 overflow-hidden z-20 pointer-events-none;
-  }
-  .left-beads { @apply left-0; }
-  .right-beads { @apply right-0; }
-
-  .bead-column-up, .bead-column-down {
-    @apply whitespace-nowrap;
-    will-change: transform;
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-  }
-  .bead-column-up { animation: scroll-up 40s linear infinite; }
-  .bead-column-down { animation: scroll-down 40s linear infinite; }
-
-  .bead {
-    @apply inline-block font-hindi text-xl font-bold my-1 text-pink-500;
-    text-shadow: 0 0 2px black, 0 0 8px hsl(330, 80%, 70%);
-    animation: bead-glow 3s ease-in-out infinite;
-  }
-  
-  .motivational-quote {
-      @apply text-yellow-400;
-  }
-
-  .light .motivational-quote {
-      @apply text-cyan-600;
-  }
-  
+    
   .radha-rani .motivational-quote {
       @apply text-yellow-950;
   }
@@ -250,20 +194,5 @@
         clip: rect(0, 0, 0, 0);
         white-space: nowrap;
         border-width: 0;
-    }
-
-    @keyframes scroll-up {
-        0% { transform: translateY(0%); }
-        100% { transform: translateY(-50%); }
-    }
-
-    @keyframes scroll-down {
-        0% { transform: translateY(-50%); }
-        100% { transform: translateY(0%); }
-    }
-    
-    @keyframes bead-glow {
-        0%, 100% { opacity: 0.7; }
-        50% { opacity: 1; }
     }
 }

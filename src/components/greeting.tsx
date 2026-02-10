@@ -50,7 +50,7 @@ export function Greeting() {
   }
 
   return (
-    <div className={cn("text-center", isRadhaTheme && "homepage-section")}>
+    <div className="text-center">
       {isRadhaTheme && (
         <div className="mb-4">
           <Image 
@@ -72,9 +72,9 @@ export function Greeting() {
       <p className="text-muted-foreground font-semibold mt-1 text-center">{currentDate}</p>
       
       {!quote ? (
-          <p className="text-lg font-semibold mt-2 italic text-center motivational-quote">Loading quote...</p>
+          <p className="text-lg font-semibold mt-2 italic text-center text-muted-foreground">Loading quote...</p>
       ) : (
-          <p className="text-lg font-hindi font-bold mt-2 italic text-center motivational-quote">&quot;{quote}&quot;</p>
+          <p className="text-lg font-hindi font-bold mt-2 italic text-center text-muted-foreground">&quot;{quote}&quot;</p>
       )}
     </div>
   );

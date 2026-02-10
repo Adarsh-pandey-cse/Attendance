@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { db } from '@/lib/firebase';
 import {
   collection,
@@ -10,81 +11,152 @@ import {
   addDoc,
   updateDoc,
   deleteDoc,
-  writeBatch,
-  serverTimestamp,
-  Timestamp,
   setDoc,
 } from 'firebase/firestore';
-import type { Subject, AttendanceLog, UserData, TimetableEntry } from '@/types';
+import type { Subject, AttendanceLog, UserData, DayOfWeek } from '@/types';
 import { useToast } from './use-toast';
+import { startOfWeek, subWeeks, getTime } from 'date-fns';
 
-// A mock user ID. In a real multi-user app, this would come from an auth system.
 const USER_ID = 'single-user';
 
 export const useAttendance = () => {
   const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [userName, setUserNameState] = useState<string>('Student');
-  const [profilePicture, setProfilePictureState] = useState<string | null>(null);
-  const [overallTarget, setOverallTargetState] = useState<number>(75);
-  const [timetable, setTimetableState] = useState<UserData['timetable']>({});
+  const [userData, setUserData] = useState<Partial<UserData>>({});
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
   const userDocRef = doc(db, 'users', USER_ID);
   const subjectsColRef = collection(db, 'users', USER_ID, 'subjects');
+  
+  const { userName, profilePicture, overallTarget, timetable, currentStreak, longestStreak } = userData;
 
   // --- Real-time Listeners ---
   useEffect(() => {
     setLoading(true);
-    // Listen for user profile data (name, picture, target)
     const unsubscribeUser = onSnapshot(userDocRef, (doc) => {
       if (doc.exists()) {
         const data = doc.data() as UserData;
-        setUserNameState(data.userName || 'Student');
-        setProfilePictureState(data.profilePicture || null);
-        setOverallTargetState(data.overallTarget || 75);
-        setTimetableState(data.timetable || {});
+        setUserData({
+            userName: data.userName || 'Student',
+            profilePicture: data.profilePicture || null,
+            overallTarget: data.overallTarget || 75,
+            timetable: data.timetable || {},
+            currentStreak: data.currentStreak || 0,
+            longestStreak: data.longestStreak || 0,
+            lastWeekEvaluated: data.lastWeekEvaluated || 0,
+            perfectWeeks: data.perfectWeeks || 0,
+        });
       } else {
-        // If the user document doesn't exist, create it with default values
-        // This is handled by the set functions now to ensure it exists before write
-        setDoc(userDocRef, { userName: 'Student', overallTarget: 75, timetable: {} }, { merge: true });
+        const defaultData: UserData = { 
+            userName: 'Student', 
+            overallTarget: 75, 
+            timetable: {},
+            currentStreak: 0,
+            longestStreak: 0,
+            lastWeekEvaluated: 0,
+            perfectWeeks: 0,
+            profilePicture: null,
+        };
+        setDoc(userDocRef, defaultData, { merge: true });
+        setUserData(defaultData);
       }
     }, (error) => {
       console.error("Error fetching user data:", error);
       toast({ title: "Warning", description: "Could not load user profile.", variant: "destructive" });
     });
 
-    // Listen for subjects data
     const q = query(subjectsColRef);
     const unsubscribeSubjects = onSnapshot(q, (querySnapshot) => {
-      const subjectsData = querySnapshot.docs.map(doc => {
-        const data = doc.data();
-        return {
-          ...data,
-          id: doc.id,
-          history: data.history || [],
-        } as Subject;
-      });
+      const subjectsData = querySnapshot.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id,
+        history: doc.data().history || [],
+      } as Subject));
       setSubjects(subjectsData);
       setLoading(false);
     }, (error) => {
-        console.error("Error fetching subjects:", error);
-        toast({ title: "Error", description: "Could not fetch subjects.", variant: "destructive" });
-        setLoading(false);
+      console.error("Error fetching subjects:", error);
+      toast({ title: "Error", description: "Could not fetch subjects.", variant: "destructive" });
+      setLoading(false);
     });
 
     return () => {
       unsubscribeUser();
       unsubscribeSubjects();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // --- Streak Evaluation Logic ---
+  useEffect(() => {
+    if (loading || !subjects.length || userData.lastWeekEvaluated === undefined) return;
+
+    const evaluateWeeklyStreak = async () => {
+        const now = new Date();
+        const lastWeekStartDate = startOfWeek(subWeeks(now, 1), { weekStartsOn: 1 });
+        const lastWeekStartDateTimestamp = getTime(lastWeekStartDate);
+
+        // Only evaluate if we haven't already evaluated for the last week
+        if (userData.lastWeekEvaluated && userData.lastWeekEvaluated >= lastWeekStartDateTimestamp) {
+            return;
+        }
+
+        const lastWeekEndDate = new Date(lastWeekStartDate);
+        lastWeekEndDate.setDate(lastWeekEndDate.getDate() + 6);
+        lastWeekEndDate.setHours(23, 59, 59, 999);
+
+        let totalScheduled = 0;
+        let totalAttended = 0;
+
+        const dayMapping: DayOfWeek[] = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        
+        if(userData.timetable){
+            for (let d = new Date(lastWeekStartDate); d <= lastWeekEndDate; d.setDate(d.getDate() + 1)) {
+                const dayOfWeek = dayMapping[d.getDay()];
+                if (userData.timetable[dayOfWeek]) {
+                    totalScheduled += userData.timetable[dayOfWeek]!.length;
+                }
+            }
+        }
+
+
+        subjects.forEach(subject => {
+            subject.history.forEach(log => {
+                if(log.timestamp >= lastWeekStartDateTimestamp && log.timestamp <= getTime(lastWeekEndDate)) {
+                    if (log.status === 'present') {
+                        totalAttended++;
+                    }
+                }
+            });
+        });
+
+        const newUserData: Partial<UserData> = { lastWeekEvaluated: getTime(now) };
+
+        if (totalScheduled > 0 && totalAttended >= totalScheduled) {
+            newUserData.currentStreak = (userData.currentStreak || 0) + 1;
+            newUserData.perfectWeeks = (userData.perfectWeeks || 0) + 1;
+            if (newUserData.currentStreak > (userData.longestStreak || 0)) {
+                newUserData.longestStreak = newUserData.currentStreak;
+            }
+            toast({ title: 'Perfect Week! 🎉', description: 'You attended all your classes last week. Your streak continues!' });
+        } else if (totalScheduled > 0) {
+            newUserData.currentStreak = 0;
+            if((userData.currentStreak || 0) > 0) {
+              toast({ title: 'Streak Reset', description: 'You missed a class last week. Keep trying for a perfect week!', variant: 'destructive'});
+            }
+        }
+        
+        await setDoc(userDocRef, newUserData, { merge: true });
+    };
+
+    evaluateWeeklyStreak();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, subjects, userData.lastWeekEvaluated]);
+
 
   const addSubject = async (newSubject: Omit<Subject, 'id' | 'history'>) => {
     try {
-      await addDoc(subjectsColRef, {
-        ...newSubject,
-        history: [],
-      });
+      await addDoc(subjectsColRef, { ...newSubject, history: [] });
       toast({ title: "Success", description: "Subject added successfully." });
     } catch (error) {
       console.error('Error adding subject:', error);
@@ -94,9 +166,8 @@ export const useAttendance = () => {
 
   const updateSubject = async (updatedSubject: Partial<Subject> & { id: string }) => {
     const { id, ...dataToUpdate } = updatedSubject;
-    const subjectDocRef = doc(db, 'users', USER_ID, 'subjects', id);
     try {
-      await updateDoc(subjectDocRef, dataToUpdate);
+      await updateDoc(doc(subjectsColRef, id), dataToUpdate);
       toast({ title: "Success", description: "Subject updated." });
     } catch (error) {
       console.error('Error updating subject:', error);
@@ -105,19 +176,16 @@ export const useAttendance = () => {
   };
 
   const deleteSubject = async (subjectId: string) => {
-    const subjectDocRef = doc(db, 'users', USER_ID, 'subjects', subjectId);
     try {
-      await deleteDoc(subjectDocRef);
+      await deleteDoc(doc(subjectsColRef, subjectId));
       toast({ title: "Success", description: "Subject deleted." });
-    } catch (error)
- {
+    } catch (error) {
       console.error('Error deleting subject:', error);
       toast({ title: "Error", description: "Failed to delete subject.", variant: "destructive" });
     }
   };
 
   const markAttendance = async (subjectId: string, status: 'present' | 'absent') => {
-    const subjectDocRef = doc(db, 'users', USER_ID, 'subjects', subjectId);
     const subject = subjects.find(s => s.id === subjectId);
     if (!subject) return;
 
@@ -134,7 +202,7 @@ export const useAttendance = () => {
     };
 
     try {
-      await updateDoc(subjectDocRef, updatedData);
+      await updateDoc(doc(subjectsColRef, subjectId), updatedData);
     } catch (error) {
       console.error('Error marking attendance:', error);
       toast({ title: "Error", description: "Failed to mark attendance.", variant: "destructive" });
@@ -146,27 +214,18 @@ export const useAttendance = () => {
   };
   
   const setUserName = async (name: string) => {
-    try {
-      await setDoc(userDocRef, { userName: name }, { merge: true });
-    } catch (error) {
-      console.error('Error updating user name:', error);
-    }
+    try { await setDoc(userDocRef, { userName: name }, { merge: true }); } 
+    catch (error) { console.error('Error updating user name:', error); }
   }
 
   const setProfilePicture = async (url: string | null) => {
-    try {
-      await setDoc(userDocRef, { profilePicture: url }, { merge: true });
-    } catch (error) {
-      console.error('Error updating profile picture:', error);
-    }
+    try { await setDoc(userDocRef, { profilePicture: url }, { merge: true }); } 
+    catch (error) { console.error('Error updating profile picture:', error); }
   }
   
   const setOverallTarget = async (target: number) => {
-     try {
-      await setDoc(userDocRef, { overallTarget: target }, { merge: true });
-    } catch (error) {
-      console.error('Error updating overall target:', error);
-    }
+     try { await setDoc(userDocRef, { overallTarget: target }, { merge: true }); }
+     catch (error) { console.error('Error updating overall target:', error); }
   }
 
   const updateTimetable = async (newTimetable: UserData['timetable']) => {
@@ -180,20 +239,13 @@ export const useAttendance = () => {
   };
 
   return {
-    subjects,
-    addSubject,
-    updateSubject,
-    deleteSubject,
-    markAttendance,
-    getSubjectById,
-    userName,
-    setUserName,
-    profilePicture,
-    setProfilePicture,
-    overallTarget,
-    setOverallTarget,
-    timetable,
-    updateTimetable,
+    subjects, addSubject, updateSubject, deleteSubject, markAttendance, getSubjectById,
     loading,
+    // From UserData
+    userName, setUserName,
+    profilePicture, setProfilePicture,
+    overallTarget, setOverallTarget,
+    timetable, updateTimetable,
+    currentStreak, longestStreak,
   };
 };

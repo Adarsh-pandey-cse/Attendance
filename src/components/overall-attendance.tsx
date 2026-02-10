@@ -1,12 +1,12 @@
 
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { useAttendance } from '@/hooks/use-attendance';
 import { motion } from 'framer-motion';
-import { calculateClassesToAttend, calculateClassesToBunk } from '@/lib/utils';
 import { useTheme } from '@/hooks/use-theme';
 import { cn } from '@/lib/utils';
+import { StreakDisplay } from './streak-display';
 
 const OverallCircularProgress = ({ percentage, target }: { percentage: number, target: number }) => {
     const radius = 60;
@@ -64,36 +64,15 @@ const OverallCircularProgress = ({ percentage, target }: { percentage: number, t
 export function OverallAttendance() {
     const { subjects, overallTarget } = useAttendance();
     const { theme } = useTheme();
-    const [isClient, setIsClient] = useState(false);
 
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
-
-    const { totalAttended, totalClasses, overallPercentage, needed, bunkable } = useMemo(() => {
+    const { overallPercentage } = useMemo(() => {
         const totalAttended = subjects.reduce((acc, subject) => acc + subject.attendedClasses, 0);
         const totalClasses = subjects.reduce((acc, subject) => acc + subject.totalClasses, 0);
         const overallPercentage = totalClasses > 0 ? (totalAttended / totalClasses) * 100 : 0;
-        const needed = calculateClassesToAttend(totalAttended, totalClasses, overallTarget);
-        const bunkable = calculateClassesToBunk(totalAttended, totalClasses, overallTarget);
-        return { totalAttended, totalClasses, overallPercentage, needed, bunkable };
-    }, [subjects, overallTarget]);
+        return { overallPercentage };
+    }, [subjects]);
 
-    let statusText, statusColor;
-    const isRadhaTheme = isClient && theme === 'radha-rani';
-
-    if (overallPercentage < overallTarget) {
-        statusText = `Attend the next ${needed} class${needed !== 1 ? 'es' : ''} to reach your target.`;
-        statusColor = isRadhaTheme ? "text-red-700" : "text-red-400";
-    } else {
-        statusText = `You can safely miss the next ${bunkable} class${bunkable !== 1 ? 'es' : ''}.`;
-        statusColor = isRadhaTheme ? "text-orange-600" : "text-cyan-400";
-    }
-     if (needed === Infinity) {
-        statusText = "Target is unreachable. You may need to edit your attendance data.";
-        statusColor = isRadhaTheme ? "text-red-700 font-bold" : "text-red-500 font-bold";
-    }
-
+    const isLightTheme = theme === 'light';
 
     if (subjects.length === 0) {
         return null;
@@ -101,34 +80,18 @@ export function OverallAttendance() {
 
     return (
         <motion.div
-            className="p-6 flex flex-col md:flex-row items-center justify-around gap-6 homepage-section"
+            className={cn("p-4 md:p-6 flex flex-col items-center justify-around gap-4 rounded-xl", isLightTheme ? 'bg-white shadow' : 'glass-card')}
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
         >
-            <OverallCircularProgress percentage={overallPercentage} target={overallTarget} />
-            <motion.div 
-                className="text-center md:text-left"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-            >
-                <h2 className="text-2xl font-bold tracking-tight">Your Progress</h2>
-                <p className="text-muted-foreground font-semibold">A summary of all your subjects.</p>
-                 <p className={cn("text-base font-semibold mt-3", statusColor)}>
-                    {statusText}
-                </p>
-                <div className="mt-4 flex gap-6 justify-center md:justify-start">
-                    <div>
-                        <p className="text-3xl font-extrabold text-primary">{totalAttended}</p>
-                        <p className="text-sm font-semibold text-muted-foreground">Classes Attended</p>
-                    </div>
-                    <div>
-                        <p className="text-3xl font-extrabold">{totalClasses}</p>
-                        <p className="text-sm font-semibold text-muted-foreground">Total Classes</p>
-                    </div>
+            <div className="flex flex-col md:flex-row items-center justify-around w-full gap-4">
+                <OverallCircularProgress percentage={overallPercentage} target={overallTarget || 75} />
+                <div className="flex flex-col items-center">
+                     <h2 className="text-xl font-bold tracking-tight mb-2">Weekly Streak</h2>
+                     <StreakDisplay />
                 </div>
-            </motion.div>
+            </div>
         </motion.div>
     );
 }

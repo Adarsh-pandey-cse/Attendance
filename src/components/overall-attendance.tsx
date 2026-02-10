@@ -1,12 +1,13 @@
-
 'use client';
 
 import { useMemo } from 'react';
 import { useAttendance } from '@/hooks/use-attendance';
 import { motion } from 'framer-motion';
 import { useTheme } from '@/hooks/use-theme';
-import { cn } from '@/lib/utils';
+import { cn, calculateClassesToAttend, calculateClassesToBunk } from '@/lib/utils';
 import { StreakDisplay } from './streak-display';
+import { Separator } from '@/components/ui/separator';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 
 const OverallCircularProgress = ({ percentage, target }: { percentage: number, target: number }) => {
     const radius = 60;
@@ -65,12 +66,16 @@ export function OverallAttendance() {
     const { subjects, overallTarget } = useAttendance();
     const { theme } = useTheme();
 
-    const { overallPercentage } = useMemo(() => {
+    const { overallPercentage, totalAttended, totalClasses } = useMemo(() => {
         const totalAttended = subjects.reduce((acc, subject) => acc + subject.attendedClasses, 0);
         const totalClasses = subjects.reduce((acc, subject) => acc + subject.totalClasses, 0);
         const overallPercentage = totalClasses > 0 ? (totalAttended / totalClasses) * 100 : 0;
-        return { overallPercentage };
+        return { overallPercentage, totalAttended, totalClasses };
     }, [subjects]);
+
+    const target = overallTarget || 75;
+    const classesToAttend = calculateClassesToAttend(totalAttended, totalClasses, target);
+    const classesToBunk = calculateClassesToBunk(totalAttended, totalClasses, target);
 
     const isLightTheme = theme === 'light';
 
@@ -86,12 +91,31 @@ export function OverallAttendance() {
             transition={{ duration: 0.5, ease: 'easeOut' }}
         >
             <div className="flex flex-col md:flex-row items-center justify-around w-full gap-4">
-                <OverallCircularProgress percentage={overallPercentage} target={overallTarget || 75} />
+                <OverallCircularProgress percentage={overallPercentage} target={target} />
                 <div className="flex flex-col items-center">
                      <h2 className="text-xl font-bold tracking-tight mb-2">Weekly Streak</h2>
                      <StreakDisplay />
                 </div>
             </div>
+
+            {totalClasses > 0 && (
+                <>
+                    <Separator className="my-2 bg-border/40" />
+                    <div className="text-center text-sm font-semibold text-muted-foreground w-full">
+                        {overallPercentage < target ? (
+                            <p className="flex items-center justify-center gap-1.5">
+                                <TrendingUp className="w-4 h-4 text-accent" />
+                                Attend the next <span className="text-foreground font-bold">{classesToAttend}</span> class{classesToAttend !== 1 ? 'es' : ''} to reach {target}%.
+                            </p>
+                        ) : (
+                            <p className="flex items-center justify-center gap-1.5">
+                                <TrendingDown className="w-4 h-4 text-primary" />
+                                You can miss <span className="text-foreground font-bold">{classesToBunk}</span> more class{classesToBunk !== 1 ? 'es' : ''} and stay above {target}%.
+                            </p>
+                        )}
+                    </div>
+                </>
+            )}
         </motion.div>
     );
 }

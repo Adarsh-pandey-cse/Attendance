@@ -172,4 +172,89 @@
         white-space: nowrap;
         border-width: 0;
     }
+
+    /* NEW STYLES FOR RADHA RANI THEME */
+    .radha-rani-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image: url('https://jumpshare.com/s/mBIGXG1LHzVqnyMHJXpu');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      z-index: -2;
+      opacity: 0.15; /* Make it subtle */
+    }
+
+    .bead-container {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      width: 60px; /* Adjust width as needed */
+      z-index: -1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+    }
+
+    .left-beads {
+      left: 0;
+    }
+
+    .right-beads {
+      right: 0;
+    }
+
+    .bead-column-up, .bead-column-down {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .bead-column-up {
+      animation: scroll-up 60s linear infinite;
+    }
+    
+    .bead-column-down {
+      animation: scroll-down 60s linear infinite;
+    }
+
+    @keyframes scroll-up {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(-50%);
+      }
+    }
+
+    @keyframes scroll-down {
+      from {
+        transform: translateY(-50%);
+      }
+      to {
+        transform: translateY(0);
+      }
+    }
+    
+    .bead {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      margin: 10px 0;
+      border-radius: 50%;
+      background-color: rgba(251, 191, 36, 0.1); /* Faint yellow from Radha theme */
+      border: 1px solid rgba(251, 191, 36, 0.2);
+      color: hsl(var(--primary));
+      font-family: 'Tiro Devanagari Hindi', serif;
+      font-size: 1.2rem;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
 }

@@ -27,13 +27,13 @@ export function RadhaRaniThemeElements() {
 
       {/* Left and Right Bead Columns */}
       <div className="bead-container left-beads">
-          <div className="bead-column-up">
+          <div className="bead-column-down">
               {beadContent}
               {beadContent}
           </div>
       </div>
        <div className="bead-container right-beads">
-          <div className="bead-column-down">
+          <div className="bead-column-up">
               {beadContent}
               {beadContent}
           </div>

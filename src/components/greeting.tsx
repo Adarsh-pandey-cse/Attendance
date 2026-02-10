@@ -62,11 +62,11 @@ export function Greeting() {
           />
         </div>
       )}
-      <h2 className={cn("text-3xl font-bold", isRadhaTheme && "font-hindi")}>
+      <h2 className={cn("text-3xl font-bold", isRadhaTheme && "font-hindi text-yellow-500")}>
           {greetingText}
       </h2>
       <div className="text-center">
-          <span className="text-2xl font-bold ml-2">{userName}!</span>
+          <span className={cn("text-2xl font-bold ml-2", isRadhaTheme && "text-yellow-500")}>{userName}!</span>
       </div>
       <p className="text-muted-foreground font-semibold mt-1 text-center">{currentDate}</p>
       

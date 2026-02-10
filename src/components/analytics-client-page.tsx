@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useAttendance } from '@/hooks/use-attendance';
@@ -9,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Progress } from '@/components/ui/progress';
 
 const COLORS = {
   present: '#22c55e',
@@ -29,7 +31,7 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 export function AnalyticsClientPage() {
-  const { subjects, loading } = useAttendance();
+  const { subjects, loading, overallTarget } = useAttendance();
   const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(null);
 
   const analyticsData = useMemo(() => {
@@ -102,6 +104,8 @@ export function AnalyticsClientPage() {
       );
   }
 
+  const percentage = currentViewData.total > 0 ? (currentViewData.attended / currentViewData.total) * 100 : 0;
+
   return (
     <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -134,7 +138,7 @@ export function AnalyticsClientPage() {
             </CardHeader>
             <CardContent className="flex flex-col items-center">
                  {currentViewData.total > 0 ? (
-                    <div className='w-full h-52 md:h-60'>
+                    <div className='w-full h-52 md:h-60 relative'>
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie
@@ -142,9 +146,9 @@ export function AnalyticsClientPage() {
                                     cx="50%"
                                     cy="50%"
                                     labelLine={false}
+                                    innerRadius="60%"
                                     outerRadius="80%"
                                     dataKey="value"
-                                    label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}
                                     isAnimationActive={true}
                                     animationDuration={800}
                                 >
@@ -155,6 +159,16 @@ export function AnalyticsClientPage() {
                                 <Tooltip content={<CustomTooltip />} />
                             </PieChart>
                         </ResponsiveContainer>
+                        <motion.div
+                            key={currentViewData.title + '-percentage'}
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.5 }}
+                            className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"
+                        >
+                            <span className="text-4xl font-bold">{percentage.toFixed(1)}%</span>
+                            <span className="text-sm font-semibold text-muted-foreground">Attendance</span>
+                        </motion.div>
                     </div>
                 ) : (
                     <div className='text-center py-12'>
@@ -200,19 +214,30 @@ export function AnalyticsClientPage() {
             </CardHeader>
             <CardContent>
                 <div className="space-y-2">
-                    {analyticsData.subjectBreakdown.map(subject => (
+                    {analyticsData.subjectBreakdown.map(subject => {
+                       const target = overallTarget || 75;
+                       let progressColor = 'bg-yellow-500';
+                       if (subject.percentage >= target) {
+                           progressColor = 'bg-primary';
+                       } else if (subject.percentage < target * 0.75) {
+                           progressColor = 'bg-red-500';
+                       }
+                       return (
                         <button
                             key={subject.id}
                             onClick={() => setSelectedSubjectId(subject.id)}
                             className={cn(
-                                'w-full text-left p-3 rounded-lg transition-colors flex justify-between items-center',
-                                selectedSubjectId === subject.id ? 'bg-primary/20' : 'hover:bg-secondary/50'
+                                'w-full text-left p-3 rounded-lg transition-all',
+                                selectedSubjectId === subject.id ? 'bg-primary/20 scale-[1.02]' : 'hover:bg-secondary/50'
                             )}
                         >
-                            <span className="font-semibold">{subject.name}</span>
-                            <span className="font-bold">{subject.percentage.toFixed(1)}%</span>
+                            <div className="flex justify-between items-center mb-1">
+                                <span className="font-semibold">{subject.name}</span>
+                                <span className="font-bold">{subject.percentage.toFixed(1)}%</span>
+                            </div>
+                             <Progress value={subject.percentage} className="h-1.5" indicatorClassName={progressColor} />
                         </button>
-                    ))}
+                    )})}
                 </div>
             </CardContent>
         </Card>

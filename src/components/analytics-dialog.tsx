@@ -22,8 +22,8 @@ export function AnalyticsDialog({ isOpen, setIsOpen, subject }: AnalyticsDialogP
     const absent = total - attended;
 
     const data: AnalyticsData[] = [
-        { name: 'Present', value: attended, fill: '#3CB371' }, // Emerald Green
-        { name: 'Absent', value: absent, fill: '#FF6347' }, // Tomato Red
+        { name: 'Present', value: attended, fill: '#22C55E' },
+        { name: 'Absent', value: absent, fill: '#FACC15' },
     ];
 
   return (

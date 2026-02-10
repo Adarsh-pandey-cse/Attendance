@@ -14,7 +14,7 @@ import { Progress } from '@/components/ui/progress';
 
 const COLORS = {
   present: '#22c55e',
-  absent: '#f59e0b'
+  absent: '#FACC15'
 };
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -216,11 +216,11 @@ export function AnalyticsClientPage() {
                 <div className="space-y-2">
                     {analyticsData.subjectBreakdown.map(subject => {
                        const target = overallTarget || 75;
-                       let progressColor = 'bg-yellow-500';
+                       let progressColor = 'bg-yellow-400';
                        if (subject.percentage >= target) {
-                           progressColor = 'bg-primary';
+                           progressColor = 'bg-green-500';
                        } else if (subject.percentage < target * 0.75) {
-                           progressColor = 'bg-red-500';
+                           progressColor = 'bg-red-400';
                        }
                        return (
                         <button

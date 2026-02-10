@@ -49,11 +49,11 @@ export function SubjectCard({ subject }: SubjectCardProps) {
   
   const isLightTheme = theme === 'light';
 
-  let progressColor = 'bg-yellow-500';
-  if (percentage >= overallTarget) {
-    progressColor = 'bg-primary';
-  } else if (percentage < overallTarget * 0.75) { 
-    progressColor = 'bg-red-500';
+  let progressColor = 'bg-yellow-400';
+  if (percentage >= (overallTarget || 75)) {
+    progressColor = 'bg-gradient-to-r from-green-500 to-sky-400';
+  } else if (percentage < (overallTarget || 75) * 0.75) { 
+    progressColor = 'bg-red-400';
   }
 
   const handleDelete = () => {
@@ -71,13 +71,13 @@ export function SubjectCard({ subject }: SubjectCardProps) {
     }
   }
 
-  const classesToAttend = calculateClassesToAttend(subject.attendedClasses, subject.totalClasses, overallTarget);
-  const classesToBunk = calculateClassesToBunk(subject.attendedClasses, subject.totalClasses, overallTarget);
+  const classesToAttend = calculateClassesToAttend(subject.attendedClasses, subject.totalClasses, overallTarget || 75);
+  const classesToBunk = calculateClassesToBunk(subject.attendedClasses, subject.totalClasses, overallTarget || 75);
 
   return (
     <>
     <motion.div 
-        className={cn("w-full rounded-xl p-4 transition-all duration-300", isLightTheme ? 'bg-white shadow' : 'glass-card' )}
+        className={cn("w-full rounded-lg p-4 transition-all duration-300", isLightTheme ? 'bg-white shadow' : 'glass-card' )}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
@@ -125,18 +125,18 @@ export function SubjectCard({ subject }: SubjectCardProps) {
       </div>
 
        <div className="mt-3 space-y-2">
-            <Progress value={percentage} className="h-2 [&>div]:" indicatorClassName={progressColor} />
+            <Progress value={percentage} className="h-1.5" indicatorClassName={progressColor} />
             {subject.totalClasses > 0 && (
                 <div className="text-center text-xs font-semibold text-muted-foreground">
-                {percentage < overallTarget ? (
+                {percentage < (overallTarget || 75) ? (
                     <p className="flex items-center justify-center gap-1">
                         <TrendingUp className="w-4 h-4 text-primary" />
-                        Attend the next <span className="text-foreground font-bold">{classesToAttend}</span> class{classesToAttend !== 1 ? 'es' : ''} to reach {overallTarget}%.
+                        Attend the next <span className="text-foreground font-bold">{classesToAttend}</span> class{classesToAttend !== 1 ? 'es' : ''} to reach {overallTarget || 75}%.
                     </p>
                 ) : (
                     <p className="flex items-center justify-center gap-1">
                         <TrendingDown className="w-4 h-4 text-yellow-400" />
-                        You can miss <span className="text-foreground font-bold">{classesToBunk}</span> class{classesToBunk !== 1 ? 'es' : ''} and stay above {overallTarget}%.
+                        You can miss <span className="text-foreground font-bold">{classesToBunk}</span> class{classesToBunk !== 1 ? 'es' : ''} and stay above {overallTarget || 75}%.
                     </p>
                 )}
             </div>
@@ -145,12 +145,12 @@ export function SubjectCard({ subject }: SubjectCardProps) {
         
         <div className="mt-4 grid grid-cols-2 gap-2">
             <motion.div whileTap={{ scale: 0.95 }} transition={{ duration: 0.1 }}>
-                <Button onClick={() => markAttendance(subject.id, 'present')} size="sm" variant="outline" className="w-full font-bold border-green-500/50 bg-green-500/10 text-green-400 hover:bg-green-500/20 hover:text-green-300">
+                <Button onClick={() => markAttendance(subject.id, 'present')} size="sm" className="w-full font-bold bg-green-500 text-white hover:bg-green-600">
                     <Check className="mr-2 h-4 w-4" /> Present
                 </Button>
             </motion.div>
             <motion.div whileTap={{ scale: 0.95 }} transition={{ duration: 0.1 }}>
-                <Button onClick={() => markAttendance(subject.id, 'absent')} size="sm" variant="outline" className="w-full font-bold border-red-500/50 bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300">
+                <Button onClick={() => markAttendance(subject.id, 'absent')} size="sm" variant="destructive" className="w-full font-bold">
                     <X className="mr-2 h-4 w-4" /> Absent
                 </Button>
             </motion.div>
@@ -168,7 +168,7 @@ export function SubjectCard({ subject }: SubjectCardProps) {
             </AlertDialogHeader>
             <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/80 font-bold">Delete</AlertDialogAction>
+            <AlertDialogAction onClick={handleDelete} className="font-bold">Delete</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>

@@ -89,7 +89,15 @@ export function SubjectCard({ subject }: SubjectCardProps) {
         </div>
         <div className="flex items-center gap-2">
              <div className="text-center">
-                <p className="font-bold text-lg">{percentage.toFixed(0)}%</p>
+                <motion.p
+                    key={`${subject.attendedClasses}-${subject.totalClasses}`}
+                    initial={{ scale: 1 }}
+                    animate={{ scale: [1, 1.3, 1] }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                    className="font-bold text-lg"
+                >
+                    {percentage.toFixed(0)}%
+                </motion.p>
             </div>
         
             <DropdownMenu>
@@ -136,12 +144,12 @@ export function SubjectCard({ subject }: SubjectCardProps) {
         </div>
         
         <div className="mt-4 grid grid-cols-2 gap-2">
-            <motion.div whileTap={{ scale: 0.95 }}>
+            <motion.div whileTap={{ scale: 0.95 }} transition={{ duration: 0.1 }}>
                 <Button onClick={() => markAttendance(subject.id, 'present')} size="sm" variant="outline" className="w-full font-bold border-green-500/50 bg-green-500/10 text-green-400 hover:bg-green-500/20 hover:text-green-300">
                     <Check className="mr-2 h-4 w-4" /> Present
                 </Button>
             </motion.div>
-            <motion.div whileTap={{ scale: 0.95 }}>
+            <motion.div whileTap={{ scale: 0.95 }} transition={{ duration: 0.1 }}>
                 <Button onClick={() => markAttendance(subject.id, 'absent')} size="sm" variant="outline" className="w-full font-bold border-red-500/50 bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300">
                     <X className="mr-2 h-4 w-4" /> Absent
                 </Button>

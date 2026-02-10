@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useMemo } from 'react';
@@ -93,7 +94,7 @@ export function OverallAttendance() {
             <div className="flex flex-col md:flex-row items-center justify-around w-full gap-4">
                 <div className="flex flex-col items-center">
                     <OverallCircularProgress percentage={overallPercentage} target={target} />
-                    <p className="text-sm font-bold mt-2 text-foreground">{totalAttended} <span className="font-medium text-muted-foreground">/ {totalClasses} classes</span></p>
+                    <p className="text-lg font-bold mt-2 text-foreground">{totalAttended} <span className="font-semibold text-muted-foreground">/ {totalClasses} classes</span></p>
                 </div>
                 <div className="flex flex-col items-center">
                      <h2 className="text-xl font-bold tracking-tight mb-2">Weekly Streak</h2>

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -30,11 +29,11 @@ export function Greeting() {
       }
       const currentHour = new Date().getHours();
       if (currentHour < 12) {
-        return 'Good morning,';
+        return 'Good Morning,';
       } else if (currentHour < 18) {
-        return 'Good afternoon,';
+        return 'Good Afternoon,';
       } else {
-        return 'Good evening,';
+        return 'Good Evening,';
       }
     };
     setGreetingText(getGreeting());
@@ -74,7 +73,7 @@ export function Greeting() {
       {!quote ? (
           <p className="text-lg font-semibold mt-2 italic text-center text-muted-foreground">Loading quote...</p>
       ) : (
-          <p className="text-lg font-hindi font-bold mt-2 italic text-center text-muted-foreground">&quot;{quote}&quot;</p>
+          <p className={cn("text-lg font-hindi font-bold mt-2 italic text-center", isRadhaTheme ? 'text-yellow-500' : 'text-muted-foreground')}>&quot;{quote}&quot;</p>
       )}
     </div>
   );

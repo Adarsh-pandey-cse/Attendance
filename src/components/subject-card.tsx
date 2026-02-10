@@ -136,12 +136,16 @@ export function SubjectCard({ subject }: SubjectCardProps) {
         </div>
         
         <div className="mt-4 grid grid-cols-2 gap-2">
-            <Button onClick={() => markAttendance(subject.id, 'present')} size="sm" variant="outline" className="font-bold border-green-500/50 bg-green-500/10 text-green-400 hover:bg-green-500/20 hover:text-green-300">
-                <Check className="mr-2 h-4 w-4" /> Present
-            </Button>
-            <Button onClick={() => markAttendance(subject.id, 'absent')} size="sm" variant="outline" className="font-bold border-red-500/50 bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300">
-                <X className="mr-2 h-4 w-4" /> Absent
-            </Button>
+            <motion.div whileTap={{ scale: 0.95 }}>
+                <Button onClick={() => markAttendance(subject.id, 'present')} size="sm" variant="outline" className="w-full font-bold border-green-500/50 bg-green-500/10 text-green-400 hover:bg-green-500/20 hover:text-green-300">
+                    <Check className="mr-2 h-4 w-4" /> Present
+                </Button>
+            </motion.div>
+            <motion.div whileTap={{ scale: 0.95 }}>
+                <Button onClick={() => markAttendance(subject.id, 'absent')} size="sm" variant="outline" className="w-full font-bold border-red-500/50 bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300">
+                    <X className="mr-2 h-4 w-4" /> Absent
+                </Button>
+            </motion.div>
         </div>
 
     </motion.div>

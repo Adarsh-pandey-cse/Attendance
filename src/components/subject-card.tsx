@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Subject } from '@/types';
@@ -13,7 +12,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { EditSubjectDialog } from './edit-subject-dialog';
 import { useState } from 'react';
@@ -103,9 +101,7 @@ export function SubjectCard({ subject }: SubjectCardProps) {
                 <EditSubjectDialog subject={subject}>
                     <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="font-semibold gap-2"><Edit/> Edit</DropdownMenuItem>
                 </EditSubjectDialog>
-                <AlertDialogTrigger asChild>
-                    <DropdownMenuItem className="text-destructive focus:text-destructive-foreground focus:bg-destructive font-semibold gap-2"><Trash2/> Delete</DropdownMenuItem>
-                </AlertDialogTrigger>
+                <DropdownMenuItem onSelect={() => setIsDeleteDialogOpen(true)} className="text-destructive focus:text-destructive-foreground focus:bg-destructive font-semibold gap-2"><Trash2/> Delete</DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -114,21 +110,22 @@ export function SubjectCard({ subject }: SubjectCardProps) {
             <Progress value={percentage} className="h-2 [&>div]:" indicatorClassName={progressColor} />
         </div>
 
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle className="font-bold">Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will permanently delete the subject &quot;{subject.name}&quot; and all its attendance history. This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/80 font-bold">Delete</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </motion.div>
+
+    <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle className="font-bold">Are you sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This will permanently delete the subject &quot;{subject.name}&quot; and all its attendance history. This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/80 font-bold">Delete</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
 
     <AnalyticsDialog
         isOpen={isAnalyticsOpen}

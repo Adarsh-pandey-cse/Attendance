@@ -45,12 +45,14 @@ export function AttendanceImpactCalculator() {
   }, [currentPresent, currentTotal, missCount]);
 
   const safeMissLimit = useMemo(() => {
+    if (loading || !overallTarget) return 0;
     if (currentPercentage < overallTarget) return 0;
     const bunkable = Math.floor((100 * currentPresent - overallTarget * currentTotal) / overallTarget);
     return bunkable > 0 ? bunkable : 0;
-  }, [currentPresent, currentTotal, overallTarget, currentPercentage]);
+  }, [currentPresent, currentTotal, overallTarget, currentPercentage, loading]);
 
   const { riskStatus, riskColor, RiskIcon, riskBorderColor } = useMemo(() => {
+    if (loading || !overallTarget) return { riskStatus: '', riskColor: '', RiskIcon: ShieldQuestion, riskBorderColor: ''};
     if (projectedPercentage >= overallTarget + 5) {
       return { riskStatus: 'Safe', riskColor: 'text-primary', RiskIcon: ShieldCheck, riskBorderColor: 'border-primary' };
     } else if (projectedPercentage >= overallTarget) {
@@ -58,7 +60,7 @@ export function AttendanceImpactCalculator() {
     } else {
       return { riskStatus: 'Critical', riskColor: 'text-red-500', RiskIcon: AlertTriangle, riskBorderColor: 'border-red-500' };
     }
-  }, [projectedPercentage, overallTarget]);
+  }, [projectedPercentage, overallTarget, loading]);
 
   const handleMissCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
@@ -152,7 +154,7 @@ export function AttendanceImpactCalculator() {
 
                 <div className="mt-4 text-sm font-semibold text-muted-foreground flex items-center gap-2">
                     <ShieldQuestion className="w-5 h-5 text-sky-400" />
-                    {currentPercentage < overallTarget ? (
+                    {currentPercentage < overallTarget! ? (
                         <span className='text-yellow-400'>You are already below the {overallTarget}% target.</span>
                     ) : (
                         <span>You can safely miss <span className='font-bold text-foreground'>{safeMissLimit}</span> more class{safeMissLimit !== 1 ? 'es' : ''}.</span>

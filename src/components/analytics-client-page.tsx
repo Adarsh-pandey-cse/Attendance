@@ -14,7 +14,7 @@ import { Progress } from '@/components/ui/progress';
 
 const COLORS = {
   present: '#22c55e',
-  absent: '#FACC15'
+  absent: '#FBBF24'
 };
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -124,8 +124,8 @@ export function AnalyticsClientPage() {
                         transition={{ duration: 0.3 }}
                         className='flex items-center justify-between'
                     >
-                        <CardTitle className="flex items-center gap-2">
-                            <PieChartIcon className="text-primary" />
+                        <CardTitle className="flex items-center gap-2 text-foreground">
+                            <PieChartIcon className="text-accent" />
                             <span className='truncate'>{currentViewData.title}</span>
                         </CardTitle>
                         {selectedSubjectId && (
@@ -186,7 +186,7 @@ export function AnalyticsClientPage() {
                     <Card className="bg-secondary/30">
                         <CardHeader className="p-4 flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Attended</CardTitle>
-                            <Check className="h-4 w-4 text-green-400" />
+                            <Check className="h-4 w-4 text-accent" />
                         </CardHeader>
                         <CardContent className="p-4 pt-0">
                             <div className="text-2xl font-bold">{currentViewData.attended}</div>
@@ -196,7 +196,7 @@ export function AnalyticsClientPage() {
                      <Card className="bg-secondary/30">
                         <CardHeader className="p-4 flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Missed</CardTitle>
-                            <X className="h-4 w-4 text-amber-500" />
+                            <X className="h-4 w-4 text-primary" />
                         </CardHeader>
                         <CardContent className="p-4 pt-0">
                             <div className="text-2xl font-bold">{currentViewData.missed}</div>
@@ -216,11 +216,11 @@ export function AnalyticsClientPage() {
                 <div className="space-y-2">
                     {analyticsData.subjectBreakdown.map(subject => {
                        const target = overallTarget || 75;
-                       let progressColor = 'bg-yellow-400';
+                       let progressColor = 'bg-primary'; // gold
                        if (subject.percentage >= target) {
-                           progressColor = 'bg-green-500';
+                           progressColor = 'bg-gradient-to-r from-accent to-emerald-600'; // green
                        } else if (subject.percentage < target * 0.75) {
-                           progressColor = 'bg-red-400';
+                           progressColor = 'bg-destructive'; // red
                        }
                        return (
                         <button

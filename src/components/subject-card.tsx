@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Subject } from '@/types';
@@ -48,12 +49,13 @@ export function SubjectCard({ subject }: SubjectCardProps) {
   const percentage = subject.totalClasses > 0 ? (subject.attendedClasses / subject.totalClasses) * 100 : 0;
   
   const isLightTheme = theme === 'light';
+  const target = overallTarget || 75;
 
-  let progressColor = 'bg-yellow-400';
-  if (percentage >= (overallTarget || 75)) {
-    progressColor = 'bg-gradient-to-r from-green-500 to-sky-400';
-  } else if (percentage < (overallTarget || 75) * 0.75) { 
-    progressColor = 'bg-red-400';
+  let progressColor = 'bg-primary'; // Gold/Amber for warning
+  if (percentage >= target) {
+    progressColor = 'bg-gradient-to-r from-accent to-emerald-600'; // Green for safe
+  } else if (percentage < target * 0.75) { 
+    progressColor = 'bg-destructive'; // Red for critical
   }
 
   const handleDelete = () => {
@@ -71,13 +73,13 @@ export function SubjectCard({ subject }: SubjectCardProps) {
     }
   }
 
-  const classesToAttend = calculateClassesToAttend(subject.attendedClasses, subject.totalClasses, overallTarget || 75);
-  const classesToBunk = calculateClassesToBunk(subject.attendedClasses, subject.totalClasses, overallTarget || 75);
+  const classesToAttend = calculateClassesToAttend(subject.attendedClasses, subject.totalClasses, target);
+  const classesToBunk = calculateClassesToBunk(subject.attendedClasses, subject.totalClasses, target);
 
   return (
     <>
     <motion.div 
-        className={cn("w-full rounded-lg p-4 transition-all duration-300", isLightTheme ? 'bg-white shadow' : 'glass-card' )}
+        className={cn("w-full p-4 transition-all duration-300 glass-card")}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
@@ -91,8 +93,8 @@ export function SubjectCard({ subject }: SubjectCardProps) {
              <div className="text-center">
                 <motion.p
                     key={`${subject.attendedClasses}-${subject.totalClasses}`}
-                    initial={{ scale: 1 }}
-                    animate={{ scale: [1, 1.3, 1] }}
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.4, ease: 'easeOut' }}
                     className="font-bold text-lg"
                 >
@@ -128,15 +130,15 @@ export function SubjectCard({ subject }: SubjectCardProps) {
             <Progress value={percentage} className="h-1.5" indicatorClassName={progressColor} />
             {subject.totalClasses > 0 && (
                 <div className="text-center text-xs font-semibold text-muted-foreground">
-                {percentage < (overallTarget || 75) ? (
+                {percentage < target ? (
                     <p className="flex items-center justify-center gap-1">
-                        <TrendingUp className="w-4 h-4 text-primary" />
-                        Attend the next <span className="text-foreground font-bold">{classesToAttend}</span> class{classesToAttend !== 1 ? 'es' : ''} to reach {overallTarget || 75}%.
+                        <TrendingUp className="w-4 h-4 text-accent" />
+                        Attend the next <span className="text-foreground font-bold">{classesToAttend}</span> class{classesToAttend !== 1 ? 'es' : ''} to reach {target}%.
                     </p>
                 ) : (
                     <p className="flex items-center justify-center gap-1">
-                        <TrendingDown className="w-4 h-4 text-yellow-400" />
-                        You can miss <span className="text-foreground font-bold">{classesToBunk}</span> class{classesToBunk !== 1 ? 'es' : ''} and stay above {overallTarget || 75}%.
+                        <TrendingDown className="w-4 h-4 text-primary" />
+                        You can miss <span className="text-foreground font-bold">{classesToBunk}</span> class{classesToBunk !== 1 ? 'es' : ''} and stay above {target}%.
                     </p>
                 )}
             </div>
@@ -144,13 +146,13 @@ export function SubjectCard({ subject }: SubjectCardProps) {
         </div>
         
         <div className="mt-4 grid grid-cols-2 gap-2">
-            <motion.div whileTap={{ scale: 0.95 }} transition={{ duration: 0.1 }}>
-                <Button onClick={() => markAttendance(subject.id, 'present')} size="sm" className="w-full font-bold bg-green-500 text-white hover:bg-green-600">
+            <motion.div whileTap={{ scale: 0.97, filter: 'brightness(0.9)' }} transition={{ duration: 0.1 }}>
+                <Button onClick={() => markAttendance(subject.id, 'present')} size="sm" className="w-full font-bold bg-gradient-to-r from-accent to-emerald-600 text-white hover:brightness-110">
                     <Check className="mr-2 h-4 w-4" /> Present
                 </Button>
             </motion.div>
-            <motion.div whileTap={{ scale: 0.95 }} transition={{ duration: 0.1 }}>
-                <Button onClick={() => markAttendance(subject.id, 'absent')} size="sm" variant="destructive" className="w-full font-bold">
+            <motion.div whileTap={{ scale: 0.97, filter: 'brightness(0.9)' }} transition={{ duration: 0.1 }}>
+                <Button onClick={() => markAttendance(subject.id, 'absent')} size="sm" className="w-full font-bold bg-gradient-to-r from-primary to-amber-500 text-primary-foreground hover:brightness-110">
                     <X className="mr-2 h-4 w-4" /> Absent
                 </Button>
             </motion.div>
@@ -159,7 +161,7 @@ export function SubjectCard({ subject }: SubjectCardProps) {
     </motion.div>
 
     <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="glass-card">
             <AlertDialogHeader>
             <AlertDialogTitle className="font-bold">Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
@@ -168,7 +170,7 @@ export function SubjectCard({ subject }: SubjectCardProps) {
             </AlertDialogHeader>
             <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="font-bold">Delete</AlertDialogAction>
+            <AlertDialogAction onClick={handleDelete} className="font-bold bg-destructive text-destructive-foreground">Delete</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>

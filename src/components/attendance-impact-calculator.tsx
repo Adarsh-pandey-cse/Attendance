@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -63,11 +64,11 @@ export function AttendanceImpactCalculator() {
   const { riskStatus, riskColor, RiskIcon, riskBorderColor } = useMemo(() => {
     if (loading || !overallTarget) return { riskStatus: '', riskColor: '', RiskIcon: ShieldQuestion, riskBorderColor: ''};
     if (projectedPercentage >= overallTarget + 5) {
-      return { riskStatus: 'Safe', riskColor: 'text-primary', RiskIcon: ShieldCheck, riskBorderColor: 'border-primary' };
+      return { riskStatus: 'Safe', riskColor: 'text-accent', RiskIcon: ShieldCheck, riskBorderColor: 'border-accent' };
     } else if (projectedPercentage >= overallTarget) {
-      return { riskStatus: 'Warning', riskColor: 'text-yellow-400', RiskIcon: ShieldAlert, riskBorderColor: 'border-yellow-400' };
+      return { riskStatus: 'Warning', riskColor: 'text-primary', RiskIcon: ShieldAlert, riskBorderColor: 'border-primary' };
     } else {
-      return { riskStatus: 'Critical', riskColor: 'text-red-500', RiskIcon: AlertTriangle, riskBorderColor: 'border-red-500' };
+      return { riskStatus: 'Critical', riskColor: 'text-destructive', RiskIcon: AlertTriangle, riskBorderColor: 'border-destructive' };
     }
   }, [projectedPercentage, overallTarget, loading]);
 
@@ -165,13 +166,13 @@ export function AttendanceImpactCalculator() {
                     <div className='flex items-center gap-2'>
                         <ShieldQuestion className="w-5 h-5 text-sky-400" />
                         {currentPercentage < overallTarget! ? (
-                            <span className='text-yellow-400'>You are already below the {overallTarget}% target.</span>
+                            <span className='text-primary'>You are already below the {overallTarget}% target.</span>
                         ) : (
                             <span>You can safely miss <span className='font-bold text-foreground'>{safeMissLimit}</span> more class{safeMissLimit !== 1 ? 'es' : ''}.</span>
                         )}
                     </div>
                      {projectedPercentage < overallTarget! && missCount > 0 && classesToRecover > 0 && (
-                        <div className='flex items-center gap-2 text-primary'>
+                        <div className='flex items-center gap-2 text-accent'>
                             <TrendingUp className="w-5 h-5" />
                             <span>Attend the next <span className='font-bold text-foreground'>{classesToRecover}</span> class{classesToRecover !== 1 ? 'es' : ''} to recover.</span>
                         </div>

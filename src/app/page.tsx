@@ -1,4 +1,3 @@
-
 'use client';
 
 import { AddSubjectDialog } from '@/components/add-subject-dialog';
@@ -11,7 +10,7 @@ import { useAttendance } from '@/hooks/use-attendance';
 import { PlusCircle, Loader2, BookOpenCheck } from 'lucide-react';
 import { useTheme } from '@/hooks/use-theme';
 import { cn } from '@/lib/utils';
-import { LeavePlanner } from '@/components/leave-planner';
+import { AttendanceImpactCalculator } from '@/components/attendance-impact-calculator';
 
 export default function Home() {
   const { subjects, loading } = useAttendance();
@@ -65,7 +64,7 @@ export default function Home() {
 
             <Separator className="my-4" />
             
-            <LeavePlanner />
+            <AttendanceImpactCalculator />
 
           </div>
         </div>

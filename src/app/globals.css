@@ -180,12 +180,11 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background-image: url('https://www.photo-pick.com/online/tRZ0mDFg.link');
+      background-image: radial-gradient(circle at top, hsla(var(--primary) / 0.1), transparent 70%), radial-gradient(circle at bottom, hsla(var(--accent) / 0.1), transparent 70%);
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
       z-index: -2;
-      opacity: 0.15; /* Make it subtle */
     }
 
     .bead-container {

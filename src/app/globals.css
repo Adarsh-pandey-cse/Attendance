@@ -180,7 +180,7 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background-image: url('https://jumpshare.com/s/mBIGXG1LHzVqnyMHJXpu');
+      background-image: url('https://www.photo-pick.com/online/tRZ0mDFg.link');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -245,15 +245,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 40px;
-      height: 40px;
+      width: 30px;
+      height: 30px;
       margin: 8px 0;
       border-radius: 50%;
       background-color: rgba(251, 191, 36, 0.1); /* Faint yellow from Radha theme */
       border: 1px solid rgba(251, 191, 36, 0.2);
       color: hsl(var(--primary));
       font-family: 'Tiro Devanagari Hindi', serif;
-      font-size: 1rem;
+      font-size: 0.75rem;
       font-weight: bold;
       flex-shrink: 0;
     }

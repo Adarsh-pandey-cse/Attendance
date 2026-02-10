@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Logo } from '@/components/logo';
@@ -12,7 +11,7 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem
 } from '@/components/ui/dropdown-menu';
-import { MoreVertical, Info, Percent, CalendarClock, Shield, Moon, Sun, Palette, Star } from 'lucide-react';
+import { MoreVertical, Info, Percent, CalendarClock, Shield, Moon, Sun, Palette, Star, AreaChart } from 'lucide-react';
 import Link from 'next/link';
 import { useAttendance } from '@/hooks/use-attendance';
 import { Slider } from '@/components/ui/slider';
@@ -81,6 +80,12 @@ export function Header() {
                     </DropdownMenuRadioGroup>
                 </div>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                <Link href="/analytics" className="flex items-center gap-2 cursor-pointer font-semibold">
+                    <AreaChart className="w-4 h-4" />
+                    <span>Analytics</span>
+                </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                 <Link href="/timetable" className="flex items-center gap-2 cursor-pointer font-semibold">
                     <CalendarClock className="w-4 h-4" />

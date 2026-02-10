@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -74,7 +73,7 @@ export function ScheduleDialog({ children, day, isOpen, setIsOpen, entry }: Sche
   }, [entry, isOpen, form]);
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    const updatedTimetable = { ...timetable };
+    const updatedTimetable = { ...(timetable || {}) };
     const daySchedule = updatedTimetable[day] || [];
 
     if (entry) { // Editing existing entry

@@ -12,7 +12,7 @@ export function TimetableTab({ day }: { day: DayOfWeek }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<TimetableEntry | null>(null);
 
-  const daySchedule = timetable[day] || [];
+  const daySchedule = timetable?.[day] || [];
 
   const getSubjectName = (subjectId: string) => {
     return subjects.find(s => s.id === subjectId)?.name || 'Unknown Subject';
@@ -29,7 +29,7 @@ export function TimetableTab({ day }: { day: DayOfWeek }) {
   };
 
   const handleDelete = (entryId: string) => {
-    const updatedTimetable = { ...timetable };
+    const updatedTimetable = { ...(timetable || {}) };
     updatedTimetable[day] = (updatedTimetable[day] || []).filter(entry => entry.id !== entryId);
     updateTimetable(updatedTimetable);
   };

@@ -16,6 +16,8 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from './ui/button';
 import { ImageCropDialog } from './image-crop-dialog';
+import { useTheme } from '@/hooks/use-theme';
+import { cn } from '@/lib/utils';
 
 export function ProfileSection() {
   const { userName, setUserName, profilePicture, setProfilePicture } = useAttendance();
@@ -24,6 +26,7 @@ export function ProfileSection() {
   const nameInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isClient, setIsClient] = useState(false);
+  const { theme } = useTheme();
 
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [managementDialogOpen, setManagementDialogOpen] = useState(false);
@@ -85,6 +88,8 @@ export function ProfileSection() {
     setProfilePicture(null);
     setManagementDialogOpen(false);
   }
+
+  const isRadhaTheme = isClient && theme === 'radha-rani';
 
   return (
     <>
@@ -152,7 +157,10 @@ export function ProfileSection() {
             </div>
           ) : (
             <div className="flex items-center gap-2" onClick={() => setIsEditingName(true)}>
-              <span className="font-bold text-lg cursor-pointer hover:text-primary/80 transition-colors">
+              <span className={cn(
+                "font-bold text-lg cursor-pointer hover:text-primary/80 transition-colors",
+                isRadhaTheme && "text-yellow-400"
+              )}>
                 {isClient ? userName : 'Student'}
               </span>
               <Edit2 className="w-4 h-4 text-muted-foreground cursor-pointer" />

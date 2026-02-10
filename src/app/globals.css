@@ -192,7 +192,7 @@
       position: fixed;
       top: 0;
       bottom: 0;
-      width: 60px; /* Adjust width as needed */
+      width: 50px; /* Adjust width as needed */
       z-index: -1;
       overflow: hidden;
       display: flex;
@@ -245,15 +245,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 50px;
-      height: 50px;
-      margin: 10px 0;
+      width: 40px;
+      height: 40px;
+      margin: 8px 0;
       border-radius: 50%;
       background-color: rgba(251, 191, 36, 0.1); /* Faint yellow from Radha theme */
       border: 1px solid rgba(251, 191, 36, 0.2);
       color: hsl(var(--primary));
       font-family: 'Tiro Devanagari Hindi', serif;
-      font-size: 1.2rem;
+      font-size: 1rem;
       font-weight: bold;
       flex-shrink: 0;
     }

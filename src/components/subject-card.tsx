@@ -19,7 +19,7 @@ import { motion } from 'framer-motion';
 import { useTheme } from '@/hooks/use-theme';
 import { cn } from '@/lib/utils';
 import { Progress } from './ui/progress';
-import { MoreVertical, Edit, Trash2, PieChart, FileDown, History, Check, X, TrendingUp, TrendingDown } from 'lucide-react';
+import { MoreVertical, Edit, Trash2, PieChart, History, Check, X, TrendingUp, TrendingDown } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,8 +28,6 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { AnalyticsDialog } from './analytics-dialog';
-import { generatePdf } from '@/lib/pdf-generator';
-import { useToast } from '@/hooks/use-toast';
 import { calculateClassesToAttend, calculateClassesToBunk } from '@/lib/utils';
 import Link from 'next/link';
 import { EditSubjectDialog } from './edit-subject-dialog';
@@ -40,11 +38,10 @@ type SubjectCardProps = {
 };
 
 export function SubjectCard({ subject }: SubjectCardProps) {
-  const { deleteSubject, markAttendance, overallTarget, userName } = useAttendance();
+  const { deleteSubject, markAttendance, overallTarget } = useAttendance();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
   const { theme } = useTheme();
-  const { toast } = useToast();
 
   const percentage = subject.totalClasses > 0 ? (subject.attendedClasses / subject.totalClasses) * 100 : 0;
   
@@ -61,16 +58,6 @@ export function SubjectCard({ subject }: SubjectCardProps) {
   const handleDelete = () => {
     deleteSubject(subject.id);
     setIsDeleteDialogOpen(false);
-  }
-
-  const handleExport = () => {
-    try {
-        generatePdf(subject, userName || 'Student');
-        toast({ title: 'PDF Exported', description: `${subject.name} attendance has been exported.` });
-    } catch(e) {
-        console.error(e);
-        toast({ title: 'Export Failed', description: 'There was an error generating the PDF.', variant: 'destructive' });
-    }
   }
 
   const classesToAttend = calculateClassesToAttend(subject.attendedClasses, subject.totalClasses, target);
@@ -91,15 +78,9 @@ export function SubjectCard({ subject }: SubjectCardProps) {
         </div>
         <div className="flex items-center gap-2">
              <div className="text-center">
-                <motion.p
-                    key={`${subject.attendedClasses}-${subject.totalClasses}`}
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.4, ease: 'easeOut' }}
-                    className="font-bold text-lg"
-                >
+                <p className="font-bold text-lg">
                     {percentage.toFixed(0)}%
-                </motion.p>
+                </p>
             </div>
         
             <DropdownMenu>
@@ -115,7 +96,6 @@ export function SubjectCard({ subject }: SubjectCardProps) {
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setIsAnalyticsOpen(true)} className="font-semibold gap-2 cursor-pointer"><PieChart/> View Analytics</DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleExport} className="font-semibold gap-2 cursor-pointer"><FileDown/> Export as PDF</DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <EditSubjectDialog subject={subject}>
                         <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="font-semibold gap-2 cursor-pointer"><Edit/> Edit</DropdownMenuItem>
@@ -127,7 +107,7 @@ export function SubjectCard({ subject }: SubjectCardProps) {
       </div>
 
        <div className="mt-3 space-y-2">
-            <Progress value={percentage} className="h-1.5" indicatorClassName={progressColor} />
+            <Progress value={percentage} className="h-2" indicatorClassName={progressColor} />
             {subject.totalClasses > 0 && (
                 <div className="text-center text-xs font-semibold text-muted-foreground">
                 {percentage < target ? (
@@ -146,13 +126,13 @@ export function SubjectCard({ subject }: SubjectCardProps) {
         </div>
         
         <div className="mt-4 grid grid-cols-2 gap-2">
-            <motion.div whileTap={{ scale: 0.97, filter: 'brightness(0.9)' }} transition={{ duration: 0.1 }}>
-                <Button onClick={() => markAttendance(subject.id, 'present')} size="sm" className="w-full font-bold bg-gradient-to-r from-accent to-emerald-600 text-white hover:brightness-110">
+            <motion.div whileTap={{ scale: 0.97 }} transition={{ duration: 0.1 }}>
+                <Button onClick={() => markAttendance(subject.id, 'present')} size="sm" className="w-full font-bold bg-gradient-to-r from-accent to-emerald-600 text-white hover:brightness-110 shadow-lg shadow-accent/20">
                     <Check className="mr-2 h-4 w-4" /> Present
                 </Button>
             </motion.div>
-            <motion.div whileTap={{ scale: 0.97, filter: 'brightness(0.9)' }} transition={{ duration: 0.1 }}>
-                <Button onClick={() => markAttendance(subject.id, 'absent')} size="sm" className="w-full font-bold bg-gradient-to-r from-primary to-amber-500 text-primary-foreground hover:brightness-110">
+            <motion.div whileTap={{ scale: 0.97 }} transition={{ duration: 0.1 }}>
+                <Button onClick={() => markAttendance(subject.id, 'absent')} size="sm" className="w-full font-bold bg-gradient-to-r from-primary to-amber-500 text-primary-foreground hover:brightness-110 shadow-lg shadow-primary/20">
                     <X className="mr-2 h-4 w-4" /> Absent
                 </Button>
             </motion.div>

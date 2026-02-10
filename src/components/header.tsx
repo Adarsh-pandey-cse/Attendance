@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Logo } from '@/components/logo';
@@ -12,7 +11,7 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem
 } from '@/components/ui/dropdown-menu';
-import { MoreVertical, Info, Percent, CalendarClock, Shield, Moon, Sun, Palette, Star, AreaChart, Minus, Plus } from 'lucide-react';
+import { MoreVertical, Info, Percent, CalendarClock, Shield, Moon, Sun, Palette, Star, AreaChart, Minus, Plus, FileDown } from 'lucide-react';
 import Link from 'next/link';
 import { useAttendance } from '@/hooks/use-attendance';
 import { Slider } from '@/components/ui/slider';
@@ -21,11 +20,14 @@ import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
+import { generateOverallPdf } from '@/lib/pdf-generator';
+import { useToast } from '@/hooks/use-toast';
 
 export function Header() {
-  const { overallTarget, setOverallTarget } = useAttendance();
+  const { subjects, overallTarget, setOverallTarget, userName, profilePicture } = useAttendance();
   const { theme, setTheme } = useTheme();
   const [isClient, setIsClient] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     setIsClient(true);
@@ -38,6 +40,25 @@ export function Header() {
           setOverallTarget(value);
       }
   }
+
+  const handleExportAll = () => {
+    if (!subjects || subjects.length === 0) {
+        toast({
+            title: 'Export Failed',
+            description: 'No subject data available to export.',
+            variant: 'destructive'
+        });
+        return;
+    }
+    try {
+        generateOverallPdf(subjects, userName || 'Student', profilePicture || null);
+        toast({ title: 'PDF Exported', description: `Overall attendance report has been generated.` });
+    } catch(e) {
+        console.error(e);
+        toast({ title: 'Export Failed', description: 'There was an error generating the PDF.', variant: 'destructive' });
+    }
+  }
+
 
   return (
     <header className="flex flex-col gap-4 items-center py-2">
@@ -145,6 +166,10 @@ export function Header() {
                     <CalendarClock className="w-4 h-4" />
                     <span>Timetable</span>
                 </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleExportAll} className="flex items-center gap-2 cursor-pointer font-semibold">
+                    <FileDown className="w-4 h-4" />
+                    <span>Export as PDF</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>

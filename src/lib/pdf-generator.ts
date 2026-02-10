@@ -9,9 +9,6 @@ interface jsPDFWithAutoTable extends jsPDF {
     autoTable: (options: any) => jsPDF;
 }
 
-// This function is deprecated and its functionality is moved to generateOverallPdf.
-export const generatePdf = (subject: Subject, studentName: string) => {};
-
 export const generateOverallPdf = (subjects: Subject[], userName: string, profilePicture: string | null) => {
     const doc = new jsPDF() as jsPDFWithAutoTable;
     

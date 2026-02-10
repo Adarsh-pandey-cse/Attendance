@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -63,18 +62,18 @@ export function Greeting() {
           />
         </div>
       )}
-      <h2 className={cn("text-3xl font-bold", isRadhaTheme && "font-hindi text-yellow-950")}>
+      <h2 className={cn("text-3xl font-bold", isRadhaTheme && "font-hindi text-pink-400")}>
           {greetingText}
       </h2>
       <div className="text-center">
-          <span className={cn("text-2xl font-bold ml-2", isRadhaTheme && "text-yellow-950")}>{userName}!</span>
+          <span className={cn("text-2xl font-bold ml-2", isRadhaTheme && "text-amber-400")}>{userName}!</span>
       </div>
-      <p className="text-muted-foreground font-semibold mt-1 text-center">{currentDate}</p>
+      <p className={cn("text-muted-foreground font-semibold mt-1 text-center", isRadhaTheme && "text-pink-300/80")}>{currentDate}</p>
       
       {!quote ? (
           <p className="text-lg font-semibold mt-2 italic text-center text-muted-foreground">Loading quote...</p>
       ) : (
-          <p className={cn("text-lg font-hindi font-bold mt-2 italic text-center text-yellow-950")}>&quot;{quote}&quot;</p>
+          <p className={cn("text-lg font-hindi font-bold mt-2 italic text-center", isRadhaTheme && "bg-gradient-to-r from-yellow-400 via-pink-400 to-yellow-400 bg-clip-text text-transparent")}>&quot;{quote}&quot;</p>
       )}
     </div>
   );

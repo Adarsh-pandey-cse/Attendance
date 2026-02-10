@@ -91,7 +91,10 @@ export function OverallAttendance() {
             transition={{ duration: 0.5, ease: 'easeOut' }}
         >
             <div className="flex flex-col md:flex-row items-center justify-around w-full gap-4">
-                <OverallCircularProgress percentage={overallPercentage} target={target} />
+                <div className="flex flex-col items-center">
+                    <OverallCircularProgress percentage={overallPercentage} target={target} />
+                    <p className="text-sm font-bold mt-2 text-foreground">{totalAttended} <span className="font-medium text-muted-foreground">/ {totalClasses} classes</span></p>
+                </div>
                 <div className="flex flex-col items-center">
                      <h2 className="text-xl font-bold tracking-tight mb-2">Weekly Streak</h2>
                      <StreakDisplay />

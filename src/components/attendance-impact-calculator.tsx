@@ -7,8 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calculator, TrendingDown, ShieldQuestion, AlertTriangle, ShieldAlert, ShieldCheck } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Calculator, TrendingDown, ShieldQuestion, AlertTriangle, ShieldAlert, ShieldCheck, TrendingUp } from 'lucide-react';
+import { cn, calculateClassesToAttend } from '@/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export function AttendanceImpactCalculator() {
@@ -51,6 +51,15 @@ export function AttendanceImpactCalculator() {
     return bunkable > 0 ? bunkable : 0;
   }, [currentPresent, currentTotal, overallTarget, currentPercentage, loading]);
 
+  const classesToRecover = useMemo(() => {
+    if (loading || !overallTarget || projectedPercentage >= overallTarget) {
+      return 0;
+    }
+    const newTotal = currentTotal + missCount;
+    return calculateClassesToAttend(currentPresent, newTotal, overallTarget);
+  }, [currentPresent, currentTotal, missCount, overallTarget, projectedPercentage, loading]);
+
+
   const { riskStatus, riskColor, RiskIcon, riskBorderColor } = useMemo(() => {
     if (loading || !overallTarget) return { riskStatus: '', riskColor: '', RiskIcon: ShieldQuestion, riskBorderColor: ''};
     if (projectedPercentage >= overallTarget + 5) {
@@ -68,7 +77,7 @@ export function AttendanceImpactCalculator() {
   };
   
   if (loading) {
-      return null; // Or a skeleton loader
+      return null;
   }
 
   return (
@@ -125,9 +134,9 @@ export function AttendanceImpactCalculator() {
               <Input
                 id="miss-count-input"
                 type="number"
-                value={missCount}
+                value={missCount === 0 ? '' : missCount}
+                placeholder='0'
                 onChange={handleMissCountChange}
-                onFocus={(e) => e.target.select()}
                 className="text-center text-lg font-bold h-12"
               />
             </div>
@@ -152,12 +161,20 @@ export function AttendanceImpactCalculator() {
                     </div>
                 </div>
 
-                <div className="mt-4 text-sm font-semibold text-muted-foreground flex items-center gap-2">
-                    <ShieldQuestion className="w-5 h-5 text-sky-400" />
-                    {currentPercentage < overallTarget! ? (
-                        <span className='text-yellow-400'>You are already below the {overallTarget}% target.</span>
-                    ) : (
-                        <span>You can safely miss <span className='font-bold text-foreground'>{safeMissLimit}</span> more class{safeMissLimit !== 1 ? 'es' : ''}.</span>
+                <div className="mt-4 space-y-2 text-sm font-semibold text-muted-foreground">
+                    <div className='flex items-center gap-2'>
+                        <ShieldQuestion className="w-5 h-5 text-sky-400" />
+                        {currentPercentage < overallTarget! ? (
+                            <span className='text-yellow-400'>You are already below the {overallTarget}% target.</span>
+                        ) : (
+                            <span>You can safely miss <span className='font-bold text-foreground'>{safeMissLimit}</span> more class{safeMissLimit !== 1 ? 'es' : ''}.</span>
+                        )}
+                    </div>
+                     {projectedPercentage < overallTarget! && missCount > 0 && classesToRecover > 0 && (
+                        <div className='flex items-center gap-2 text-primary'>
+                            <TrendingUp className="w-5 h-5" />
+                            <span>Attend the next <span className='font-bold text-foreground'>{classesToRecover}</span> class{classesToRecover !== 1 ? 'es' : ''} to recover.</span>
+                        </div>
                     )}
                 </div>
             </motion.div>

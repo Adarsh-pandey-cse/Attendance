@@ -31,6 +31,7 @@ import { generatePdf } from '@/lib/pdf-generator';
 import { useToast } from '@/hooks/use-toast';
 import { calculateClassesToAttend, calculateClassesToBunk } from '@/lib/utils';
 import Link from 'next/link';
+import { EditSubjectDialog } from './edit-subject-dialog';
 
 
 type SubjectCardProps = {

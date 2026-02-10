@@ -17,6 +17,7 @@ export function Greeting() {
   const { theme } = useTheme();
   
   const isRadhaTheme = isClient && theme === 'radha-rani';
+  const isDarkTheme = isClient && theme === 'dark';
 
   useEffect(() => {
     setIsClient(true);
@@ -62,18 +63,34 @@ export function Greeting() {
           />
         </div>
       )}
-      <h2 className={cn("text-3xl font-bold", isRadhaTheme && "font-hindi text-pink-400")}>
+      <h2 className={cn(
+          "text-3xl font-bold", 
+          isRadhaTheme && "font-hindi text-pink-400", 
+          isDarkTheme && "bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"
+        )}>
           {greetingText}
       </h2>
       <div className="text-center">
-          <span className={cn("text-2xl font-bold ml-2", isRadhaTheme && "text-amber-400")}>{userName}!</span>
+          <span className={cn(
+              "text-2xl font-bold ml-2", 
+              isRadhaTheme && "text-amber-400",
+              isDarkTheme && "text-primary"
+            )}>{userName}!</span>
       </div>
-      <p className={cn("text-muted-foreground font-semibold mt-1 text-center", isRadhaTheme && "text-pink-300/80")}>{currentDate}</p>
+      <p className={cn(
+          "text-muted-foreground font-semibold mt-1 text-center", 
+          isRadhaTheme && "text-pink-300/80",
+          isDarkTheme && "text-foreground/90"
+        )}>{currentDate}</p>
       
       {!quote ? (
           <p className="text-lg font-semibold mt-2 italic text-center text-muted-foreground">Loading quote...</p>
       ) : (
-          <p className={cn("text-lg font-hindi font-bold mt-2 italic text-center", isRadhaTheme && "bg-gradient-to-r from-yellow-400 via-pink-400 to-yellow-400 bg-clip-text text-transparent")}>&quot;{quote}&quot;</p>
+          <p className={cn(
+              "text-lg font-hindi font-bold mt-2 italic text-center", 
+              isRadhaTheme && "bg-gradient-to-r from-yellow-400 via-pink-400 to-yellow-400 bg-clip-text text-transparent",
+              isDarkTheme && "text-foreground"
+            )}>&quot;{quote}&quot;</p>
       )}
     </div>
   );

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -90,6 +89,7 @@ export function ProfileSection() {
   }
 
   const isRadhaTheme = isClient && theme === 'radha-rani';
+  const isDarkTheme = isClient && theme === 'dark';
 
   return (
     <>
@@ -159,7 +159,8 @@ export function ProfileSection() {
             <div className="flex items-center gap-2" onClick={() => setIsEditingName(true)}>
               <span className={cn(
                 "font-bold text-lg cursor-pointer hover:text-primary/80 transition-colors",
-                isRadhaTheme && "text-yellow-400"
+                isRadhaTheme && "text-yellow-400",
+                isDarkTheme && "text-primary"
               )}>
                 {isClient ? userName : 'Student'}
               </span>

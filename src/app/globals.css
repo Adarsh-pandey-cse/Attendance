@@ -1,4 +1,3 @@
-
 @import 'react-image-crop/dist/ReactCrop.css';
 
 @tailwind base;
@@ -183,75 +182,5 @@
       background-position: center;
       background-repeat: no-repeat;
       z-index: -2;
-    }
-
-    .bead-container {
-      position: fixed;
-      top: 0;
-      bottom: 0;
-      width: 50px; /* Adjust width as needed */
-      z-index: -1;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
-      mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
-    }
-
-    .left-beads {
-      left: 0;
-    }
-
-    .right-beads {
-      right: 0;
-    }
-
-    .bead-column-up, .bead-column-down {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .bead-column-up {
-      animation: scroll-up 60s linear infinite;
-    }
-    
-    .bead-column-down {
-      animation: scroll-down 60s linear infinite;
-    }
-
-    @keyframes scroll-up {
-      from {
-        transform: translateY(0);
-      }
-      to {
-        transform: translateY(-50%);
-      }
-    }
-
-    @keyframes scroll-down {
-      from {
-        transform: translateY(-50%);
-      }
-      to {
-        transform: translateY(0);
-      }
-    }
-    
-    .bead {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 30px;
-      height: 30px;
-      margin: 8px 0;
-      border-radius: 50%;
-      background-color: rgba(251, 191, 36, 0.1); /* Faint yellow from Radha theme */
-      border: 1px solid rgba(251, 191, 36, 0.2);
-      color: hsl(var(--primary));
-      font-family: 'Tiro Devanagari Hindi', serif;
-      font-size: 0.75rem;
-      font-weight: bold;
-      flex-shrink: 0;
     }
 }

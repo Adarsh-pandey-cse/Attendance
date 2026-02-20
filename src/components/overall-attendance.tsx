@@ -6,7 +6,6 @@ import { useAttendance } from '@/hooks/use-attendance';
 import { motion } from 'framer-motion';
 import { useTheme } from '@/hooks/use-theme';
 import { cn, calculateClassesToAttend, calculateClassesToBunk } from '@/lib/utils';
-import { StreakDisplay } from './streak-display';
 import { Separator } from '@/components/ui/separator';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
@@ -91,14 +90,10 @@ export function OverallAttendance() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
         >
-            <div className="flex flex-col md:flex-row items-center justify-around w-full gap-4">
+            <div className="flex flex-col md:flex-row items-center justify-center w-full gap-4">
                 <div className="flex flex-col items-center">
                     <OverallCircularProgress percentage={overallPercentage} target={target} />
                     <p className="text-lg font-bold mt-2 text-foreground">{totalAttended} <span className="font-semibold text-muted-foreground">/ {totalClasses} classes</span></p>
-                </div>
-                <div className="flex flex-col items-center">
-                     <h2 className="text-xl font-bold tracking-tight mb-2">Weekly Streak</h2>
-                     <StreakDisplay />
                 </div>
             </div>
 

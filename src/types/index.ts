@@ -1,4 +1,3 @@
-
 'use client';
 
 export type AttendanceLog = {
@@ -31,10 +30,6 @@ export type UserData = {
     timetable: {
       [key in DayOfWeek]?: TimetableEntry[];
     };
-    currentStreak: number;
-    longestStreak: number;
-    lastWeekEvaluated: number; // Using timestamp
-    perfectWeeks: number;
 }
 
 export type DeveloperInfo = {

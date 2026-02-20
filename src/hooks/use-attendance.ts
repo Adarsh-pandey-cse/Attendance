@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -15,7 +14,6 @@ import {
 } from 'firebase/firestore';
 import type { Subject, AttendanceLog, UserData, DayOfWeek } from '@/types';
 import { useToast } from './use-toast';
-import { startOfWeek, subWeeks, getTime } from 'date-fns';
 
 const USER_ID = 'single-user';
 
@@ -28,7 +26,7 @@ export const useAttendance = () => {
   const userDocRef = doc(db, 'users', USER_ID);
   const subjectsColRef = collection(db, 'users', USER_ID, 'subjects');
   
-  const { userName, profilePicture, overallTarget, timetable, currentStreak, longestStreak } = userData;
+  const { userName, profilePicture, overallTarget, timetable } = userData;
 
   // --- Real-time Listeners ---
   useEffect(() => {
@@ -41,20 +39,12 @@ export const useAttendance = () => {
             profilePicture: data.profilePicture || null,
             overallTarget: data.overallTarget || 75,
             timetable: data.timetable || {},
-            currentStreak: data.currentStreak || 0,
-            longestStreak: data.longestStreak || 0,
-            lastWeekEvaluated: data.lastWeekEvaluated || 0,
-            perfectWeeks: data.perfectWeeks || 0,
         });
       } else {
         const defaultData: UserData = { 
             userName: 'Student', 
             overallTarget: 75, 
             timetable: {},
-            currentStreak: 0,
-            longestStreak: 0,
-            lastWeekEvaluated: 0,
-            perfectWeeks: 0,
             profilePicture: null,
         };
         setDoc(userDocRef, defaultData, { merge: true });
@@ -86,72 +76,6 @@ export const useAttendance = () => {
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // --- Streak Evaluation Logic ---
-  useEffect(() => {
-    if (loading || !subjects.length || userData.lastWeekEvaluated === undefined) return;
-
-    const evaluateWeeklyStreak = async () => {
-        const now = new Date();
-        const lastWeekStartDate = startOfWeek(subWeeks(now, 1), { weekStartsOn: 1 });
-        const lastWeekStartDateTimestamp = getTime(lastWeekStartDate);
-
-        // Only evaluate if we haven't already evaluated for the last week
-        if (userData.lastWeekEvaluated && userData.lastWeekEvaluated >= lastWeekStartDateTimestamp) {
-            return;
-        }
-
-        const lastWeekEndDate = new Date(lastWeekStartDate);
-        lastWeekEndDate.setDate(lastWeekEndDate.getDate() + 6);
-        lastWeekEndDate.setHours(23, 59, 59, 999);
-
-        let totalScheduled = 0;
-        let totalAttended = 0;
-
-        const dayMapping: DayOfWeek[] = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-        
-        if(userData.timetable){
-            for (let d = new Date(lastWeekStartDate); d <= lastWeekEndDate; d.setDate(d.getDate() + 1)) {
-                const dayOfWeek = dayMapping[d.getDay()];
-                if (userData.timetable[dayOfWeek]) {
-                    totalScheduled += userData.timetable[dayOfWeek]!.length;
-                }
-            }
-        }
-
-
-        subjects.forEach(subject => {
-            subject.history.forEach(log => {
-                if(log.timestamp >= lastWeekStartDateTimestamp && log.timestamp <= getTime(lastWeekEndDate)) {
-                    if (log.status === 'present') {
-                        totalAttended++;
-                    }
-                }
-            });
-        });
-
-        const newUserData: Partial<UserData> = { lastWeekEvaluated: getTime(now) };
-
-        if (totalScheduled > 0 && totalAttended >= totalScheduled) {
-            newUserData.currentStreak = (userData.currentStreak || 0) + 1;
-            newUserData.perfectWeeks = (userData.perfectWeeks || 0) + 1;
-            if (newUserData.currentStreak > (userData.longestStreak || 0)) {
-                newUserData.longestStreak = newUserData.currentStreak;
-            }
-            toast({ title: 'Perfect Week! 🎉', description: 'You attended all your classes last week. Your streak continues!' });
-        } else if (totalScheduled > 0) {
-            newUserData.currentStreak = 0;
-            if((userData.currentStreak || 0) > 0) {
-              toast({ title: 'Streak Reset', description: 'You missed a class last week. Keep trying for a perfect week!', variant: 'destructive'});
-            }
-        }
-        
-        await setDoc(userDocRef, newUserData, { merge: true });
-    };
-
-    evaluateWeeklyStreak();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading, subjects, userData.lastWeekEvaluated]);
 
 
   const addSubject = async (newSubject: Omit<Subject, 'id' | 'history'>) => {
@@ -246,6 +170,5 @@ export const useAttendance = () => {
     profilePicture, setProfilePicture,
     overallTarget, setOverallTarget,
     timetable, updateTimetable,
-    currentStreak, longestStreak,
   };
 };

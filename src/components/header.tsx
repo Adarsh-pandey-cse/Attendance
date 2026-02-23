@@ -11,7 +11,7 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem
 } from '@/components/ui/dropdown-menu';
-import { MoreVertical, Info, Percent, CalendarClock, Shield, Moon, Sun, Palette, Star, AreaChart, Minus, Plus, FileDown } from 'lucide-react';
+import { MoreVertical, Info, Percent, CalendarClock, Shield, Moon, Sun, Palette, Star, AreaChart, Minus, Plus, FileDown, CalendarDays } from 'lucide-react';
 import Link from 'next/link';
 import { useAttendance } from '@/hooks/use-attendance';
 import { Slider } from '@/components/ui/slider';
@@ -160,6 +160,12 @@ export function Header() {
                     <AreaChart className="w-4 h-4" />
                     <span>Analytics</span>
                 </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link href="/history/daily" className="flex items-center gap-2 cursor-pointer font-semibold">
+                        <CalendarDays className="w-4 h-4" />
+                        <span>Daily History</span>
+                    </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                 <Link href="/timetable" className="flex items-center gap-2 cursor-pointer font-semibold">

@@ -90,12 +90,60 @@ export const useAttendance = () => {
 
   const updateSubject = async (updatedSubject: Partial<Subject> & { id: string }) => {
     const { id, ...dataToUpdate } = updatedSubject;
-    try {
-      await updateDoc(doc(subjectsColRef, id), dataToUpdate);
-      toast({ title: "Success", description: "Subject updated." });
-    } catch (error) {
-      console.error('Error updating subject:', error);
-      toast({ title: "Error", description: "Failed to update subject.", variant: "destructive" });
+    const subjectDocRef = doc(subjectsColRef, id);
+
+    const originalSubject = subjects.find(s => s.id === id);
+    if (!originalSubject) {
+        toast({ title: "Error", description: "Could not find subject to update.", variant: "destructive" });
+        return;
+    }
+
+    const attendedChanged = dataToUpdate.attendedClasses !== undefined && dataToUpdate.attendedClasses !== originalSubject.attendedClasses;
+    const totalChanged = dataToUpdate.totalClasses !== undefined && dataToUpdate.totalClasses !== originalSubject.totalClasses;
+
+    // If attendance numbers changed, create a history log.
+    if (attendedChanged || totalChanged) {
+        const changes: string[] = [];
+        if (dataToUpdate.name !== undefined && dataToUpdate.name !== originalSubject.name) {
+            changes.push(`name from "${originalSubject.name}" to "${dataToUpdate.name}"`);
+        }
+        if (attendedChanged) {
+            changes.push(`attended classes from ${originalSubject.attendedClasses} to ${dataToUpdate.attendedClasses}`);
+        }
+        if (totalChanged) {
+            changes.push(`total classes from ${originalSubject.totalClasses} to ${dataToUpdate.totalClasses}`);
+        }
+
+        const details = 'Edited: ' + changes.join(', ');
+        const newLog: AttendanceLog = {
+            id: doc(collection(db, 'dummy')).id,
+            timestamp: Date.now(),
+            status: 'edit',
+            details: details,
+        };
+        
+        const finalUpdateData = {
+            ...dataToUpdate,
+            history: [...(originalSubject.history || []), newLog]
+        };
+
+        try {
+            await updateDoc(subjectDocRef, finalUpdateData);
+            toast({ title: "Success", description: "Subject updated." });
+        } catch (error) {
+            console.error('Error updating subject:', error);
+            toast({ title: "Error", description: "Failed to update subject.", variant: "destructive" });
+        }
+    } else { // Only name might have changed, or nothing. No history log needed.
+        if (Object.keys(dataToUpdate).length > 0) {
+            try {
+                await updateDoc(subjectDocRef, dataToUpdate);
+                toast({ title: "Success", description: "Subject updated." });
+            } catch (error) {
+                console.error('Error updating subject:', error);
+                toast({ title: "Error", description: "Failed to update subject.", variant: "destructive" });
+            }
+        }
     }
   };
 

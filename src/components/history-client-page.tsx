@@ -4,7 +4,7 @@
 import { useAttendance } from '@/hooks/use-attendance';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Calendar, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowLeft, Calendar, CheckCircle, XCircle, Edit } from 'lucide-react';
 import { format, isToday, isYesterday, parseISO } from 'date-fns';
 import { AttendanceLog } from '@/types';
 import { Card, CardContent } from '@/components/ui/card';
@@ -84,16 +84,18 @@ export function HistoryClientPage({ subjectId }: HistoryClientPageProps) {
                     <h3 className="font-bold text-lg mb-2 sticky top-0 bg-card/80 backdrop-blur-sm py-2">{formatDateGroup(date)}</h3>
                     <ul className="space-y-2 border-l-2 border-primary/20 ml-2 pl-4">
                       {groupedLogs[date].sort((a,b) => b.timestamp - a.timestamp).map(log => (
-                        <li key={log.id} className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
+                        <li key={log.id} className="flex items-start justify-between gap-4">
+                           <div className="flex items-start gap-3">
                                 {log.status === 'present' ? (
-                                    <CheckCircle className="w-5 h-5 text-green-400"/>
+                                    <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0 mt-1"/>
+                                ) : log.status === 'absent' ? (
+                                    <XCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-1"/>
                                 ) : (
-                                    <XCircle className="w-5 h-5 text-red-400"/>
+                                    <Edit className="w-5 h-5 text-blue-400 flex-shrink-0 mt-1" />
                                 )}
-                                <span className="font-bold capitalize">{log.status}</span>
+                                <p className="font-semibold text-sm">{log.details || log.status}</p>
                             </div>
-                            <span className="text-sm text-muted-foreground font-semibold">
+                            <span className="text-sm text-muted-foreground font-semibold text-right flex-shrink-0">
                                 {format(new Date(log.timestamp), 'h:mm a')}
                             </span>
                         </li>

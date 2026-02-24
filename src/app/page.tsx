@@ -7,10 +7,12 @@ import { OverallAttendance } from '@/components/overall-attendance';
 import { SubjectCard } from '@/components/subject-card';
 import { Separator } from '@/components/ui/separator';
 import { useAttendance } from '@/hooks/use-attendance';
-import { PlusCircle, Loader2, BookOpenCheck } from 'lucide-react';
+import { PlusCircle, Loader2, BookOpenCheck, CalendarDays } from 'lucide-react';
 import { useTheme } from '@/hooks/use-theme';
 import { cn } from '@/lib/utils';
 import { AttendanceImpactCalculator } from '@/components/attendance-impact-calculator';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 export default function Home() {
   const { subjects, loading } = useAttendance();
@@ -25,6 +27,15 @@ export default function Home() {
             <Header />
             <Greeting />
             <OverallAttendance />
+
+            <div className="px-1 mt-4">
+                <Button asChild variant="outline" className="w-full font-bold">
+                    <Link href="/history/daily">
+                        <CalendarDays className="mr-2 h-4 w-4" />
+                        View Daily History Log
+                    </Link>
+                </Button>
+            </div>
 
             <Separator className="my-4" />
 

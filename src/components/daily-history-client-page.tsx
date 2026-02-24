@@ -2,7 +2,7 @@
 
 import { useAttendance } from '@/hooks/use-attendance';
 import { Button } from '@/components/ui/button';
-import { Calendar, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { Calendar, CheckCircle, XCircle, Loader2, Edit } from 'lucide-react';
 import { format, isToday, isYesterday, parseISO } from 'date-fns';
 import { Card, CardContent } from '@/components/ui/card';
 import { useMemo } from 'react';
@@ -11,7 +11,8 @@ import { useMemo } from 'react';
 type CombinedAttendanceLog = {
   id: string;
   timestamp: number;
-  status: 'present' | 'absent';
+  status: 'present' | 'absent' | 'edit';
+  details?: string;
   subjectName: string;
   subjectId: string;
 };
@@ -84,19 +85,21 @@ export function DailyHistoryClientPage() {
                 <h3 className="font-bold text-lg mb-2 sticky top-0 bg-card/80 backdrop-blur-sm py-2">{formatDateGroup(date)}</h3>
                 <ul className="space-y-3 border-l-2 border-primary/20 ml-2 pl-4">
                   {groupedLogs[date].sort((a,b) => b.timestamp - a.timestamp).map(log => (
-                    <li key={log.id} className="flex items-center justify-between bg-secondary/20 p-2 rounded-md">
-                        <div className="flex items-center gap-3">
-                            {log.status === 'present' ? (
-                                <CheckCircle className="w-5 h-5 text-green-400"/>
+                    <li key={log.id} className="flex items-start justify-between gap-2 bg-secondary/20 p-3 rounded-lg">
+                        <div className="flex items-start gap-3">
+                           {log.status === 'present' ? (
+                                <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0 mt-1"/>
+                            ) : log.status === 'absent' ? (
+                                <XCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-1"/>
                             ) : (
-                                <XCircle className="w-5 h-5 text-red-400"/>
+                                <Edit className="w-5 h-5 text-blue-400 flex-shrink-0 mt-1" />
                             )}
-                            <div>
+                            <div className="flex-1">
                                 <p className="font-bold capitalize">{log.subjectName}</p>
-                                <p className="text-xs text-muted-foreground font-semibold">{log.status}</p>
+                                <p className="text-xs text-muted-foreground font-semibold">{log.details || log.status}</p>
                             </div>
                         </div>
-                        <span className="text-sm text-muted-foreground font-semibold">
+                        <span className="text-sm text-muted-foreground font-semibold flex-shrink-0">
                             {format(new Date(log.timestamp), 'h:mm a')}
                         </span>
                     </li>

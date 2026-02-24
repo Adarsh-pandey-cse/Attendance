@@ -3,7 +3,8 @@
 export type AttendanceLog = {
   id: string;
   timestamp: number;
-  status: 'present' | 'absent';
+  status: 'present' | 'absent' | 'edit';
+  details?: string;
 };
 
 export type Subject = {

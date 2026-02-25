@@ -66,8 +66,11 @@ export default function Home() {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 gap-4">
-                  {subjects.map((subject) => (
-                    <SubjectCard key={subject.id} subject={subject} />
+                  {subjects
+                    .slice()
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((subject) => (
+                      <SubjectCard key={subject.id} subject={subject} />
                   ))}
                 </div>
               )}
